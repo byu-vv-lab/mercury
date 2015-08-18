@@ -1,0 +1,341 @@
+% ---------------------------------------------------------------------
+% Save boxes for the various figures in the example section
+% ---------------------------------------------------------------------
+\newcommand{\epsnd}{\textit{$N_s$}}
+\newcommand{\eprcv}{\textit{$N_r$}}
+\newcommand{\epwait}{\textit{$P_r$}}
+\newcommand{\epbarrier}{\textit{$P_b$}}
+\newcommand{\frm}{\textit{frm}}
+\newcommand{\vbot}{\textit{v$-\bot$}}
+\newcommand{\status}{\textit{s}}
+\newcommand{\error}{\ensuremath{\mathbf{error}}}
+\newcommand{\aidmap}{\textit{A}}
+\newcommand{\thread}{\ensuremath{\mathit{p}}}
+\newcommand{\aid}{\ensuremath{\mathit{x}}}
+\newcommand{\num}{\ensuremath{\mathit{v}}}
+\newcommand{\rcvp}{\ensuremath{\mathit{pt}}}
+\newcommand{\npro}{\ensuremath{\mathit{n}}}
+\newcommand{\cmd}{\ensuremath{\mathit{e}}}
+\newcommand{\op}{\ensuremath{\mathit{op}}}
+\newcommand{\comm}{\ensuremath{\mathit{cm}}}
+\newcommand{\applyop}{\ensuremath{\mathrm{op}}}
+\newcommand{\wait}{\ensuremath{\mathbf{w}}}
+\newcommand{\sendi}{\ensuremath{\mathbf{s}}}
+\newcommand{\recvi}{\ensuremath{\mathbf{r}}}
+\newcommand{\barrier}{\ensuremath{\mathbf{b}}}
+\newcommand{\traceentry}{\ensuremath{\sigma}}
+\newcommand{\movelist}{\ensuremath{\delta}}
+\newcommand{\ep}{\ensuremath{\mathbf{\gamma}}}
+\newcommand{\src}{\ensuremath{\alpha}}
+\newcommand{\dst}{\ensuremath{\beta}}
+\newcommand{\true}{\ensuremath{\mathbf{true}}}
+\newcommand{\false}{\ensuremath{\mathbf{false}}}
+\newcommand{\match}{\ensuremath{\mathrm{m}}}
+\newcommand{\matchl}{\ensuremath{\mathrm{match}}}
+\newcommand{\findrecv}{\ensuremath{\mathrm{search_r}}}
+\newcommand{\smt}{\ensuremath{\mathit{smt}}}
+
+\newcommand{\statuschange}{\left\{ \begin{array}{ll}  \status &\ \mathrm{if}\ |\epsnd(\dst)(\src)|>0\\
+   \mathit{error} &\  \mathrm{otherwise}\end{array}\right .}
+
+\newcommand{\reduce}[1]{\ensuremath{\rightarrow_{#1}}}
+% Multiple reductions
+\newcommand{\reduceK}[1]{\ensuremath{\rightarrow_{#1}^{*}}}
+% Non-deterministic reductions
+\newcommand{\reduceN}[1]{\ensuremath{\dashrightarrow_{#1}}}
+\newcommand{\reduceNK}[1]{\ensuremath{\dashrightarrow_{#1}^{*}}}
+\newcommand{\mt}{\ensuremath{mt}}
+\newcommand{\trace}{\ensuremath{\mathit{trace}}}
+\newcommand{\movebot}{\ensuremath{\mathit{m}}}
+\newcommand{\ret}{\ensuremath{\mathbf{ret}}}
+
+
+\newsavebox{\boxTZero}
+\begin{lrbox}{\boxTZero}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+00 (\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{00}\)
+01 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{0}}\) \(\mathit{\ast 0}\) \(\mathit{w\sb{0}}\)) \(\mathbf{r}\sb{01}\)}
+02 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\) \(\mathit{r\sb{0}}\)) \(\mathbf{w}\sb{02}\)
+03 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{1}}\) \(\mathit{1 0}\) \(\mathit{w\sb{1}}\)) \(\mathbf{r}\sb{03}\)}
+04 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\) \(\mathit{r\sb{1}}\)) \(\mathbf{w}\sb{04}\)
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+\newsavebox{\boxTOne}
+\begin{lrbox}{\boxTOne}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+10 (\(\mathbf{r}\) \(\mathit{r\sb{2}}\) \(\mathit{\ast 1}\) \(\mathit{w\sb{2}}\)) \(\mathbf{r}\sb{10}\)
+11 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\) \(\mathit{r\sb{2}}\)) \(\mathbf{w}\sb{11}\)
+12 \underline{(\(\mathbf{s}\) \(\mathit{1 0}\)) \(\mathbf{s}\sb{12}\)}
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+\newsavebox{\boxTTwo}
+\begin{lrbox}{\boxTTwo}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+20 \underline{(\(\mathbf{s}\) \(\mathit{2 0}\)) \(\mathbf{s}\sb{20}\)}
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+% ---------------------------------------------------------------------
+% END Save boxes
+% ---------------------------------------------------------------------
+
+\newcommand\examplefigone{
+\begin{figure*}[tb]
+\begin{center}
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}[t]{c|c|c}
+$\mathit{p_0}$ & $\mathit{p_1}$ & $\mathit{p_2}$ \\
+\hline
+\scalebox{0.8}{\usebox{\boxTZero}}&
+\scalebox{0.8}{\usebox{\boxTOne}} &
+\scalebox{0.8}{\usebox{\boxTTwo}}\\
+\end{tabular}
+\end{center}
+\caption{A Deadlock Caused by Mismatched Send and Receive}
+\label{fig:deadlock1}
+\end{figure*}
+}
+
+
+
+\newsavebox{\boxnozero}
+\begin{lrbox}{\boxnozero}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}	
+00 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{0}}\) \(\mathit{\ast 0}\) \(\mathit{w\sb{0}}\)) \(\mathbf{r}\sb{00}\)}
+01 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\) \(\mathit{r\sb{0}}\)) \(\mathbf{w}\sb{01}\)
+02 (\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{02}\)
+03 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{1}}\) \(\mathit{1 0}\) \(\mathit{w\sb{1}}\)) \(\mathbf{r}\sb{03}\)}
+04 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\) \(\mathit{r\sb{1}}\)) \(\mathbf{w}\sb{04}\)
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+\newsavebox{\boxnoone}
+\begin{lrbox}{\boxnoone}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+10 (\(\mathbf{r}\) \(\mathit{r\sb{2}}\) \(\mathit{\ast 1}\) \(\mathit{w\sb{2}}\)) \(\mathbf{r}\sb{10}\)
+11 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\) \(\mathit{r\sb{2}}\)) \(\mathbf{w}\sb{11}\)
+12 \underline{(\(\mathbf{s}\) \(\mathit{1 0}\)) \(\mathbf{s}\sb{12}\)}
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+\newsavebox{\boxnotwo}
+\begin{lrbox}{\boxnotwo}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+20 \underline{(\(\mathbf{s}\) \(\mathit{2 0}\)) \(\mathbf{s}\sb{20}\)}
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+
+\newcommand\examplefigtwo{
+\begin{figure*}[tb]
+\begin{center}
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}[t]{c|c|c}
+$\mathit{p_0}$ & $\mathit{p_1}$ & $\mathit{p_2}$ \\
+\hline
+\scalebox{0.8}{\usebox{\boxnozero}}&
+\scalebox{0.8}{\usebox{\boxnoone}} &
+\scalebox{0.8}{\usebox{\boxnotwo}}\\
+\end{tabular}
+\end{center}
+\caption{No Deadlock Caused by Mismatched Send and Receive}
+\label{fig:nodeadlock1}
+\end{figure*}
+}
+
+
+\newsavebox{\boxone}
+\begin{lrbox}{\boxone}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+00 (\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{00}\)
+01 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{0}}\) \(\mathit{\ast 0}\) \(\mathit{w\sb{0}}\)) \(\mathbf{r}\sb{01}\)}
+02 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\) \(\mathit{r\sb{0}}\)) \(\mathbf{w}\sb{02}\)
+03 \underline{(\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{03}\)}
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+\newsavebox{\boxtwo}
+\begin{lrbox}{\boxtwo}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+10 (\(\mathbf{r}\) \(\mathit{r\sb{1}}\) \(\mathit{\ast 1}\) \(\mathit{w\sb{1}}\)) \(\mathbf{r}\sb{10}\)
+11 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\) \(\mathit{r\sb{1}}\)) \(\mathbf{w}\sb{11}\)
+12 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{2}}\) \(\mathit{\ast 1}\) \(\mathit{w\sb{2}}\)) \(\mathbf{r}\sb{12}\)}
+13 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\) \(\mathit{r\sb{2}}\)) \(\mathbf{w}\sb{13}\)
+14 \underline{(\(\mathbf{s}\) \(\mathit{1 2}\)) \(\mathbf{s}\sb{14}\)}
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+\newsavebox{\boxthree}
+\begin{lrbox}{\boxthree}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+20 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{3}}\) \(\mathit{1 2}\) \(\mathit{w\sb{3}}\)) \(\mathbf{r}\sb{20}\)}
+21 (\(\mathbf{w}\) \(\mathit{w\sb{3}}\) \(\mathit{r\sb{3}}\)) \(\mathbf{w}\sb{21}\)
+22 \underline{(\(\mathbf{s}\) \(\mathit{2 0}\)) \(\mathbf{s}\sb{22}\)}
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+% ---------------------------------------------------------------------
+% END Save boxes
+% ---------------------------------------------------------------------
+
+\newcommand\examplefigthree{
+\begin{figure*}[tb]
+\begin{center}
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}[t]{c|c|c}
+$p_0$ & $p_1$ & $p_2$ \\
+\hline
+\scalebox{0.8}{\usebox{\boxone}}&
+\scalebox{0.8}{\usebox{\boxtwo}} &
+\scalebox{0.8}{\usebox{\boxthree}}\\
+\end{tabular}
+\end{center}
+\caption{A Deadlock Caused by Circular Dependency in Messages}
+\label{fig:deadlock2}
+\end{figure*}
+}
+
+
+\newsavebox{\boxoneno}
+\begin{lrbox}{\boxoneno}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+00 (\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{00}\)
+01 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{0}}\) \(\mathit{\ast 0}\) \(\mathit{w\sb{0}}\)) \(\mathbf{r}\sb{01}\)}
+02 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\) \(\mathit{r\sb{0}}\)) \(\mathbf{w}\sb{02}\)
+03 \underline{(\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{03}\)}
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+\newsavebox{\boxtwono}
+\begin{lrbox}{\boxtwono}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+10 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{1}}\) \(\mathit{\ast 1}\) \(\mathit{w\sb{1}}\)) \(\mathbf{r}\sb{10}\)}
+11 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\) \(\mathit{r\sb{1}}\)) \(\mathbf{w}\sb{11}\)
+12 \underline{(\(\mathbf{s}\) \(\mathit{1 2}\)) \(\mathbf{s}\sb{12}\)}
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+\newsavebox{\boxthreeno}
+\begin{lrbox}{\boxthreeno}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+20 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{2}}\) \(\mathit{1 2}\) \(\mathit{w\sb{2}}\)) \(\mathbf{r}\sb{20}\)}
+21 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\) \(\mathit{r\sb{2}}\)) \(\mathbf{w}\sb{21}\)
+22 \underline{(\(\mathbf{s}\) \(\mathit{2 0}\)) \(\mathbf{s}\sb{22}\)}
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+% ---------------------------------------------------------------------
+% END Save boxes
+% ---------------------------------------------------------------------
+
+\newcommand\examplefigfour{
+\begin{figure*}[tb]
+\begin{center}
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}[t]{c|c|c}
+$p_0$ & $p_1$ & $p_2$ \\
+\hline
+\scalebox{0.8}{\usebox{\boxoneno}}&
+\scalebox{0.8}{\usebox{\boxtwono}} &
+\scalebox{0.8}{\usebox{\boxthreeno}}\\
+\end{tabular}
+\end{center}
+\caption{No Deadlock Caused by Circular Dependency in Messages}
+\label{fig:nodeadlock2}
+\end{figure*}
+}
+
+\newsavebox{\boxonezerobuffer}
+\begin{lrbox}{\boxonezerobuffer}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+00 (\(\mathbf{r}\) \(\mathit{r\sb{0}}\) \(\mathit{\ast 0}\) \(\mathit{w\sb{0}}\)) 
+01 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\) \(\mathit{r\sb{0}}\))
+02 (\(\mathbf{s}\) \(\mathit{0 1}\)) 
+03 (\(\mathbf{r}\) \(\mathit{r\sb{1}}\) \(\mathit{\ast 0}\) \(\mathit{w\sb{1}}\)) 
+04 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\) \(\mathit{r\sb{1}}\))
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+\newsavebox{\boxtwozerobuffer}
+\begin{lrbox}{\boxtwozerobuffer}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+10 (\(\mathbf{s}\) \(\mathit{1 0}\)) 
+11 (\(\mathbf{r}\) \(\mathit{r\sb{2}}\) \(\mathit{\ast 1}\) \(\mathit{w\sb{2}}\)) 
+12 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\) \(\mathit{r\sb{2}}\))
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+\newsavebox{\boxthreezerobuffer}
+\begin{lrbox}{\boxthreezerobuffer}
+\begin{minipage}[t]{0.65\linewidth}
+\large
+\begin{alltt}
+20 (\(\mathbf{s}\) \(\mathit{2 0}\)) 
+\end{alltt}
+\end{minipage}
+\end{lrbox}
+
+
+\newcommand\examplefigfive{
+%:
+\begin{figure*}[tb]
+\begin{center}
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}[t]{c|c|c}
+$p_0$ & $p_1$ & $p_2$ \\
+\hline
+\scalebox{0.8}{\usebox{\boxonezerobuffer}}&
+\scalebox{0.8}{\usebox{\boxtwozerobuffer}} &
+\scalebox{0.8}{\usebox{\boxthreezerobuffer}}\\
+\end{tabular}
+\end{center}
+\caption{A Deadlock for Zero Buffer Semantics}
+\label{fig:zeropattern}
+\end{figure*}
+}
+
+
