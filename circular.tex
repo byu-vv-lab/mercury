@@ -1,0 +1,96 @@
+\section{Circular Dependency}
+
+%%%% This section presents the pattern match algorithm and validation for circular dependency.
+
+
+A deadlock may also occur when there exists a circular dependency in messages. This circular dependency is defined in \defref{def:circular} that depends on the sequential relation defined in \defref{def:seqrelation}.
+
+\begin{definition}
+A sequential relation for a process, $p$, is a three-tuple $(p, \mathtt{r_c}, \mathtt{s_l})$, where the receive $\mathtt{r_c}$ and its nearest-enclosing wait $\mathtt{w_d}$ are both followed by a send $\mathtt{s_l}$ on $p$. 
+\label{def:seqrelation}
+\end{definition}
+
+\begin{definition}
+Given a set of sequential relations, $D$, a circular dependency pattern $\tau$ $=$ $\langle(p_0, \mathtt{r}_0, \mathtt{s}_0),$ $\ldots,$ $(p_m, \mathtt{r}_m, \mathtt{s}_m)\rangle$ is a sequence in $D$, such that the following properties hold.
+\begin{compactenum}
+\item at least two sequential relations exist in $\tau$;
+\item for all distinct $i,j \in [0,m]$, $p_i \neq p_j$;
+\item for all $i \in [0,m], j = (i+1) \% m$, $\mathtt{s}_i$ can potentially match $\mathtt{r}_j$;
+%\item for all $i \in [1,m]$, if $\mathtt{r}_i$ is a deterministic receive, then there are no wildcard receives preceding $\mathtt{r}_i$ on $p_i$.
+\end{compactenum}
+\label{def:circular}
+\end{definition}
+
+\examplefigthree
+
+\figref{fig:deadlock2} shows an MPI program with a circular dependency in messages $\langle(p_0, \mathtt{r_{01}}, \mathtt{s_{03}}),$ $(p_1, \mathtt{r_{12}}, \mathtt{s_{14}}),$ $(p_1, \mathtt{r_{20}}, \mathtt{s_{22}})\rangle$. Each receive in the pattern instance waits for the issuing of a send from one of the other processes but never gets a response. For instance, $\mathtt{r_{01}}$ can never match $\mathtt{s_{22}}$ because of the circular dependency. For simplicity, only receives are stored to represent a circular dependency pattern instance (e.g., $(\mathtt{r_{01}}, \mathtt{r_{12}}, \mathtt{r_{20}})$ is a pattern instance for the program in \figref{fig:deadlock2}). 
+
+\begin{algorithm}
+\caption{Finding Circular Dependency}\label{algo:circular}
+\begin{algorithmic}[1]
+\Require $\mathit{ctp}$, a single-path MPI program
+\Require $\mathit{M}(\mathtt{r_c}) = \{\mathtt{s_l}\mid(\mathtt{s_l},\mathtt{r_c})\in\mathit{M}\}$, a set of potentially matched sends for $\mathtt{r_c}$
+\State $\mathit{E} \subseteq \mathit{e}\times\mathit{e}$, a relation from an operation $\mathit{e}$ to another operation $\mathit{e}$
+\State $\mathit{V}$, a set of operations
+%\State $\mathit{isIssued}$, a bool variable
+\State $\mathit{PT}$, a set of circular dependency pattern instances
+\State $\mathit{R}(p) = \{\mathtt{r_c}\mid(p,\mathtt{r_c})\in\mathit{R}\}$, the witnessed receives on process $p$
+\State $\mathit{R_w}(p) = \{\mathtt{r_c}\mid(p,\mathtt{r_c})\in\mathit{R_w}\}$, the receives for the last witnessed wait on process $p$ 
+\For{$p \in \mathit{ctp}$}
+\For{$\mathit{e} \in p$}
+\If{$\mathit{e}$ is a receive}
+%\If{$\mathit{isIssued}$ and $\mathtt{e}$ is a deterministic receive}
+%\State \textbf{break}
+%\EndIf
+%\If{$\mathtt{e}$ is a wildcard receive}
+%\State $\mathit{isIssued} \gets true$
+%\EndIf
+\State $\mathit{R} = \mathit{R} \cup \{(p,\mathit{e})\}$
+\State $\mathit{V} = \mathit{V} \cup \{\mathit{e}\}$
+\For{$\mathtt{s_l} \in \mathit{M}(\mathit{e})$} \Comment{add match relations to $\mathit{E}$}
+\State $\mathit{E} = \mathit{E} \cup \{(\mathit{e},\mathtt{s_l})\}$  
+\EndFor
+\EndIf
+\If{$\mathit{e}$ is a wait}
+\For{$\mathtt{r_c} \in \mathit{R}(p)$}
+\State $\mathit{R_w} = \mathit{R_w} \cup \{(p,\mathtt{r_c})\}$
+\EndFor
+\State $\mathit{R}(p) \gets \emptyset$ 
+\EndIf
+\If{$\mathit{e}$ is a send}
+\State $\mathit{V} = \mathit{V} \cup \{\mathit{e}\}$
+\For{$\mathtt{r_c} \in \mathit{R_w}(p)$}  \Comment{add HB relations from $\mathtt{r_c}$ to $\mathit{e}$ to $\mathit{E}$}
+\State $\mathit{E} = \mathit{E} \cup \{(\mathtt{r_c},\mathit{e})\}$
+\EndFor
+\EndIf
+\EndFor
+\EndFor
+\State $\mathit{PT} \gets$ \Call {Johnson}{$\mathit{V}$, $\mathit{E}$}
+\end{algorithmic}
+\end{algorithm}
+
+\algoref{algo:circular} shows the steps for finding all the instances of the circular dependency pattern in a single-path MPI program $\mathit{ctp}$. In general, the algorithm is part of the function $\mathrm{PATTERNFINDER}$ in \algoref{algo:main}. It builds a graph by transforming the operations in $\mathit{ctp}$ to the vertices $\mathit{V}$ and transforming two types of relations to the edges $\mathit{E}$. To be precise, for each process $p$ in $\mathit{ctp}$, the algorithm checks each operation $\mathit{e}$. 
+%If $\mathtt{e}$ is a deterministic receive and there are wildcard receives preceding $\mathtt{e}$ on a single process (property $4$ in \defref{def:circular} does not hold), then $\mathtt{e}$ is not inserted into $\mathit{V}$ at line $11$. If $\mathtt{e}$ is a wildcard receive, then the variable $\mathit{isIssued}$ is set to true. 
+If $\mathit{e}$ is a receive, then the pair $(p,\mathit{e})$ is inserted into $\mathit{R}$ and $\mathit{V}$, respectively. Also, for each potentially matched send $\mathtt{s_l}$ in $\mathit{M}(\mathit{e})$, the pair $(\mathit{e},\mathtt{s_l})$ is inserted into $\mathit{E}$ indicating that a match relation from $\mathtt{s_l}$ to $\mathit{e}$ is an edge in the graph. If $\mathit{e}$ is a wait, all the receives in $\mathit{R}(p)$ are inserted to $\mathit{R_w}(p)$ and $\mathit{R}(p)$ is set to an empty set, indicating that $\mathit{e}$ is the nearest-enclosing wait for the receives in $\mathit{R}(p)$. \defref{def:seqrelation} requires for each sequential relation a receive and its nearest-enclosing wait both precede a send on a single process. Therefore, %only the receives in the set $\mathit{Wset}$ are considered to build the happens-before relation. 
+if $\mathit{e}$ is a send, then the pair $(\mathtt{r_c},\mathit{e})$ is inserted into $\mathit{E}$ at line $24$ indicating that a happens-before relation from each receive $\mathtt{r_c}\in\mathit{R_w}$ to $\mathit{e}$ is an edge in the graph. Finally, the function $\mathrm{JOHNSON}$ implements the Johnson's algorithm to compute all the cycles \cite{DBLP:journals/siamcomp/Johnson75}. Since an edge in any computed cycle is either a receive-send HB relation on an identical process, or is a send-receive match relation across two processes, there exists exactly one sequential relation for any process of the cycle. Therefore, each cycle computed by the function $\mathrm{JOHNSON}$ has potential to cause deadlock. Only receives in each cycle are stored as an instance of the circular dependency pattern in the set $\mathit{PT}$. The complexity of program traversal is $O(\mathrm{N}^2)$, where $\mathrm{N}$ is the total number of operations in the program. The complexity of Johnson's algorithm is $O((\mathrm{v}+\mathrm{e})(\mathrm{c}+1))$ $\approx$ $O((\mathrm{c}+1)\mathrm{N}^2)$, where $\mathrm{v}$ is the number of vertices, $\mathrm{e}$ is the number of edges, and $\mathrm{c}$ is the number of cycles. Therefore, the total complexity of the algorithm is $O((\mathrm{c}+1)\mathrm{N}^2)$.
+
+\examplefigfour
+
+An instance of the circular dependency pattern does not mean a deadlock occurs. For example, the program in \figref{fig:nodeadlock2} has an instance of the circular dependency that is detected by \algoref{algo:circular}. However, it is pruned by \algoref{algo:main} because there does not exist a feasible schedule.
+
+%%Soundness proof for pattern match needs to be added. the following proof needs to be revised to show that the validation is sound and complete.
+
+\begin{lemma}[Soundness for Circular Dependency Pattern]
+For any message passing program, \textit{ctp}, the existence of a deadlock reported by \algoref{algo:main} for an instance of the circular dependency pattern, $\mathit{pt}$, indicates a real deadlock. 
+\label{lemma:circular}
+\end{lemma}
+\begin{proof}
+Proof by showing the existence of a deadlock. First, assume $(\mathit{ctp}^\prime,$ $\mathit{ctp}_s,$ $\mathit{N_s},$ $\mathit{N_r},$ $\mathit{P_r},$ $\mathit{P_b},$ $\mathit{R_{pt}}^\prime)$ is the machine state after applying the operational semantics in \figref{fig:machine} and no reduction commands can be further applied. Second, assume \algoref{algo:main} reports the existence of a deadlock at line $15$. Assume $\mathit{ctp}_s$ is a feasible schedule. Similar to the proof of \lemmaref{lemma:mismatch}, $\mathit{ctp}_s$ is executable in the runtime system. Also, any receive in $\mathit{pt}$ has no way to be matched if the condition at line $11$ in \algoref{algo:main} is not satisfied for any receive in $\mathit{pt}$. Further, for any process other than the processes in $\mathit{pt}$, the first operation is blocked in $\mathit{ctp}^\prime$ according to the operational semantics in \figref{fig:machine}. As such, $\mathit{ctp}^\prime$ deadlocks. As such, the program \textit{ctp} may deadlock for the pattern instance $\mathit{pt}$ in program execution. 
+\end{proof} 
+
+%%zero buffer for circular dependency
+
+\subsection{Deadlock for Zero Buffer Semantics}
+The deadlock patterns discussed above may also cause a program to deadlock under zero buffer semantics. Notice that the commands in \figref{fig:machine} are consistent with how messages communicate under infinite buffer semantics (e.g., a send is consumed immediately). The zero buffer semantics, however, enforce a different way of message communication. As such, a feasible infinite buffer schedule generated by \algoref{algo:main} is not able to witness a deadlock under zero buffer semantics. Therefore, the zero buffer compatibility should be checked for each generated schedule. \algoref{algo:main} is extended with two changes: 1) the zero buffer encoding rules (refer to \cite{HuangNFM15}) are added to the function $\mathrm{ENCODE}$; 2) The circular dependency pattern also needs an SMT encoding to check the feasibility of a schedule. As a note, to encode the match pairs for the circular dependency pattern only needs to ensure that each receive in the schedule is matched with some send. Once the schedule is proved to be zero buffer compatible, the program may deadlock under zero buffer semantics; otherwise, the pattern instance does not imply a real deadlock. 
+
+

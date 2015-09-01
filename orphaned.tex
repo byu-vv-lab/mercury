@@ -1,0 +1,67 @@
+\section{Orphaned Receive}
+
+%% rename the pattern as orphaned receive. This section presents the pattern match algorithm and validation for orphaned receive.
+
+A deadlock may occur if sends and receives are mismatched because of the existence of deterministic receives. For instance, in \figref{fig:deadlock1}, a deadlock may occur if $\mathtt{s_{12}}$ matches $\mathtt{r_{01}}$ and there is no way to match $\mathtt{s_{20}}$ with $\mathtt{r_{03}}$. This program shows an instance of the mismatched send-receive pattern that is a set of the underlined operations. Only the deterministic receive $\mathtt{r_{03}}$ is stored to represent the pattern instance defined in \defref{def:mismatch}.
+
+
+\begin{definition}
+A mismatched send and receive pattern is matched when there exists a deterministic receive $\mathtt{r_c}$ where, 
+\begin{compactenum}
+\item there exists a wildcard receive $\mathtt{r_w}$ followed by $\mathtt{r_c}$ on a single process $\mathit{p}$; 
+\item at least two sends from different source endpoints other than $\mathit{p}$ may potentially match $\mathtt{r_w}$; and
+\item among these matched sends, at least one send matches $\mathtt{r_c}$. 
+\end{compactenum}
+\label{def:mismatch}
+\end{definition}
+
+\examplefigtwo
+
+The existence of a pattern instance does not mean a deadlock occurs. The program in \figref{fig:nodeadlock1} is such an instance. This pattern instance is detected, but is pruned at line $17$ in \algoref{algo:main} because there does not exist a feasible schedule (a schedule that is allowed by MPI semantics).
+
+
+
+\begin{algorithm}
+\caption{Finding Mismatched Send-Receive}\label{algo:mismatch}
+\begin{algorithmic}[1]
+\Require $\mathit{ctp}$, a single-path MPI program
+\Require $\mathit{M}(\mathtt{r_c}) = \{\mathtt{s_l}\mid(\mathtt{s_l},\mathtt{r_c})\in\mathit{M}\}$, a set of potentially matched sends for $\mathtt{r_c}$
+\State $\mathit{PT}$, a set of mismatched send-receive pattern instances
+\State $\mathit{R}(p) = \{\mathtt{r_w}\mid(p,\mathtt{r_w})\in\mathit{R}\}$, a set of wildcard receives on process $p$
+\For{$p \in \mathit{ctp}$}
+\For{$\mathtt{r_c} \in p$}
+\If{$\mathtt{r_c}$ is a wildcard receive}
+\State $\mathit{R} = \mathit{R} \cup \{(p,\mathtt{r_c})\}$
+\EndIf
+\If{$\mathtt{r_c}$ is a deterministic receive}
+\For{$\mathtt{r_w} \in \mathit{R}(p)$}
+\If{$\mathit{M}(\mathtt{r_c}) \cap \mathit{M}(\mathtt{r_w}) \neq \emptyset \wedge |\mathit{M}(\mathtt{r_w})| > 1$}
+\State $\mathit{PT} = \mathit{PT} \cup \{\{\mathtt{r_c}\}\}$
+\State \textbf{break}
+\EndIf
+\EndFor
+\EndIf
+\EndFor
+\EndFor
+%\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\algoref{algo:mismatch} shows the steps for finding the mismatched send and receive pattern instances for an MPI program. In general, the algorithm is part of the function $\mathrm{PATTERNFINDER}$ in \algoref{algo:main}. It requires a single-path MPI program $\mathit{ctp}$ and the preprocessed match pair set $\mathit{M}$ as input. A match pair is a coupling of a receive and a send that may match in the runtime system. The complexity of the algorithm is $O(\mathrm{N}^2)$, where $\mathrm{N}$ is the total number of operations in the program. 
+
+%%Soundness proof for pattern match needs to be added. the following proof needs to be revised to show that the validation is sound and complete.
+
+
+\begin{lemma}[Soundness for Mismatched Send and Receive Pattern]
+For any message passing program, \textit{ctp}, a satisfying assignment returned by the function $\mathrm{ENCODE}$ in \algoref{algo:main} indicates a real deadlock schedule for an instance of the mismatched send and receive pattern, $\mathit{pt}$. 
+\label{lemma:mismatch}
+\end{lemma}
+\begin{proof}
+Proof by showing the existence of a deadlock. First, assume $(\mathit{ctp}^\prime,$ $\mathit{ctp}_s,$ $\mathit{N_s},$ $\mathit{N_r},$ $\mathit{P_r},$ $\mathit{P_b},$ $\mathit{R_{pt}}^\prime)$ is the machine state after applying the operational semantics in \figref{fig:machine} and no reduction commands can be further applied. Second, assume the schedule $\mathit{ctp}_s$ is input to the function $\mathrm{ENCODE}$ in \algoref{algo:main}. Since $\mathrm{ENCODE}$ returns a satisfying assignment, say $\mathit{t}$, it implies that $\mathit{t}$ is a sequential order of all the operations in $\mathit{ctp}_s$ that is executable by the runtime system. Also, for the process that the deterministic receive $\mathtt{r_c}$ in $\mathit{pt}$ resides in, say $\mathit{p}$, $\mathit{t}$ satisfies that each send with the destination $\mathit{p}$ is matched with some receive in $\mathit{ctp}_s$. As such, no sends can match $\mathtt{r_c}$ as the nearest-enclosing wait for $\mathtt{r_c}$ is stored in $\mathit{ctp}^\prime$ according to the \emph{Wait (Rcvi) Command 2} in \figref{fig:machine}. Further, for any process other than $\mathit{p}$ in $\mathit{pt}$, the first operation is blocked in $\mathit{ctp}^\prime$ according to the operational semantics in \figref{fig:machine}. As such, $\mathit{ctp}^\prime$ deadlocks. Since $\mathit{ctp}_s$ is executable and $\mathit{ctp}^\prime$ deadlocks, the program \textit{ctp} may deadlock for the pattern instance $\mathit{pt}$ in program execution. 
+\end{proof}
+
+%%zero buffer for orphaned receive
+
+\subsection{Deadlock for Zero Buffer Semantics}
+The deadlock patterns discussed above may also cause a program to deadlock under zero buffer semantics. Notice that the commands in \figref{fig:machine} are consistent with how messages communicate under infinite buffer semantics (e.g., a send is consumed immediately). The zero buffer semantics, however, enforce a different way of message communication. As such, a feasible infinite buffer schedule generated by \algoref{algo:main} is not able to witness a deadlock under zero buffer semantics. Therefore, the zero buffer compatibility should be checked for each generated schedule. \algoref{algo:main} is extended with two changes: 1) the zero buffer encoding rules (refer to \cite{HuangNFM15}) are added to the function $\mathrm{ENCODE}$; 2) The circular dependency pattern also needs an SMT encoding to check the feasibility of a schedule. As a note, to encode the match pairs for the circular dependency pattern only needs to ensure that each receive in the schedule is matched with some send. Once the schedule is proved to be zero buffer compatible, the program may deadlock under zero buffer semantics; otherwise, the pattern instance does not imply a real deadlock. 
+

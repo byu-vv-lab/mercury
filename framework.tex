@@ -1,0 +1,137 @@
+\section{Main Framework}
+
+%%The general algorithm including three steps: Pattern Match, Feasible Check and Validation. The pseudocode needs to be revised so it shows each step. 
+
+\examplefigone
+
+The algorithm in this paper consists of several steps shown in \algoref{algo:main}. The function $\mathrm{PATTERNFINDER}$ at line 3 computes two types of deadlock patterns (defined later) by running \algoref{algo:mismatch} and \algoref{algo:circular} in sequence, where each statically traverses the program. The function $\mathrm{SCHEDULEFINDER}$ at line 5, again, statically traverses the program and finds a potential schedule $\mathit{ctp}_s$. The variable $\mathit{empty}_{pt}$ returned by $\mathrm{SCHEDULEFINDER}$ is true if all the receives in the pattern instance \textit{pt} are witnessed after the schedule is detected. \algoref{algo:main} further checks the feasibility of this schedule with different strategies for the two types of deadlocks. The functions $\mathrm{isCircular}$ and $\mathrm{isMismatch}$ check the types of deadlock patterns. If \textit{pt} is a circular dependency instance, the condition at line 11 in \algoref{algo:main} checks whether there exists a send in the schedule that may match any receive $\mathit{r}$ in \textit{pt}. If the condition is true for some $\mathit{r}$ in \textit{pt}, then the instance is not a real deadlock because $\mathit{r}$ is matched and the circle in \textit{pt} does not hold. Once all the receives in \textit{pt} are checked such that they can not be matched to any sends in the schedule, then the feasibility of the schedule is witnessed. If \textit{pt} is a mismatched send and receive instance, the function $\mathrm{ENCODE}$ in \algoref{algo:main} encodes the schedule into an SMT problem based on the rules in \cite{DBLP:conf/kbse/HuangMM13}. Further, a new rule is extended for the match pair encoding: for any deterministic receive $\mathtt{r_c}$ in\textit{pt}, $\bigvee_{\mathtt{r_i}\in\mathit{M}(\mathtt{s_l})}(\mathtt{s_l},\mathtt{r_i})$ is encoded for any $\mathtt{s_l}\in\mathit{M}(\mathtt{r_c})$ in the schedule. This rule ensures that no send in the schedule can match $\mathtt{r_c}$. The function $\mathrm{SAT}$ is true if the encoding is satisfiable. The existence of a satisfying assignment of the encoding implies that the schedule is feasible. The algorithm aborts the verification process once a deadlock is found at line 15 or line 19. As a note, the algorithm is only applied for verifying programs under infinite buffer semantics. If the zero buffer semantics are enforced, the algorithm needs to be modified as discussed later.
+
+%The algorithm requires a single-path MPI program, $\mathit{ctp}$, as input. In the first step, the function $\mathrm{PATTERNFINDER}$ at line 4 traverses the program linearly and finds the instances of two types of deadlock patterns (defined below). In the second step, the function $\mathrm{SCHEDULEFINDER}$ at line 7, again, statically traverses the program and finds a potential schedule $\mathit{ctp}_s$ and updates the set $\rcvp^\prime$ for each pattern instance $\mathit{pt}$. If the new set $\rcvp^\prime$ is not an empty set (at line 8), or there are more sends than receives with identical $src$ and $dest$ that are the source and destination endpoints respectively for any receive in \rcvp\ (at line 12), then the algorithm continues to check the next pattern instance. It repeats the steps above until a deadlock is found or no deadlock exists for all the pattern instances. If a schedule exists, the algorithm reports a deadlock at line 17 if the pattern instance is a circular dependency, or further checks the feasibility of the schedule by encoding it into an SMT problem at line 20 if the pattern instance is a mismatched send-receive. The algorithm reports a deadlock at line 22 if the encoding is satisfiable, or continues to check the next pattern instance at line 25 if it is unsatisfiable. The algorithm aborts the verification process once a deadlock is found. As a note, the algorithm is only applied for verifying programs under infinite buffer semantics. To adjust zero buffer semantics, this paper presents how to modify the algorithm later.
+
+\begin{algorithm}
+\caption{Main Framework}\label{algo:main}
+\begin{algorithmic}[1]
+%\Procedure{Main Entrance}{}
+\Require $\mathit{ctp}$, a single-path MPI program
+\Require $\mathit{M}(\mathtt{r_c}) = \{\mathtt{s_l}\mid(\mathtt{s_l},\mathtt{r_c})\in\mathit{M}\}$, a set of potentially matched sends for $\mathtt{r_c}$
+\State  $\mathit{PT}$, a set of pattern instances
+\State  $\mathit{pt}$, a set of receives in the pattern instance $\mathit{pt}\in\mathit{PT}$
+\State  $\mathit{PT} \gets$ \Call {PatternFinder}{$\mathit{ctp}$, $\mathit{M}$}
+\State \emph{point:}
+\For{$\mathit{pt} \in \mathit{PT}$}
+\State ($\mathit{ctp}_s, \mathit{N_s}, \mathit{N_r}, \mathit{empty}_{pt}) \gets$ \Call {ScheduleFinder}{$\mathit{pt}$}
+\If{$\mathit{empty}_{pt}$} 
+\If{\Call{isCircular}{$\mathit{pt}$}}
+\For{$\mathtt{r_c}\in\mathit{pt}$}
+\State $\mathit{src} \gets$ source endpoint of $\mathtt{r_c}$, $\mathit{dest} \gets$ destination endpoint of $\mathtt{r_c}$
+\If{$\mathit{N_s}(\mathit{dest},\mathit{src}) > \mathit{N_r}(\mathit{dest},\mathit{src})$}
+\State \textbf{continue} \textit{point}
+\EndIf
+\EndFor
+\State report deadlock and exit.
+\EndIf
+\If{\Call {isMismatch}{$\mathit{pt}} \in$}
+\If{\textproc{SAT}({\Call {Encode}{$\mathit{ctp}_s$}})}
+\State report deadlock and exit.
+\EndIf
+\EndIf
+\EndIf
+\EndFor
+%\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+%%The feasible check and the soundness proof of feasible check (assuming pattern match is sound and validation is sound and complete)
+
+\begin{figure*}[tb]
+\centering
+\scalebox{0.9}{
+\mprset{flushleft}
+\begin{mathpar}
+
+\inferrule[Sndi Command]{
+  \epsnd(v_{to},v_{frm}) = v_c \\ \epsnd^\prime = \epsnd[(v_{to},v_{frm}) \mapsto v_c +1] \\ \epsnd(v_{to},\ast) = v_i \\ \epsnd^{\prime\prime} = \epsnd^\prime[(v_{to},\ast) \mapsto v_i +1] 
+}{
+  ((\thread_0\ \ldots\ ((\sendi\ v_{frm}\ v_{to})\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ (\thread_0^\prime\ \ldots\ (\cmd_2\ \ldots\ \bot)\ \thread_2^\prime\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp)\\ \reduce{m}
+  ((\thread_0\ \ldots\ (\cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ (\thread_0^\prime\ \ldots\ (\cmd_2\ \ldots\ (\sendi\ v_{frm}\ v_{to})\ \bot)\ \thread_2^\prime\ \ldots)\ \epsnd^{\prime\prime}\ \eprcv\ \epwait\ \epbarrier\ \rcvp)
+}
+
+\and
+
+\inferrule[Rcvi Command]{
+ \epwait(\aid_w) =  ([\aid_1\ v_{frm1}\ v_{to1}]\ \ldots)
+ \\ \epwait^\prime = \epwait [ \aid_w \mapsto ([\aid_0\ v_{frm0}\ v_{to0}]\ [\aid_1\ v_{frm1}\ v_{to1}]\ \ldots])] 
+}{
+  ((\thread_0\ \ldots\ ((\recvi\ \aid_0\ v_{frm0}\ v_{to0}\ \aid_w)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ (\thread_0^\prime\ \ldots\ (\cmd_2\ \ldots\ \bot)\ \thread_2^\prime\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp) \\ \reduce{m}
+  ((\thread_0\ \ldots\ (\cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ (\thread_0^\prime\ \ldots\ (\cmd_2\ \ldots\ (\recvi\ \aid_0\ v_{frm0}\ v_{to0}\ \aid_w)\ \bot)\ \thread_2^\prime\ \ldots)\ \epsnd\ \eprcv\ \epwait^\prime\ \epbarrier\ \rcvp)
+}
+\and
+\inferrule[Wait (rcvi) Command 1]
+{
+  \epwait(\aid_w) = ()
+}{
+  ((\thread_0\ \ldots\ ((\wait\ \aid_w\ \aid_0)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ (\thread_0^\prime\ \ldots\ (\cmd_2\ \ldots\ \bot)\ \thread_2^\prime\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp)\\ \reduce{m}
+  ((\thread_0\ \ldots\ (\cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ (\thread_0^\prime\ \ldots\ (\cmd_2\ \ldots\ (\wait\ \aid_w\ \aid_0)\ \bot)\ \thread_2^\prime\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp)
+}
+\and
+\inferrule[Wait (rcvi) Command 2]
+{
+   \epwait(\aid_w) = ([\aid_2\ v_{frm2}\ v_{to2}]\ [\aid_3\ v_{frm3}\ v_{to3}]\ \ldots\ [\aid_1\ v_{frm1}\ v_{to1}])\ \rcvp = (\aid_a\ \ldots\ \aid_b\ \aid_2\ \aid_c\ \ldots) \\ \aid_2 \in \rcvp \\ \rcvp^\prime = (\aid_a\ \ldots\ \aid_b\ \aid_c\ \ldots)
+}{
+  ((\thread_0\ \ldots\ ((\wait\ \aid_w\ \aid_0)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ ctp_s\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp)\\ \reduce{m}
+  ((\thread_0\ \ldots\ ((\wait\ \aid_w\ \aid_0)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ ctp_s\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp^\prime)
+}
+\and
+\inferrule[Wait (rcvi) Command 3]
+{
+  \epwait(\aid_w) = ([\aid_2\ v_{frm2}\ v_{to2}]\ [\aid_3\ v_{frm3}\ v_{to3}]\ \ldots\ [\aid_1\ v_{frm1}\ v_{to1}]) \\
+  \aid_2 \notin \rcvp \\ \eprcv(v_{to2},v_{frm2}) < \epsnd(v_{to2},v_{frm2}) \\ \eprcv(v_{to2},\ast) < \epsnd(v_{to2},\ast) \\
+   \eprcv(v_{to2},v_{frm2}) = v_c \\
+    \eprcv^\prime = \eprcv [(v_{to2}, v_{frm2}) \mapsto v_c + 1]] \\ 
+    \epwait^\prime = \epwait [\aid_w\ \mapsto\ ([\aid_3\ v_{frm3}\ v_{to3}]\ \ldots\ [\aid_1\ v_{frm1}\ v_{to1}])]
+}{
+  ((\thread_0\ \ldots\ ((\wait\ \aid_w\ \aid_1)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ ctp_s\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp)\\ \reduce{m}
+  ((\thread_0\ \ldots\ ((\wait\ \aid_w\ \aid_1)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ ctp_s\ \epsnd\ \eprcv^\prime\ \epwait^\prime\ \epbarrier\ \rcvp)
+}
+\and
+\inferrule[Barrier Command 1]
+{
+  \epbarrier(\aid_0) = v_c \\ v_c < \npro \\ \epbarrier^\prime = \epbarrier[\aid_0 \mapsto  v_c + 1]
+}{
+ ((\thread_0\ \ldots\ ((\barrier\ \num_0\ \aid_0)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ ctp_s\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp)\\ \reduce{m}
+ ((\thread_0\ \ldots\ ((\barrier\ \num_0\ \aid_0)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ ctp_s\ \epsnd\ \eprcv\ \epwait\ \epbarrier^\prime\ \rcvp)
+}
+\and
+\inferrule[Barrier Command 2]
+{
+  \epbarrier(\aid_0) = \npro
+}{
+ ((\thread_0\ \ldots\ ((\barrier\ \num_0\ \aid_0)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ (\thread_0^\prime\ \ldots\ (\cmd_2\ \ldots\ \bot)\ \thread_2^\prime\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp)\\ \reduce{m}
+ ((\thread_0\ \ldots\ (\cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ (\thread_0^\prime\ \ldots\ (\cmd_2\ \ldots\ (\barrier\ \num_0\ \aid_0)\ \bot)\ \thread_2^\prime\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp)
+}
+
+\end{mathpar}}
+\caption{Machine Reductions ($\reduce{m}$). }
+\label{fig:machine}
+\end{figure*}
+
+
+The function $\mathrm{SCHEDULEFINDER}$ in \algoref{algo:main} is presented as set of rewriting commands for the machine state (\textit{st}) defined in \figref{fig:machine}. These commands define how to execute the program $\mathit{ctp}$ and generates a schedule $\mathit{ctp}_s$. The \emph{Sndi Command} in \figref{fig:machine} consumes the first send in any process of the program. 
+%Consider a portion of the \emph{Sndi Command}:
+%\begin{eqnarray*}
+% \epsnd(v_{to},v_{frm}) = v_c\\ \epsnd^\prime = \epsnd[(v_{to},v_{frm}) \mapsto v_c +1] \\ \epsnd(v_{to},\ast) = v_i \\ \epsnd^{\prime\prime} = \epsnd^\prime[(v_{to},\ast) \mapsto v_i +1] 
+%\end{eqnarray*}
+$\epsnd^\prime$\ is a new set, just like the old set $\epsnd$, only the new set maps the destination
+endpoint $v_{to}$\ and the source endpoint $v_{frm}$ to the number $v_c + 1$ where $v_c$ is the content in the old set. The set is also updated such that it maps $v_{to}$\ and $\ast$ indicating any source to the number $v_i + 1$ where $v_i$ is the content in the old set. The send is then pushed to the schedule $\mathit{ctp}_s$ at the bottom of the corresponding process in the machine state. The \emph{Rcvi Command} in \figref{fig:machine} consumes the receive by updating the set \epwait. Similar to the rule in \emph{Sndi Command}, \epwait\ merely adds a new record for the receive that is indexed by its nearest-enclosing wait. The receive is then moved to the schedule. The \emph{Wait (Rcvi) Command} operates in three ways. If the wait $\aid_w$ maps to an empty set in \epwait\ indicating that no receives need to be completed by $\aid_w$, then the command consumes $\aid_w$ by moving it to the schedule. If the first receive $\aid_2$ in $\epwait(\aid_w)$ is stored in \rcvp\ for the pattern instance $\mathit{pt}$, then $\aid_2$ is removed from \rcvp\ indicating that it is witnessed. As a note, \algoref{algo:main} checks if all the receives in \rcvp\ are witnessed after detecting a schedule for $\mathit{pt}$. The last way that a wait can move forward checks whether the first receive $\aid_2$\ in $\epwait(x_w)$ is able to be consumed. Note that the receives in $\epwait(\aid_0)$ are ordered as they are on the original process of the program. Therefore, if the first receive in $\epwait(x_w)$ cannot be consumed, the following receives are blocked as well. This step requires two conditions. First, $\aid_2$ is not a receive in the pattern instance. Second, there are more sends than receives with common source and destination endpoints and there are more sends for the preceding wildcard receives. If both conditions are satisfied, then the set \eprcv\ is updated where the new set maps the destination endpoint $v_{to}$\ and the source endpoint $v_{frm}$ to the number $v_c + 1$ where $v_c$ is the content in the old set. This receive is then removed from \epwait. The \emph{Barrier Command} moves the barrier forward by its synchronization rule. If the count of the witnessed barriers $\epbarrier(\aid_0)$ for a specific communicator $\aid_0$ is less than the size of processes $N_{pro}$ indicating that the barriers for $\aid_0$ are not matched, then the barrier is not consumed and $\epbarrier(\aid_0)$ is incremented. The barrier can only be moved to the schedule if the count $\epbarrier(\aid_0)$ is equal to the number of processes $N_{pro}$.
+
+The machine rewrites the state \textit{st} until no more reduction rules can be applied indicating that there is no way to further traverse the program. In such a schedule, the last statement on any process is either the bottom of the process or a blocking operation. A blocking operation could be a wait or a barrier. 
+
+%%Soundness Proof needs to be revised such that it shows the feasible check (operational semantics) is sound.
+
+\begin{lemma}[Completeness for Two Common Deadlock Patterns]
+For any message passing program, \textit{ctp}, any real deadlock for mismatched send and receive pattern and circular dependency pattern can be reported by \algoref{algo:main}.
+\label{lemma:complete}
+\end{lemma}
+\begin{proof}
+Proof by showing that the operational semantics in \figref{fig:machine} simulate the message communication under infinite buffer semantics. For \emph{Sndi Command} and \emph{Rcvi Command}, a send or receive is consumed immediately by incrementing two structures $\mathit{N_s}$ and $\mathit{N_r}$, respectively. This is consistent with the issuing of send and receive under infinite buffer semantics. The three cases of \emph{Wait Command} witness the completion of receives that are not in the pattern $\mathit{pt}$ and hold the receives in $\mathit{pt}$ so that a postponed feasibility check is launched in \algoref{algo:main}. The two cases of \emph{Barrier Command} stops the execution of a member process until all the barriers in group are witnessed. Since the operational semantics in \figref{fig:machine} are able to simulate the behavior under infinite buffer semantics, if a real deadlock exists for a pattern, then the schedule is able to be extracted. Thus, the deadlock can be reported.
+\end{proof}
