@@ -78,6 +78,43 @@ if $\mathit{e}$ is a send, then the pair $(\mathtt{r_c},\mathit{e})$ is inserted
 
 An instance of the circular dependency pattern does not mean a deadlock occurs. For example, the program in \figref{fig:nodeadlock2} has an instance of the circular dependency that is detected by \algoref{algo:circular}. However, it is pruned by \algoref{algo:main} because there does not exist a feasible schedule.
 
+%%revise the following algorithm of validating circular dependency pattern
+
+If \textit{pt} is a circular dependency instance, the condition at line 7 in \algoref{algo:vcircular} checks whether there exists a send in the schedule that may match any receive $\mathit{r}$ in \textit{pt}. If the condition is true for some $\mathit{r}$ in \textit{pt}, then the instance is not a real deadlock because $\mathit{r}$ is matched and the circle in \textit{pt} does not hold. Once all the receives in \textit{pt} are checked such that they can not be matched to any sends in the schedule, then the feasibility of the schedule is witnessed.
+
+\begin{algorithm}
+\caption{Validate Circular Dependency}\label{algo:vcircular}
+\begin{algorithmic}[1]
+%\Procedure{Main Entrance}{}
+\Require $\mathit{ctp}$, a single-path MPI program
+\Require $\mathit{M}(\mathtt{r_c}) = \{\mathtt{s_l}\mid(\mathtt{s_l},\mathtt{r_c})\in\mathit{M}\}$, a set of potentially matched sends for $\mathtt{r_c}$
+\State  $\mathit{PT}$, a set of pattern instances
+\State  $\mathit{pt}$, a set of receives in the pattern instance $\mathit{pt}\in\mathit{PT}$
+\State $\mathit{N_s}$, a set of numbers each representing the the number of issued sends given a destination and a source
+\State $\mathit{N_r}$, a set of numbers each representing the number of issued receives given a destination and a source
+%\State ($\mathit{ctp}_s, \mathit{N_s}, \mathit{N_r}, \mathit{empty}_{pt}) \gets$ \Call {ScheduleFinder}{$\mathit{pt}$}
+%\If{$\mathit{empty}_{pt}$} 
+%\If{\Call{isCircular}{$\mathit{pt}$}}
+\For{$\mathtt{r_c}\in\mathit{pt}$}
+\State $\mathit{src} \gets$ source endpoint of $\mathtt{r_c}$, $\mathit{dest} \gets$ destination endpoint of $\mathtt{r_c}$
+\If{$\mathit{N_s}(\mathit{dest},\mathit{src}) > \mathit{N_r}(\mathit{dest},\mathit{src})$}
+\State report no deadlock and exit.
+\EndIf
+\EndFor
+\State report deadlock.
+%\State report deadlock and exit.
+%\EndIf
+%\If{\Call {isMismatch}{$\mathit{pt}} \in$}
+%\If{\textproc{SAT}({\Call {Encode}{$\mathit{ctp}_s$}})}
+%\State report deadlock and exit.
+%\EndIf
+%\EndIf
+%\EndIf
+%\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
 %%Soundness proof for pattern match needs to be added. the following proof needs to be revised to show that the validation is sound and complete.
 
 \begin{lemma}[Soundness for Circular Dependency Pattern]

@@ -22,7 +22,7 @@ The existence of a pattern instance does not mean a deadlock occurs. The program
 
 
 \begin{algorithm}
-\caption{Finding Mismatched Send-Receive}\label{algo:mismatch}
+\caption{Finding Orphaned Receive}\label{algo:mismatch}
 \begin{algorithmic}[1]
 \Require $\mathit{ctp}$, a single-path MPI program
 \Require $\mathit{M}(\mathtt{r_c}) = \{\mathtt{s_l}\mid(\mathtt{s_l},\mathtt{r_c})\in\mathit{M}\}$, a set of potentially matched sends for $\mathtt{r_c}$
@@ -48,6 +48,24 @@ The existence of a pattern instance does not mean a deadlock occurs. The program
 \end{algorithm}
 
 \algoref{algo:mismatch} shows the steps for finding the mismatched send and receive pattern instances for an MPI program. In general, the algorithm is part of the function $\mathrm{PATTERNFINDER}$ in \algoref{algo:main}. It requires a single-path MPI program $\mathit{ctp}$ and the preprocessed match pair set $\mathit{M}$ as input. A match pair is a coupling of a receive and a send that may match in the runtime system. The complexity of the algorithm is $O(\mathrm{N}^2)$, where $\mathrm{N}$ is the total number of operations in the program. 
+
+
+%%add text for the following algorithm of validating orphaned receive pattern
+
+ If \textit{pt} is a mismatched send and receive instance, the function $\mathrm{ENCODE}$ in \algoref{algo:main} encodes the schedule into an SMT problem based on the rules in \cite{DBLP:conf/kbse/HuangMM13}. Further, a new rule is extended for the match pair encoding: for any deterministic receive $\mathtt{r_c}$ in\textit{pt}, $\bigvee_{\mathtt{r_i}\in\mathit{M}(\mathtt{s_l})}(\mathtt{s_l},\mathtt{r_i})$ is encoded for any $\mathtt{s_l}\in\mathit{M}(\mathtt{r_c})$ in the schedule. This rule ensures that no send in the schedule can match $\mathtt{r_c}$. The function $\mathrm{SAT}$ is true if the encoding is satisfiable. The existence of a satisfying assignment of the encoding implies that the schedule is feasible. 
+
+\begin{algorithm}
+\caption{Validate Orphaned Receive}\label{algo:vorphaned}
+\begin{algorithmic}[1]
+\Require $\mathit{M}(\mathtt{r_c}) = \{\mathtt{s_l}\mid(\mathtt{s_l},\mathtt{r_c})\in\mathit{M}\}$, a set of potentially matched sends for $\mathtt{r_c}$
+\State  $\mathit{schedule}$, a potential schedule detected by \Call {FeasibleCheck}{}{}
+\If{\textproc{SAT}({\Call {Encode}{$\mathit{ctp}_s$, $\mathit{M}$}})}
+\State report deadlock and exit.
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+
 
 %%Soundness proof for pattern match needs to be added. the following proof needs to be revised to show that the validation is sound and complete.
 
