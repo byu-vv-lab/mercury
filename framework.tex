@@ -19,10 +19,8 @@ The algorithm in this paper consists of several steps shown in \algoref{algo:mai
 \State  $\mathit{PT}$, a set of pattern instances
 \State  $\mathit{pt}$, a set of receives in the pattern instance $\mathit{pt}\in\mathit{PT}$
 \State  $\mathit{PT} \gets$ \Call {PatternFinder}{$\mathit{ctp}$, $\mathit{M}$}
-\State \emph{point:}
 \For{$\mathit{pt} \in \mathit{PT}$}
-
-\State $\mathit{schedule} \gets$  \Call {FeasibleCheck}{$\mathit{pt}$}
+\State $\mathit{schedule} \gets$  \Call {FeasibleCheck}{$\mathit{pt}$, $\mathit{ctp}$}
 \If{$\mathit{schedule}$ is not empty}
 \If{\Call {Validate}{$\mathit{schedule}$}}
 \State report deadlock and exit.
