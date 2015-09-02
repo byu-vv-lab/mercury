@@ -4,7 +4,9 @@
 
 \examplefigone
 
-The algorithm in this paper consists of several steps shown in \algoref{algo:main}. The function $\mathrm{PATTERNFINDER}$ at line 3 computes two types of deadlock patterns (defined later) by running \algoref{algo:mismatch} and \algoref{algo:circular} in sequence, where each statically traverses the program. The function $\mathrm{SCHEDULEFINDER}$ at line 5, again, statically traverses the program and finds a potential schedule $\mathit{ctp}_s$. The variable $\mathit{empty}_{pt}$ returned by $\mathrm{SCHEDULEFINDER}$ is true if all the receives in the pattern instance \textit{pt} are witnessed after the schedule is detected. \algoref{algo:main} further checks the feasibility of this schedule with different strategies for the two types of deadlocks. The functions $\mathrm{isCircular}$ and $\mathrm{isMismatch}$ check the types of deadlock patterns. If \textit{pt} is a circular dependency instance, the condition at line 11 in \algoref{algo:main} checks whether there exists a send in the schedule that may match any receive $\mathit{r}$ in \textit{pt}. If the condition is true for some $\mathit{r}$ in \textit{pt}, then the instance is not a real deadlock because $\mathit{r}$ is matched and the circle in \textit{pt} does not hold. Once all the receives in \textit{pt} are checked such that they can not be matched to any sends in the schedule, then the feasibility of the schedule is witnessed. If \textit{pt} is a mismatched send and receive instance, the function $\mathrm{ENCODE}$ in \algoref{algo:main} encodes the schedule into an SMT problem based on the rules in \cite{DBLP:conf/kbse/HuangMM13}. Further, a new rule is extended for the match pair encoding: for any deterministic receive $\mathtt{r_c}$ in\textit{pt}, $\bigvee_{\mathtt{r_i}\in\mathit{M}(\mathtt{s_l})}(\mathtt{s_l},\mathtt{r_i})$ is encoded for any $\mathtt{s_l}\in\mathit{M}(\mathtt{r_c})$ in the schedule. This rule ensures that no send in the schedule can match $\mathtt{r_c}$. The function $\mathrm{SAT}$ is true if the encoding is satisfiable. The existence of a satisfying assignment of the encoding implies that the schedule is feasible. The algorithm aborts the verification process once a deadlock is found at line 15 or line 19. As a note, the algorithm is only applied for verifying programs under infinite buffer semantics. If the zero buffer semantics are enforced, the algorithm needs to be modified as discussed later.
+The algorithm in this paper consists of several steps shown in \algoref{algo:main}. The function $\mathrm{PATTERNFINDER}$ at line 3 computes the deadlock patterns. This next two sections discuss how to detect two types of deadlock patterns (defined later) by running \algoref{algo:mismatch} and \algoref{algo:circular} in sequence, where each statically traverses the program. The function $\mathrm{FeasibleCheck}$ at line 6 either finds a potential schedule for the pattern instance $\mathit{pt}$ or returns empty if there does not exist one. The algorithm  
+
+The variable $\mathit{empty}_{pt}$ returned by $\mathrm{SCHEDULEFINDER}$ is true if all the receives in the pattern instance \textit{pt} are witnessed after the schedule is detected. \algoref{algo:main} further checks the feasibility of this schedule with different strategies for the two types of deadlocks. The functions $\mathrm{isCircular}$ and $\mathrm{isMismatch}$ check the types of deadlock patterns. If \textit{pt} is a circular dependency instance, the condition at line 11 in \algoref{algo:main} checks whether there exists a send in the schedule that may match any receive $\mathit{r}$ in \textit{pt}. If the condition is true for some $\mathit{r}$ in \textit{pt}, then the instance is not a real deadlock because $\mathit{r}$ is matched and the circle in \textit{pt} does not hold. Once all the receives in \textit{pt} are checked such that they can not be matched to any sends in the schedule, then the feasibility of the schedule is witnessed. If \textit{pt} is a mismatched send and receive instance, the function $\mathrm{ENCODE}$ in \algoref{algo:main} encodes the schedule into an SMT problem based on the rules in \cite{DBLP:conf/kbse/HuangMM13}. Further, a new rule is extended for the match pair encoding: for any deterministic receive $\mathtt{r_c}$ in\textit{pt}, $\bigvee_{\mathtt{r_i}\in\mathit{M}(\mathtt{s_l})}(\mathtt{s_l},\mathtt{r_i})$ is encoded for any $\mathtt{s_l}\in\mathit{M}(\mathtt{r_c})$ in the schedule. This rule ensures that no send in the schedule can match $\mathtt{r_c}$. The function $\mathrm{SAT}$ is true if the encoding is satisfiable. The existence of a satisfying assignment of the encoding implies that the schedule is feasible. The algorithm aborts the verification process once a deadlock is found at line 15 or line 19. As a note, the algorithm is only applied for verifying programs under infinite buffer semantics. If the zero buffer semantics are enforced, the algorithm needs to be modified as discussed later.
 
 %The algorithm requires a single-path MPI program, $\mathit{ctp}$, as input. In the first step, the function $\mathrm{PATTERNFINDER}$ at line 4 traverses the program linearly and finds the instances of two types of deadlock patterns (defined below). In the second step, the function $\mathrm{SCHEDULEFINDER}$ at line 7, again, statically traverses the program and finds a potential schedule $\mathit{ctp}_s$ and updates the set $\rcvp^\prime$ for each pattern instance $\mathit{pt}$. If the new set $\rcvp^\prime$ is not an empty set (at line 8), or there are more sends than receives with identical $src$ and $dest$ that are the source and destination endpoints respectively for any receive in \rcvp\ (at line 12), then the algorithm continues to check the next pattern instance. It repeats the steps above until a deadlock is found or no deadlock exists for all the pattern instances. If a schedule exists, the algorithm reports a deadlock at line 17 if the pattern instance is a circular dependency, or further checks the feasibility of the schedule by encoding it into an SMT problem at line 20 if the pattern instance is a mismatched send-receive. The algorithm reports a deadlock at line 22 if the encoding is satisfiable, or continues to check the next pattern instance at line 25 if it is unsatisfiable. The algorithm aborts the verification process once a deadlock is found. As a note, the algorithm is only applied for verifying programs under infinite buffer semantics. To adjust zero buffer semantics, this paper presents how to modify the algorithm later.
 
@@ -19,23 +21,31 @@ The algorithm in this paper consists of several steps shown in \algoref{algo:mai
 \State  $\mathit{PT} \gets$ \Call {PatternFinder}{$\mathit{ctp}$, $\mathit{M}$}
 \State \emph{point:}
 \For{$\mathit{pt} \in \mathit{PT}$}
-\State ($\mathit{ctp}_s, \mathit{N_s}, \mathit{N_r}, \mathit{empty}_{pt}) \gets$ \Call {ScheduleFinder}{$\mathit{pt}$}
-\If{$\mathit{empty}_{pt}$} 
-\If{\Call{isCircular}{$\mathit{pt}$}}
-\For{$\mathtt{r_c}\in\mathit{pt}$}
-\State $\mathit{src} \gets$ source endpoint of $\mathtt{r_c}$, $\mathit{dest} \gets$ destination endpoint of $\mathtt{r_c}$
-\If{$\mathit{N_s}(\mathit{dest},\mathit{src}) > \mathit{N_r}(\mathit{dest},\mathit{src})$}
-\State \textbf{continue} \textit{point}
-\EndIf
-\EndFor
-\State report deadlock and exit.
-\EndIf
-\If{\Call {isMismatch}{$\mathit{pt}} \in$}
-\If{\textproc{SAT}({\Call {Encode}{$\mathit{ctp}_s$}})}
+
+\State $\mathit{schedule} \gets$  \Call {FeasibleCheck}{$\mathit{pt}$}
+\If{$\mathit{schedule}$ is not empty}
+\If{\Call {Validate}{$\mathit{schedule}$}}
 \State report deadlock and exit.
 \EndIf
 \EndIf
-\EndIf
+
+%\State ($\mathit{ctp}_s, \mathit{N_s}, \mathit{N_r}, \mathit{empty}_{pt}) \gets$ \Call {ScheduleFinder}{$\mathit{pt}$}
+%\If{$\mathit{empty}_{pt}$} 
+%\If{\Call{isCircular}{$\mathit{pt}$}}
+%\For{$\mathtt{r_c}\in\mathit{pt}$}
+%\State $\mathit{src} \gets$ source endpoint of $\mathtt{r_c}$, $\mathit{dest} \gets$ destination endpoint of $\mathtt{r_c}$
+%\If{$\mathit{N_s}(\mathit{dest},\mathit{src}) > \mathit{N_r}(\mathit{dest},\mathit{src})$}
+%\State \textbf{continue} \textit{point}
+%\EndIf
+%\EndFor
+%\State report deadlock and exit.
+%\EndIf
+%\If{\Call {isMismatch}{$\mathit{pt}} \in$}
+%\If{\textproc{SAT}({\Call {Encode}{$\mathit{ctp}_s$}})}
+%\State report deadlock and exit.
+%\EndIf
+%\EndIf
+%\EndIf
 \EndFor
 %\EndProcedure
 \end{algorithmic}
