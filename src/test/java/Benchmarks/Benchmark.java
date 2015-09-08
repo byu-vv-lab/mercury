@@ -1,10 +1,9 @@
-package test;
+package Benchmarks;
 
 import java.util.LinkedList;
 
 import Syntax.*;
 import Syntax.Process;
-import Finder.*;
 
 public class Benchmark {
 	
@@ -67,7 +66,9 @@ public class Benchmark {
 		MatG.add(process0);
 		MatG.add(process1);
 		MatG.add(process2);
-		
+
+//  new Send(event                    process  rank src dest match value isBlock nearestWait
+//	new Send(process0.getRank()+"_"+0,process0,0,   0,  1,   null, 1,    true,   null));
 		process0.add(new Send(process0.getRank()+"_"+0,process0,0,0,1,null,1,true,null));
 		process0.add(new Send(process0.getRank()+"_"+1,process0,0,0,2,null,1,true,null));
 		process0.add(new Send(process0.getRank()+"_"+2,process0,1,0,1,null,1,true,null));
@@ -2289,7 +2290,7 @@ public class Benchmark {
 		process1.add(new Send(process1.getRank() + "_" + 0, process1,0, 1, 0, null, 1, 
 				true, null));
 		process1.add(new Recv(process1.getRank() + "_" + 1, process1,1, 0, 
-				0, null, true, null));
+				1, null, true, null));
 		
 		process2.add(new Send(process2.getRank() + "_" + 0, process2,0, 2, 0, null, 1, 
 				true, null));

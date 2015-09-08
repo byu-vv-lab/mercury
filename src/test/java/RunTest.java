@@ -1,10 +1,6 @@
-package test;
-
+import Benchmarks.Benchmark;
 import Syntax.*;
 import Finder.*;
-
-import com.microsoft.z3.*;
-
 
 public class RunTest {
 	
