@@ -30,10 +30,11 @@ Given a set of sequential relations, $D$, a circular dependency pattern $\tau$ $
 \begin{algorithmic}[1]
 %\Require $\mathit{ctp}$, a single-path MPI program
 %\Require $\mathit{M}(\mathtt{r_c}) = \{\mathtt{s_l}\mid(\mathtt{s_l},\mathtt{r_c})\in\mathit{M}\}$, a set of potentially matched sends for $\mathtt{r_c}$
-\State $\mathit{E} \gets \emptyset$, a relation from an operation $\mathit{e}$ to another operation $\mathit{e}$
-\State $\mathit{V} \gets \emptyset$, a set of operations
-\State $\mathit{R} \gets \emptyset$
-\State $\mathit{R_w} \gets \emptyset$
+\State $\mathit{PT} \gets \emptyset$
+\State $\mathit{E} \gets \emptyset$, $\mathit{V} \gets \emptyset$
+%a relation from an operation $\mathit{e}$ to another operation $\mathit{e}$
+%a set of operations
+\State $\mathit{R} \gets \emptyset$, $\mathit{R_w} \gets \emptyset$
 %\State $\mathit{PT}$, a set of circular dependency pattern instances
 %\State $\mathit{R}(p) = \{\mathtt{r_c}\mid(p,\mathtt{r_c})\in\mathit{R}\}$, the witnessed receives on process $p$
 %\State $\mathit{R_w}(p) = \{\mathtt{r_c}\mid(p,\mathtt{r_c})\in\mathit{R_w}\}$, the receives for the last witnessed wait on process $p$ 
@@ -71,7 +72,10 @@ Given a set of sequential relations, $D$, a circular dependency pattern $\tau$ $
 \end{algorithmic}
 \end{algorithm}
 
-\algoref{algo:circular} shows the steps for finding all the instances of the circular dependency pattern in a single-path MPI program $\mathit{ctp}$. In general, the algorithm is part of the function $\mathrm{PATTERNMATCH}$ in \algoref{algo:main}. It builds a graph by transforming the operations in $\mathit{ctp}$ to the vertices $\mathit{V}$ and transforming two types of relations to the edges $\mathit{E}$. The set $\mathit{R}$ stores the witnessed receives on process $p$. The set $\mathit{R_w}$ stores the receives for the last witnessed wait on process $p$.
+\algoref{algo:circular} shows the steps for finding all the instances of the circular dependency pattern in a single-path MPI program $\mathit{ctp}$. In general, the algorithm is part of the function $\mathrm{PATTERNMATCH}$ in \algoref{algo:main}. It builds a graph by transforming the operations in $\mathit{ctp}$ to the vertices $\mathit{V}$ and transforming two types of relations to the edges $\mathit{E}$. 
+The vertices $\mathit{V}$ is a set of operations. The edges $\mathit{E}$ is a set of pairs each representing an edge from one operation to another. 
+The set $\mathit{PT}$ stores the matched pattern instances.
+The set $\mathit{R}$ stores the witnessed receives on process $p$. The set $\mathit{R_w}$ stores the receives for the last witnessed wait on process $p$.
 Each process $p$ in $\mathit{ctp}$ is a list of operations $(e_1, e_2, \dots, e_n)$. 
 The algorithm checks each operation $e_i$ in $p$. 
 If $\mathit{e_i}$ is a receive, then it is inserted into $\mathit{R}$ and $\mathit{V}$, respectively. Also, for each potentially matched send $\mathtt{s_l}$ in $\mathit{M}(\mathit{e_i})$, the pair $(\mathit{e},\mathtt{s_l})$ is inserted into $\mathit{E}$ indicating that a match relation from $\mathtt{s_l}$ to $\mathit{e_i}$ is an edge in the graph. If $\mathit{e_i}$ is a wait, all the receives in $\mathit{R}$ are inserted to $\mathit{R_w}$ and $\mathit{R}$ is set back to an empty set, indicating that $\mathit{e_i}$ is the nearest-enclosing wait for the receives in $\mathit{R}$. \defref{def:seqrelation} requires for each sequential relation a receive and its nearest-enclosing wait both precede a send on a single process. Therefore, %only the receives in the set $\mathit{Wset}$ are considered to build the happens-before relation. 
@@ -83,7 +87,8 @@ An instance of the circular dependency pattern does not mean a deadlock occurs. 
 
 %%revise the following algorithm of validating circular dependency pattern
 
-\algoref{algo:vcircular} presents how to validate whether or not the schedule $\mathit{ctp_s}$ implies a real deadlock for the pattern instance \textit{pt}. The condition at line 3 checks if there exists a send in $\mathit{ctp_s}$ that may match any receive $\mathit{r_c}$ in \textit{pt}. The function $\mathit{N_s}(\mathit{dest},\mathit{src})$ returns the number of issued sends with the destination $\mathit{dest}$ and the source $\mathit{src}$. The function $\mathit{N_r}(\mathit{dest},\mathit{src})$ returns the number of issued receives with the destination $\mathit{dest}$ and the source $\mathit{src}$.
+If a schedule $\mathit{ctp_s}$ is detected by the function $\mathrm{FEASIBLECHECK}$ in \algoref{algo:main}.
+\algoref{algo:vcircular} presents how to further validate whether or not $\mathit{ctp_s}$ implies a real deadlock for the pattern instance \textit{pt}. The condition at line 3 checks if there exists a send in $\mathit{ctp_s}$ that may match any receive $\mathit{r_c}$ in \textit{pt}. The function $\mathit{N_s}(\mathit{dest},\mathit{src})$ returns the number of issued sends with the destination $\mathit{dest}$ and the source $\mathit{src}$. The function $\mathit{N_r}(\mathit{dest},\mathit{src})$ returns the number of issued receives with the destination $\mathit{dest}$ and the source $\mathit{src}$.
 If the condition is true, no real deadlock exists for \textit{pt} because $\mathit{r_c}$ is matched and the cycle in \textit{pt} does not hold. If this condition is not satisfiable for any receive in \textit{pt}, the algorithm detects a real deadlock for \textit{pt}.
 
 \begin{algorithm}

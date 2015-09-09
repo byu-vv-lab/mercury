@@ -27,7 +27,7 @@ As a note, the algorithm is only applied for verifying programs under infinite b
 \State ($\mathit{ctp}_s, \mathit{N_s}, \mathit{N_r}, \mathit{pt^\prime})\gets$\Call {FeasibleCheck}{$\mathit{pt}$, $\mathit{ctp}$}
 \If{$\mathit{pt^\prime} \neq \emptyset$}
 \State continue.
-\ElsIf{$\neg$\Call {Validate}{$\mathit{ctp}_s, \mathit{N_s}, \mathit{N_r}, \mathit{empty}_{pt}$}}
+\ElsIf{$\neg$\Call {Validate}{$\mathit{ctp}_s, \mathit{N_s}, \mathit{N_r}, \mathit{pt}$}}
 \State continue.
 \Else\ report error and exit.
 \EndIf
