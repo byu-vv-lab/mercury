@@ -4,8 +4,12 @@
 
 \examplefigone
 
-The algorithm in this paper consists of several steps shown in \algoref{algo:main}. The function $\mathrm{PATTERNFINDER}$ at line 3 computes the deadlock patterns. This next two sections discuss how to detect two types of deadlock patterns (defined later) by running \algoref{algo:mismatch} and \algoref{algo:circular} in sequence, where each statically traverses the program. The function $\mathrm{FEASIBLECHECK}$ at line 6 either finds a potential schedule for the pattern instance $\mathit{pt}$ or returns empty if there does not exist one. The algorithm does not report any deadlock if no potential schedule is detected in this step. Otherwise, the algorithm further validates if the detected schedule is a real deadlock by passing it through the function $\mathrm{VALIDATE}$. The algorithm aborts the verification process once a deadlock is found at line 9. As a note, the algorithm is only applied for verifying programs under infinite buffer semantics. If the zero buffer semantics are enforced, the algorithm needs to be modified as discussed later.
+The main framework is presented in \algoref{algo:main}. The variable $\mathit{PT}$ is a set of pattern instances where each pattern instance $\mathit{pt}$ is a set of receives. The function $\mathrm{PATTERNMATCH}$ at line 3 computes the error patterns given a single-path MPI program \emph{ctp} and a set \emph{M} where each receive is associated with potential sends for which it might match. For convenience, the function $\mathit{M}(\mathtt{r_c}) = \{\mathtt{s_l}\mid(\mathtt{s_l},\mathtt{r_c})\in\mathit{M}\}$ returns all potential sends for the receive $\mathtt{r_c}$.  
+The function $\mathrm{FEASIBLECHECK}$ at line 5 either finds a potential schedule $\mathit{ctp_s}$ for the pattern instance $\mathit{pt}$ or continues to check other pattern instances. The variables $\mathit{N_s}$ and $\mathit{N_r}$ represent the number of issued sends and the number of issued receives, respectively.
+ The set $\mathit{pt^\prime}$ is not empty if no potential schedules are detected. Otherwise, the algorithm further validates if the detected schedule is a real error by passing it through the function $\mathrm{VALIDATE}$ at line 8. The algorithm aborts the verification process once an error is found at line 10 or repeats the steps for other pattern instances.
+As a note, the algorithm is only applied for verifying programs under infinite buffer semantics. If the zero buffer semantics are enforced, the algorithm needs to be modified as discussed later. The framework is useful for error detection with appropriate pattern match and validation algorithms. This paper applies the framework for deadlock detection based on two types of deadlock patterns in the next two sections.
 
+ 
 %The variable $\mathit{empty}_{pt}$ returned by $\mathrm{SCHEDULEFINDER}$ is true if all the receives in the pattern instance \textit{pt} are witnessed after the schedule is detected. \algoref{algo:main} further checks the feasibility of this schedule with different strategies for the two types of deadlocks. The functions $\mathrm{isCircular}$ and $\mathrm{isMismatch}$ check the types of deadlock patterns. If \textit{pt} is a circular dependency instance, the condition at line 11 in \algoref{algo:main} checks whether there exists a send in the schedule that may match any receive $\mathit{r}$ in \textit{pt}. If the condition is true for some $\mathit{r}$ in \textit{pt}, then the instance is not a real deadlock because $\mathit{r}$ is matched and the circle in \textit{pt} does not hold. Once all the receives in \textit{pt} are checked such that they can not be matched to any sends in the schedule, then the feasibility of the schedule is witnessed. If \textit{pt} is a mismatched send and receive instance, the function $\mathrm{ENCODE}$ in \algoref{algo:main} encodes the schedule into an SMT problem based on the rules in \cite{DBLP:conf/kbse/HuangMM13}. Further, a new rule is extended for the match pair encoding: for any deterministic receive $\mathtt{r_c}$ in\textit{pt}, $\bigvee_{\mathtt{r_i}\in\mathit{M}(\mathtt{s_l})}(\mathtt{s_l},\mathtt{r_i})$ is encoded for any $\mathtt{s_l}\in\mathit{M}(\mathtt{r_c})$ in the schedule. This rule ensures that no send in the schedule can match $\mathtt{r_c}$. The function $\mathrm{SAT}$ is true if the encoding is satisfiable. The existence of a satisfying assignment of the encoding implies that the schedule is feasible. The algorithm aborts the verification process once a deadlock is found at line 15 or line 19. As a note, the algorithm is only applied for verifying programs under infinite buffer semantics. If the zero buffer semantics are enforced, the algorithm needs to be modified as discussed later.
 
 %The algorithm requires a single-path MPI program, $\mathit{ctp}$, as input. In the first step, the function $\mathrm{PATTERNFINDER}$ at line 4 traverses the program linearly and finds the instances of two types of deadlock patterns (defined below). In the second step, the function $\mathrm{SCHEDULEFINDER}$ at line 7, again, statically traverses the program and finds a potential schedule $\mathit{ctp}_s$ and updates the set $\rcvp^\prime$ for each pattern instance $\mathit{pt}$. If the new set $\rcvp^\prime$ is not an empty set (at line 8), or there are more sends than receives with identical $src$ and $dest$ that are the source and destination endpoints respectively for any receive in \rcvp\ (at line 12), then the algorithm continues to check the next pattern instance. It repeats the steps above until a deadlock is found or no deadlock exists for all the pattern instances. If a schedule exists, the algorithm reports a deadlock at line 17 if the pattern instance is a circular dependency, or further checks the feasibility of the schedule by encoding it into an SMT problem at line 20 if the pattern instance is a mismatched send-receive. The algorithm reports a deadlock at line 22 if the encoding is satisfiable, or continues to check the next pattern instance at line 25 if it is unsatisfiable. The algorithm aborts the verification process once a deadlock is found. As a note, the algorithm is only applied for verifying programs under infinite buffer semantics. To adjust zero buffer semantics, this paper presents how to modify the algorithm later.
@@ -14,17 +18,18 @@ The algorithm in this paper consists of several steps shown in \algoref{algo:mai
 \caption{Main Framework}\label{algo:main}
 \begin{algorithmic}[1]
 %\Procedure{Main Entrance}{}
-\Require $\mathit{ctp}$, a single-path MPI program
-\Require $\mathit{M}(\mathtt{r_c}) = \{\mathtt{s_l}\mid(\mathtt{s_l},\mathtt{r_c})\in\mathit{M}\}$, a set of potentially matched sends for $\mathtt{r_c}$
-\State  $\mathit{PT}$, a set of pattern instances
-\State  $\mathit{pt}$, a set of receives in the pattern instance $\mathit{pt}\in\mathit{PT}$
-\State  $\mathit{PT} \gets$ \Call {PatternFinder}{$\mathit{ctp}$, $\mathit{M}$}
+%\Require $\mathit{ctp}$, a single-path MPI program
+%\Require $\mathit{M}(\mathtt{r_c}) = \{\mathtt{s_l}\mid(\mathtt{s_l},\mathtt{r_c})\in\mathit{M}\}$, a set of potentially matched sends for $\mathtt{r_c}$
+%\State  $\mathit{PT}$, a set of pattern instances
+%\State  $\mathit{pt}$, a set of receives in the pattern instance $\mathit{pt}\in\mathit{PT}$
+\State  $\mathit{PT} \gets$ \Call {PatternMatch}{$\mathit{ctp}$, $\mathit{M}$}
 \For{$\mathit{pt} \in \mathit{PT}$}
-\State $\mathit{schedule} \gets$  \Call {FeasibleCheck}{$\mathit{pt}$, $\mathit{ctp}$}
-\If{$\mathit{schedule}$ is not empty}
-\If{\Call {Validate}{$\mathit{schedule}$}}
-\State report deadlock and exit.
-\EndIf
+\State ($\mathit{ctp}_s, \mathit{N_s}, \mathit{N_r}, \mathit{pt^\prime})\gets$\Call {FeasibleCheck}{$\mathit{pt}$, $\mathit{ctp}$}
+\If{$\mathit{pt^\prime} \neq \emptyset$}
+\State continue.
+\ElsIf{$\neg$\Call {Validate}{$\mathit{ctp}_s, \mathit{N_s}, \mathit{N_r}, \mathit{empty}_{pt}$}}
+\State continue.
+\Else\ report error and exit.
 \EndIf
 
 %\State ($\mathit{ctp}_s, \mathit{N_s}, \mathit{N_r}, \mathit{empty}_{pt}) \gets$ \Call {ScheduleFinder}{$\mathit{pt}$}
@@ -123,8 +128,10 @@ The algorithm in this paper consists of several steps shown in \algoref{algo:mai
 \label{fig:machine}
 \end{figure*}
 
+The key insight of the framework is the function $\mathrm{FEASIBLECHECK}$ in \algoref{algo:main} that is able to efficiently prune the schedules that are provably non-feasible. This function is presented as an abstract machine
+including a set of rewriting commands for the machine state (\textit{st}) defined in \figref{fig:machine}. 
 
-The function $\mathrm{SCHEDULEFINDER}$ in \algoref{algo:main} is presented as set of rewriting commands for the machine state (\textit{st}) defined in \figref{fig:machine}. These commands define how to execute the program $\mathit{ctp}$ and generates a schedule $\mathit{ctp}_s$. The \emph{Sndi Command} in \figref{fig:machine} consumes the first send in any process of the program. 
+These commands define how to execute the program $\mathit{ctp}$ and generates a schedule $\mathit{ctp}_s$. The \emph{Sndi Command} in \figref{fig:machine} consumes the first send in any process of the program. 
 %Consider a portion of the \emph{Sndi Command}:
 %\begin{eqnarray*}
 % \epsnd(v_{to},v_{frm}) = v_c\\ \epsnd^\prime = \epsnd[(v_{to},v_{frm}) \mapsto v_c +1] \\ \epsnd(v_{to},\ast) = v_i \\ \epsnd^{\prime\prime} = \epsnd^\prime[(v_{to},\ast) \mapsto v_i +1] 
@@ -135,6 +142,7 @@ endpoint $v_{to}$\ and the source endpoint $v_{frm}$ to the number $v_c + 1$ whe
 The machine rewrites the state \textit{st} until no more reduction rules can be applied indicating that there is no way to further traverse the program. In such a schedule, the last statement on any process is either the bottom of the process or a blocking operation. A blocking operation could be a wait or a barrier. 
 
 %%Soundness Proof needs to be revised such that it shows the feasible check (operational semantics) is sound.
+
 
 \begin{lemma}[Completeness for Two Common Deadlock Patterns]
 For any message passing program, \textit{ctp}, any real deadlock for mismatched send and receive pattern and circular dependency pattern can be reported by \algoref{algo:main}.
