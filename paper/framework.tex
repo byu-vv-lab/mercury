@@ -56,6 +56,8 @@ As a note, the algorithm is only applied for verifying programs under infinite b
 
 %%The feasible check and the soundness proof of feasible check (assuming pattern match is sound and validation is sound and complete)
 
+The key insight of the framework is the function $\mathrm{FEASIBLECHECK}$ in \algoref{algo:main} that is able to efficiently prune the schedules that are provably non-feasible. This function is presented as an abstract machine given by a term rewriting system using a \textit{CESK} style machine \footnote{The \textit{CESK} machine state is represented with a \textbf{C}ontrol string, \textbf{E}nvironment, \textbf{S}tore, and \textbf{K}ontinuation.}. \figref{fig:expr:stx}(b) defines the machine state and other syntax relating to evaluation. The machine state (\textit{st}) is a seven-tuple of variables. The first variable \textit{ctp} defines the trace program. The second variable \textit{ctp} represents a generated schedule that is initialized as an empty set $((\bot) (\bot) \ldots)$. The set \epsnd\ maps a destination endpoint and a source endpoint to a number that is used to record the number of the issued sends. The variable \eprcv\ has the same structure only the number is used to record the number of the matched receives. The variable \epwait\ records the pending receives by mapping the unique identifier of a nearest-enclosing wait to a set of the issued receives $\mathit{rcv}$. A nearest-enclosing wait witnesses the completion of a receive by indicating that the message is delivered and that all the previous receives on the same process issued earlier are complete as well. In this set, the action identifier, the source endpoint and the destination endpoint are recorded for each receive. The variable \epbarrier\ maps the unique identifier of a communicator to a number that is used to record the number of the witnessed barriers.
+
 \begin{figure*}[tb]
 \centering
 \scalebox{0.9}{
@@ -128,10 +130,7 @@ As a note, the algorithm is only applied for verifying programs under infinite b
 \label{fig:machine}
 \end{figure*}
 
-The key insight of the framework is the function $\mathrm{FEASIBLECHECK}$ in \algoref{algo:main} that is able to efficiently prune the schedules that are provably non-feasible. This function is presented as an abstract machine
-including a set of rewriting commands for the machine state (\textit{st}) defined in \figref{fig:machine}. 
-
-These commands define how to execute the program $\mathit{ctp}$ and generates a schedule $\mathit{ctp}_s$. The \emph{Sndi Command} in \figref{fig:machine} consumes the first send in any process of the program. 
+A set of rewriting commands for the machine state (\textit{st}) is defined in \figref{fig:machine}. These commands define how to execute the program $\mathit{ctp}$ and generates a schedule $\mathit{ctp}_s$. The \emph{Sndi Command} in \figref{fig:machine} consumes the first send in any process of the program. 
 %Consider a portion of the \emph{Sndi Command}:
 %\begin{eqnarray*}
 % \epsnd(v_{to},v_{frm}) = v_c\\ \epsnd^\prime = \epsnd[(v_{to},v_{frm}) \mapsto v_c +1] \\ \epsnd(v_{to},\ast) = v_i \\ \epsnd^{\prime\prime} = \epsnd^\prime[(v_{to},\ast) \mapsto v_i +1] 
