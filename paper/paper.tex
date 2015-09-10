@@ -3,7 +3,7 @@
 % for Lecture Notes in Computer Science,
 % version 2.4 for LaTeX2e as of 16. April 2010
 %
-\documentclass[conference]{IEEEtran}
+\documentclass[preprint]{sigplanconf}
 %
 \usepackage{url}
 \usepackage{comment}
@@ -56,13 +56,23 @@
 %
 \begin{document}
 
+\special{papersize=8.5in,11in}
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+\conferenceinfo{CONF 'yy}{Month d--d, 20yy, City, ST, Country} 
+\copyrightyear{20yy} 
+\copyrightdata{978-1-nnnn-nnnn-n/yy/mm} 
+\doi{nnnnnnn.nnnnnnn}
+
 \title{Static Analysis for Deadlock in MPI Programs}
 
-\author{\authorblockN{Yu Huang, and Eric Mercer}
-\authorblockA{Department of Computer Science\\
-Brigham Young University\\
-Provo, UT, 84602, USA \\
-Email: \{yuHuang,egm\}@byu.edu}}
+
+\authorinfo{Yu Huang \and Eric Mercer}
+           {Department of Computer Science\\
+           Beigham Young University\\
+           Provo, UT, 84602, USA}
+           {\{yuHuang,egm\}@byu.edu}
 
 \maketitle
 %
@@ -73,7 +83,9 @@ Email: \{yuHuang,egm\}@byu.edu}}
 \begin{abstract}
 \input{abstract}
 
-\IEEEkeywords MPI, Static Analysis, Message Passing
+\keywords
+MPI, Static Analysis, Message Passing
+
 \end{abstract}
 
 \input{ebnf}
@@ -91,6 +103,6 @@ Email: \{yuHuang,egm\}@byu.edu}}
 \input{conclusion}
 
 \newpage
-\bibliographystyle{splncs03}
+\bibliographystyle{abbrvnat}
 \bibliography{bib/paper}
 \end{document}

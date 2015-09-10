@@ -1,8 +1,15 @@
 \section{Background}
-This presentation uses a CTP syntax with semantics loosely based on MPI semantics for convenience. In an MPI program, it is assumed that only non-blocking sends and receives are used. A non-blocking operation is simply consumed in program execution.
+This presentation uses a concurrent trace program (CTP) syntax with semantics loosely based on MPI semantics for convenience. In an MPI program, it is assumed that only non-blocking sends and receives are used. 
+A non-blocking operation is issued without blocking the program execution. It is usually paired with a wait function that witnesses the completion of this non-blocking operation.
 %% introduce the language aspects: non-blocking, blocking, barrier, collective, point-to-point in the introduction.
-In general, the syntax of an MPI program is presented in \figref{fig:expr:stx} (a). The syntax describes a concurrent trace program (CTP). The presentation uses ellipses ($\ldots$) to represent zero or more repetitions, bold-face to indicate terminals. The language defines a CTP (\textit{ctp}) as a list of processes.  A process (\thread) is a list of commands.  For simplicity, commands (\textit{e}) are restricted to non-blocking send (\sendi), non-blocking receive (\recvi), wait (\wait) and barrier (\barrier). Each command is a tuple. It is referred to each tuple as a single notation $\mathtt{o_c}$ in the following discussion, where $\mathtt{o}\in\{\sendi,\recvi,\wait,\barrier\}$ and $\mathtt{c}$ is the line number.  
-The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} associated with a receive or a wait. The wait takes a second identifier belonging to the associated receive. Similarly, a receive is paired with a wait by recording the identifier of this wait in the tuple. It is assumed that a message is sent out immediately once the non-blocking send is issued, therefore, it is not necessary to associate an identifier or a wait with the send. A barrier \barrier\ is also associated with an identifier that is unique for its communicator. A communicator identifies a group of barriers. The non-terminal \num\ in the grammar is a number that represents an endpoint. To be precise, a receive (or a send) is associated with a source endpoint and a destination endpoint. Note that if the source endpoint of a receive is $\ast$, this receive is a wildcard receive meaning it may be matched with a send from any source. The set \rcvp\ is a deadlock pattern instance that consists of a set of receives. The patterns are defined in the following section. The data and computation are ignored since only message communication is considered in the problem of deadlock. 
+In general, the language syntax presented in \figref{fig:expr:stx} (a) is used for the abstract machine discussed in the next section. The presentation uses ellipses ($\ldots$) to represent zero or more repetitions, bold-face to indicate terminals. The language defines a CTP (\textit{ctp}) as a list of processes.  A process (\thread) is a list of commands.  For simplicity, commands (\textit{e}) are non-blocking send (\sendi), non-blocking receive (\recvi), wait (\wait) and barrier (\barrier). Each command is a tuple. A subscript is used to indicate a line number. 
+The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} associated with a receive or a wait. A receive takes a second identifier belonging to the associated wait. It is assumed that a message is sent out immediately once the non-blocking send is issued, therefore, it is not necessary to associate an identifier or a wait with the send. 
+A barrier \barrier\ is also associated with an identifier that is unique for its communicator. A communicator identifies a group of barriers. The barriers block the program execution until all the members in the same group are witnessed.
+The non-terminal \num\ in the grammar is a number that represents an endpoint. To be precise, a receive (or a send) is associated with a source endpoint and a destination endpoint. Note that if the source endpoint of a receive is $\ast$, this receive is a wildcard receive meaning it may be matched with a send from any source. The set \rcvp\ is a pattern instance that consists of a set of commands. \figref{fig:deadlock2} shows an example of a CTP with three processes. 
+%Consider extending the syntax for data and computation so can use it for other errors
+The data and computation are ignored since only message communication is considered in the problem of deadlock. 
+\figref{fig:expr:stx} (b) further defines the evaluation syntax that is used to define the semantics in \figref{fig:machine}.
+
 
 \newsavebox{\boxLangSyntax}
 
@@ -13,11 +20,11 @@ The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} 
 \cfgrule{\thread}{\lp\cfgnt{\cmd}~$\ldots$~$\bot$\rp}
 \cfgrule{\cmd}{\lp\cfgt{\sendi}~\cfgt{\num}~\cfgt{\num}\rp}
    \cfgorline{\lp\cfgt{\recvi}~\cfgt{\aid}~\cfgt{\num}~\cfgt{\num}~\cfgt{\aid}\rp}
-   \cfgorline{\lp\cfgt{\wait}~\cfgt{\aid}~\cfgt{\aid}\rp}
+   \cfgorline{\lp\cfgt{\wait}~\cfgt{\aid}\rp}
    \cfgorline{\lp\cfgt{\barrier}~\cfgt{\aid}\rp}
 \cfgrule{\num}{\cfgt{number}}
 \cfgrule{\rcvp}{\lp\aid~$\ldots$\rp}
-\cfgrule{\npro}{\cfgt{number}}
+%\cfgrule{\npro}{\cfgt{number}}
 \cfgrule{\aid}{\cfgt{ID}}
 \cfgend
 \end{minipage}
@@ -28,7 +35,7 @@ The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} 
 \begin{lrbox}{\boxEvalSyntax}
 \begin{minipage}[c]{0.3\linewidth}
 \cfgstart
-\cfgrule{st}{\lp\cfgnt{ctp}\ \cfgnt{ctp}\ \cfgnt{\epsnd}\ \cfgnt{\eprcv}\ \cfgnt{\epwait}\ \cfgnt{\epbarrier}\ \rcvp\rp}
+\cfgrule{st}{\lp\cfgnt{ctp}\ \cfgnt{\epsnd}\ \cfgnt{\eprcv}\ \cfgnt{\epwait}\ \cfgnt{\epbarrier}\ \rcvp\rp}
 \cfgrule{\epsnd}{\cfgt{\mt}\
    \cfgor\lp\cfgnt{\epsnd}~\lb\lp\cfgt{\num},\cfgt{\num}\rp~$\rightarrow$~\cfgt{\num}\rb\rp}
 \cfgrule{\eprcv}{\cfgt{\mt}\
@@ -53,9 +60,12 @@ The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} 
 (a) & (b)
 \end{tabular}
 \end{center}
-\caption{The language syntax with its evaluation syntax for the operational semantics--bold face indicates a terminal. (a) The input syntax. (b) The evaluation syntax.}
+\caption{The language syntax with its evaluation syntax for the abstract machine in \figref{fig:machine} -- bold face indicates a terminal. (a) The input syntax. (b) The evaluation syntax.}
 \label{fig:expr:stx}
 \end{figure}
+
+\examplefigthree
+
 
 %%TODO: may move the machine state to where presenting the abstract machine.
 

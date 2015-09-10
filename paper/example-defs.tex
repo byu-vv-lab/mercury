@@ -57,9 +57,9 @@
 \begin{alltt}
 00 (\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{00}\)
 01 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{0}}\) \(\mathit{\ast 0}\) \(\mathit{w\sb{0}}\)) \(\mathbf{r}\sb{01}\)}
-02 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\) \(\mathit{r\sb{0}}\)) \(\mathbf{w}\sb{02}\)
+02 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\)) \(\mathbf{w}\sb{02}\)
 03 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{1}}\) \(\mathit{1 0}\) \(\mathit{w\sb{1}}\)) \(\mathbf{r}\sb{03}\)}
-04 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\) \(\mathit{r\sb{1}}\)) \(\mathbf{w}\sb{04}\)
+04 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\)) \(\mathbf{w}\sb{04}\)
 \end{alltt}
 \end{minipage}
 \end{lrbox}
@@ -70,7 +70,7 @@
 \large
 \begin{alltt}
 10 (\(\mathbf{r}\) \(\mathit{r\sb{2}}\) \(\mathit{\ast 1}\) \(\mathit{w\sb{2}}\)) \(\mathbf{r}\sb{10}\)
-11 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\) \(\mathit{r\sb{2}}\)) \(\mathbf{w}\sb{11}\)
+11 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\)) \(\mathbf{w}\sb{11}\)
 12 \underline{(\(\mathbf{s}\) \(\mathit{1 0}\)) \(\mathbf{s}\sb{12}\)}
 \end{alltt}
 \end{minipage}
@@ -102,7 +102,7 @@ $\mathit{p_0}$ & $\mathit{p_1}$ & $\mathit{p_2}$ \\
 \scalebox{0.8}{\usebox{\boxTTwo}}\\
 \end{tabular}
 \end{center}
-\caption{A Deadlock Caused by Mismatched Send and Receive}
+\caption{A Deadlock Caused by Orphaned Receive}
 \label{fig:deadlock1}
 \end{figure*}
 }
@@ -115,10 +115,10 @@ $\mathit{p_0}$ & $\mathit{p_1}$ & $\mathit{p_2}$ \\
 \large
 \begin{alltt}	
 00 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{0}}\) \(\mathit{\ast 0}\) \(\mathit{w\sb{0}}\)) \(\mathbf{r}\sb{00}\)}
-01 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\) \(\mathit{r\sb{0}}\)) \(\mathbf{w}\sb{01}\)
+01 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\)) \(\mathbf{w}\sb{01}\)
 02 (\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{02}\)
 03 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{1}}\) \(\mathit{1 0}\) \(\mathit{w\sb{1}}\)) \(\mathbf{r}\sb{03}\)}
-04 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\) \(\mathit{r\sb{1}}\)) \(\mathbf{w}\sb{04}\)
+04 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\)) \(\mathbf{w}\sb{04}\)
 \end{alltt}
 \end{minipage}
 \end{lrbox}
@@ -129,7 +129,7 @@ $\mathit{p_0}$ & $\mathit{p_1}$ & $\mathit{p_2}$ \\
 \large
 \begin{alltt}
 10 (\(\mathbf{r}\) \(\mathit{r\sb{2}}\) \(\mathit{\ast 1}\) \(\mathit{w\sb{2}}\)) \(\mathbf{r}\sb{10}\)
-11 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\) \(\mathit{r\sb{2}}\)) \(\mathbf{w}\sb{11}\)
+11 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\)) \(\mathbf{w}\sb{11}\)
 12 \underline{(\(\mathbf{s}\) \(\mathit{1 0}\)) \(\mathbf{s}\sb{12}\)}
 \end{alltt}
 \end{minipage}
@@ -158,7 +158,7 @@ $\mathit{p_0}$ & $\mathit{p_1}$ & $\mathit{p_2}$ \\
 \scalebox{0.8}{\usebox{\boxnotwo}}\\
 \end{tabular}
 \end{center}
-\caption{No Deadlock Caused by Mismatched Send and Receive}
+\caption{No Deadlock Caused by Orphaned Receive}
 \label{fig:nodeadlock1}
 \end{figure*}
 }
@@ -171,7 +171,7 @@ $\mathit{p_0}$ & $\mathit{p_1}$ & $\mathit{p_2}$ \\
 \begin{alltt}
 00 (\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{00}\)
 01 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{0}}\) \(\mathit{\ast 0}\) \(\mathit{w\sb{0}}\)) \(\mathbf{r}\sb{01}\)}
-02 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\) \(\mathit{r\sb{0}}\)) \(\mathbf{w}\sb{02}\)
+02 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\)) \(\mathbf{w}\sb{02}\)
 03 \underline{(\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{03}\)}
 \end{alltt}
 \end{minipage}
@@ -183,9 +183,9 @@ $\mathit{p_0}$ & $\mathit{p_1}$ & $\mathit{p_2}$ \\
 \large
 \begin{alltt}
 10 (\(\mathbf{r}\) \(\mathit{r\sb{1}}\) \(\mathit{\ast 1}\) \(\mathit{w\sb{1}}\)) \(\mathbf{r}\sb{10}\)
-11 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\) \(\mathit{r\sb{1}}\)) \(\mathbf{w}\sb{11}\)
+11 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\)) \(\mathbf{w}\sb{11}\)
 12 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{2}}\) \(\mathit{\ast 1}\) \(\mathit{w\sb{2}}\)) \(\mathbf{r}\sb{12}\)}
-13 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\) \(\mathit{r\sb{2}}\)) \(\mathbf{w}\sb{13}\)
+13 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\)) \(\mathbf{w}\sb{13}\)
 14 \underline{(\(\mathbf{s}\) \(\mathit{1 2}\)) \(\mathbf{s}\sb{14}\)}
 \end{alltt}
 \end{minipage}
@@ -197,7 +197,7 @@ $\mathit{p_0}$ & $\mathit{p_1}$ & $\mathit{p_2}$ \\
 \large
 \begin{alltt}
 20 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{3}}\) \(\mathit{1 2}\) \(\mathit{w\sb{3}}\)) \(\mathbf{r}\sb{20}\)}
-21 (\(\mathbf{w}\) \(\mathit{w\sb{3}}\) \(\mathit{r\sb{3}}\)) \(\mathbf{w}\sb{21}\)
+21 (\(\mathbf{w}\) \(\mathit{w\sb{3}}\)) \(\mathbf{w}\sb{21}\)
 22 \underline{(\(\mathbf{s}\) \(\mathit{2 0}\)) \(\mathbf{s}\sb{22}\)}
 \end{alltt}
 \end{minipage}
@@ -232,7 +232,7 @@ $p_0$ & $p_1$ & $p_2$ \\
 \begin{alltt}
 00 (\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{00}\)
 01 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{0}}\) \(\mathit{\ast 0}\) \(\mathit{w\sb{0}}\)) \(\mathbf{r}\sb{01}\)}
-02 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\) \(\mathit{r\sb{0}}\)) \(\mathbf{w}\sb{02}\)
+02 (\(\mathbf{w}\) \(\mathit{w\sb{0}}\)) \(\mathbf{w}\sb{02}\)
 03 \underline{(\(\mathbf{s}\) \(\mathit{0 1}\)) \(\mathbf{s}\sb{03}\)}
 \end{alltt}
 \end{minipage}
@@ -244,7 +244,7 @@ $p_0$ & $p_1$ & $p_2$ \\
 \large
 \begin{alltt}
 10 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{1}}\) \(\mathit{\ast 1}\) \(\mathit{w\sb{1}}\)) \(\mathbf{r}\sb{10}\)}
-11 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\) \(\mathit{r\sb{1}}\)) \(\mathbf{w}\sb{11}\)
+11 (\(\mathbf{w}\) \(\mathit{w\sb{1}}\)) \(\mathbf{w}\sb{11}\)
 12 \underline{(\(\mathbf{s}\) \(\mathit{1 2}\)) \(\mathbf{s}\sb{12}\)}
 \end{alltt}
 \end{minipage}
@@ -256,7 +256,7 @@ $p_0$ & $p_1$ & $p_2$ \\
 \large
 \begin{alltt}
 20 \underline{(\(\mathbf{r}\) \(\mathit{r\sb{2}}\) \(\mathit{1 2}\) \(\mathit{w\sb{2}}\)) \(\mathbf{r}\sb{20}\)}
-21 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\) \(\mathit{r\sb{2}}\)) \(\mathbf{w}\sb{21}\)
+21 (\(\mathbf{w}\) \(\mathit{w\sb{2}}\)) \(\mathbf{w}\sb{21}\)
 22 \underline{(\(\mathbf{s}\) \(\mathit{2 0}\)) \(\mathbf{s}\sb{22}\)}
 \end{alltt}
 \end{minipage}

@@ -2,7 +2,9 @@
 
 %% rename the pattern as orphaned receive. This section presents the pattern match algorithm and validation for orphaned receive.
 
-A deadlock may occur for a pair of wildcard/deterministic receives on an identical process when the wildcard receive is matched with a send that should match the deterministic receive in runtime. For instance, in \figref{fig:deadlock1}, a deadlock may occur if $\mathtt{s_{12}}$ matches $\mathtt{r_{01}}$ and there is no way to match $\mathtt{s_{20}}$ with $\mathtt{r_{03}}$. This program shows an instance of the orphaned receive pattern that is a set of the underlined operations. Only the deterministic receive $\mathtt{r_{03}}$ is stored to represent the pattern instance defined in \defref{def:mismatch}.
+\examplefigone
+
+A deadlock may occur when a wildcard receive is matched with a send that should match a deterministic receive by the runtime. For instance, in \figref{fig:deadlock1}, a deadlock may occur if $\mathtt{s_{12}}$ matches $\mathtt{r_{01}}$ and there is no way to match $\mathtt{s_{20}}$ with $\mathtt{r_{03}}$. This program shows an instance of the orphaned receive pattern that is a set of the underlined operations. Only the deterministic receive $\mathtt{r_{03}}$ is stored to represent an instance of the orphaned receive pattern defined in \defref{def:mismatch}.
 
 
 \begin{definition}
@@ -45,18 +47,18 @@ A orphaned receive pattern is matched when there exists a deterministic receive 
 \end{algorithmic}
 \end{algorithm}
 
-\algoref{algo:mismatch} shows the steps of finding the orphaned receive pattern instances for a single-path MPI program \textit{ctp}. The algorithm is part of the function $\mathrm{PATTERNFINDER}$ in \algoref{algo:main}. 
+\algoref{algo:mismatch} shows the steps of finding the orphaned receive pattern instances for a \textit{ctp}. The algorithm is part of the function $\mathrm{PATTERNMATCH}$ in \algoref{algo:main}. 
 The set $\mathit{PT}$ stores the matched pattern instances.
 The set $\mathit{R}$ stores the witnessed wildcard receives on the process \textit{p}. 
 Each process \textit{p} in \textit{ctp} is a list of operations $(e_1, e_2, \dots, e_n)$. 
-The complexity of the algorithm is $O(\mathrm{N}^2)$, where $\mathrm{N}$ is the total number of operations in the program. 
+The complexity of the algorithm is $O(\mathrm{N}^2)$, where $\mathrm{N}$ is the total number of operations in \textit{ctp}. 
 
 
 %%add text for the following algorithm of validating orphaned receive pattern
 
 \examplefigtwo
 
-The existence of a orphaned receive pattern instance does not mean a deadlock occurs. The program in \figref{fig:nodeadlock1} is such an instance. This instance is detected, but is pruned at line 5 in \algoref{algo:main} because there does not exist a feasible schedule.
+The existence of a orphaned receive pattern instance does not mean a deadlock occurs. The CTP in \figref{fig:nodeadlock1} has an instance of the orphaned receive pattern. This instance is detected by \algoref{algo:mismatch}, but is pruned by the function \textrm{FEASIBLECHECK} in \algoref{algo:main} because there does not exist a feasible schedule.
 
 \begin{algorithm}
 \caption{Validate Orphaned Receive}\label{algo:vorphaned}
@@ -69,7 +71,8 @@ The existence of a orphaned receive pattern instance does not mean a deadlock oc
 \end{algorithmic}
 \end{algorithm}
 
-The validation step in \algoref{algo:vorphaned} is much more complicated because it requires a higher cost SMT encoding for a potential schedule $\mathit{ctp_s}$. 
+The validation step in \algoref{algo:vorphaned} is much more complicated because it requires a higher cost SMT encoding for the program $\mathit{ctp_s}$. 
+This program is generated from a modification of the abstract machine in \figref{fig:machine} such that all the operations that are consumed by the machine are added to $\mathit{ctp_s}$.
 The function $\mathrm{ENCODE}$ encodes $\mathit{ctp_s}$ into an SMT problem based on the rules in \cite{DBLP:conf/kbse/HuangMM13}. Further, a new rule is extended for the match pair encoding: for any deterministic receive $\mathtt{r_c}$ in the pattern instance \textit{pt}, $\bigvee_{\mathtt{r_i}\in\mathit{M}(\mathtt{s_l})}(\mathtt{s_l},\mathtt{r_i})$ is encoded for any $\mathtt{s_l}\in\mathit{M}(\mathtt{r_c})$ in $\mathit{ctp_s}$. This rule ensures that no send in $\mathit{ctp_s}$ can match $\mathtt{r_c}$. The function $\mathrm{SAT}$ is true if the encoding is satisfiable. The existence of a satisfying assignment of the encoding implies a real deadlock for \textit{pt}. 
 
 %%Soundness proof for pattern match needs to be added. the following proof needs to be revised to show that the validation is sound and complete.
@@ -83,7 +86,7 @@ For any message passing program, \textit{ctp}, a satisfying assignment returned 
 Proof by showing the existence of a deadlock. First, assume $(\mathit{ctp}^\prime,$ $\mathit{ctp}_s,$ $\mathit{N_s},$ $\mathit{N_r},$ $\mathit{P_r},$ $\mathit{P_b},$ $\mathit{R_{pt}}^\prime)$ is the machine state after applying the operational semantics in \figref{fig:machine} and no reduction commands can be further applied. Second, assume the schedule $\mathit{ctp}_s$ is input to the function $\mathrm{ENCODE}$ in \algoref{algo:main}. Since $\mathrm{ENCODE}$ returns a satisfying assignment, say $\mathit{t}$, it implies that $\mathit{t}$ is a sequential order of all the operations in $\mathit{ctp}_s$ that is executable by the runtime system. Also, for the process that the deterministic receive $\mathtt{r_c}$ in $\mathit{pt}$ resides in, say $\mathit{p}$, $\mathit{t}$ satisfies that each send with the destination $\mathit{p}$ is matched with some receive in $\mathit{ctp}_s$. As such, no sends can match $\mathtt{r_c}$ as the nearest-enclosing wait for $\mathtt{r_c}$ is stored in $\mathit{ctp}^\prime$ according to the \emph{Wait (Rcvi) Command 2} in \figref{fig:machine}. Further, for any process other than $\mathit{p}$ in $\mathit{pt}$, the first operation is blocked in $\mathit{ctp}^\prime$ according to the operational semantics in \figref{fig:machine}. As such, $\mathit{ctp}^\prime$ deadlocks. Since $\mathit{ctp}_s$ is executable and $\mathit{ctp}^\prime$ deadlocks, the program \textit{ctp} may deadlock for the pattern instance $\mathit{pt}$ in program execution. 
 \end{proof}
 
-The algorithm for orphaned receive pattern can be modified to be much faster by simply removing the validation step. If so, the completeness is not guaranteed. 
+The validation step can also be removed so that the deadlock detection for the orphaned receive pattern is much faster. If so, the soundness is not guaranteed. 
 
 %%zero buffer for orphaned receive
 
