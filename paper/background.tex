@@ -1,5 +1,5 @@
 \section{Background}
-This paper only considers non-determinism arising from message races and defines MPI program semantics in the context of concurrent trace programs (CTP) \cite{}. 
+This paper only considers non-determinism arising from message races and defines MPI program semantics in the context of concurrent trace programs (CTP) \cite{DBLP:conf/sigsoft/WangCGY09}. 
 %In an MPI program, it is assumed that only non-blocking sends and receives are used. A non-blocking operation is issued without blocking the program execution. It is usually paired with a wait function that witnesses the completion of this non-blocking operation.
 %% introduce the language aspects: non-blocking, blocking, barrier, collective, point-to-point in the introduction.
 The syntax is in \figref{fig:expr:stx} (a). Tuples use white space rather than commas to delineate members, ellipses ($\ldots$) represent zero or more repetitions, and bold-face font denotes terminals in the language.
