@@ -6,7 +6,7 @@ import org.junit.experimental.categories.Category;
 import static org.junit.Assert.assertTrue;
 
 @Category(Categories.Benchmark.class)
-public class BenchmarkTests {
+public class BenchmarkTest {
 
     @Test
     public void MatG3() {

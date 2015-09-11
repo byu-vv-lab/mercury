@@ -1,2 +1,0 @@
-//  Send: String event, Process process, int rank, int src, int dest, Recv match, int value, boolean isBlock, Wait nw
-//  Recv: String event, Process process, int rank, int src, int dest, Send match, boolean isBlock, Wait nw
