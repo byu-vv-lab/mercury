@@ -7,7 +7,7 @@ The presentation uses ellipses ($\ldots$) to represent zero or more repetitions,
 The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} associated with a receive, a send, or a wait. 
 A receive takes a second identifier belonging to the associated wait. 
 %The MPI semantics use an infinite buffer, therefore, a non-block send is issued immediately. As such, it is not necessary to associate an identifier or a wait with the send. 
-A barrier \barrier\ is also associated with an identifier that is unique for its communicator. A communicator identifies a group of barriers. The barriers block the program execution until all the members in the same group are witnessed.
+A barrier \barrier\ is also associated with an identifier that is unique for its communicator. A communicator identifies a group of barriers. The barriers synchronize \textit{ctp} by blocking the program execution until all the members in the same group are witnessed.
 The non-terminal \num\ in the grammar is a number that represents a specific endpoint or a special notation $\ast$ that represents any endpoint. To be precise, a receive (or a send) is associated with a source endpoint and a destination endpoint. Note that if the source endpoint of a receive is $\ast$, this receive is a wildcard receive meaning it may be matched with a send from any source. 
 A pattern in this paper is a set of commands where each process has at most one command.
 Each command in a pattern instance is set as a point on a process. The program is expected to be executed up to each point by the abstract machine defined in Section 4. 
