@@ -1,10 +1,11 @@
-import Benchmarks.Benchmark;
+package Old;
+
 import Syntax.*;
 import Finder.*;
 
 public class RunTest {
 	
-	public void run(Benchmark b) throws Exception
+	public void run(BenchmarkTestsOld b) throws Exception
 	{
 		UnmatchedEP_Finder finder1;
 		Circle_Finder finder2;
@@ -48,7 +49,7 @@ public class RunTest {
 	
 	public static void main(String[] args) throws Exception {
 
-		Benchmark benchmark = new Benchmark();
+		BenchmarkTestsOld benchmark = new BenchmarkTestsOld();
 		RunTest test = new RunTest();
 		test.run(benchmark);
 	}

@@ -1,13 +1,52 @@
 apply plugin: 'java'
+apply plugin: 'antlr'
 
 repositories {
-	mavenCentral()
-	flatDir {
-		dirs 'lib'
-	}
+    mavenCentral()
+    flatDir {
+        dirs 'lib'
+    }
+}
+
+sourceSets {
+    generated {
+        java {
+            srcDir 'src/generated/java'
+        }
+        compileClasspath += configurations.compile
+        runtimeClasspath += configurations.runtime
+    }
+
+    main {
+        compileClasspath += sourceSets.generated.output
+        runtimeClasspath += sourceSets.generated.output
+    }
+
+    test {
+        compileClasspath += sourceSets.generated.output
+        runtimeClasspath += sourceSets.generated.output
+    }
 }
 
 dependencies {
-	compile name: 'com.microsoft.z3'
+    compile name: 'com.microsoft.z3'
+    runtime group: 'org.antlr', name: 'antlr4-runtime', version: '4.5'
+    antlr group: 'org.antlr', name: 'antlr4', version: '4.5'
     testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+generateGrammarSource {
+    outputDirectory = new File("${project.projectDir}/src/generated/java/Parser")
+}
+
+test {
+    useJUnit {
+        includeCategories 'Categories.Parser'
+    }
+}
+
+task benchmark(type: Test) {
+    useJUnit {
+        includeCategories 'Categories.Benchmark'
+    }
 }

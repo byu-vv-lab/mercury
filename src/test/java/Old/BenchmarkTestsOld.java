@@ -1,15 +1,15 @@
-package Benchmarks;
+package Old;
 
 import java.util.LinkedList;
 
 import Syntax.*;
 import Syntax.Process;
 
-public class Benchmark {
+public class BenchmarkTestsOld {
 	
 	public LinkedList<Program> list;
 	
-	public Benchmark()
+	public BenchmarkTestsOld()
 	{
 		list = new LinkedList<Program>();
 		/*list.add(zero());

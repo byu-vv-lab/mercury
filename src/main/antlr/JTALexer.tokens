@@ -1,8 +1,8 @@
 Thread=1
 Read=2
 Mutate=3
-Wait=4
-Signal=5
+Recv=4
+Send=5
 Identifier=6
 Space=7
 LineBreak=8

@@ -1,0 +1,10 @@
+Thread=1
+Read=2
+Mutate=3
+Recv=4
+Send=5
+Identifier=6
+Space=7
+LineBreak=8
+Number=9
+Digit=10
