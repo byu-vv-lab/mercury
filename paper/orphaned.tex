@@ -4,7 +4,7 @@
 
 \examplefigone
 
-A deadlock may occur when a wildcard receive is matched with a send that should match a deterministic receive by the runtime. For instance, in \figref{fig:deadlock1}, a deadlock may occur if the receive $\mathit{r_{0}}$ is matched with the send $\mathit{s_{1}}$ and there is no way to match the receive $\mathit{r_{1}}$ with the send $\mathit{s_{2}}$. This CTP shows an instance of the orphaned receive pattern defined in \defref{def:mismatch}.
+A deadlock may occur when the runtime matches a wildcard receive with the send needed by a deterministic receive. For instance, in \figref{fig:deadlock1}, a deadlock may occur if the receive $\mathit{r_{0}}$ is matched with the send $\mathit{s_{1}}$ and there is no way to match the receive $\mathit{r_{1}}$ with the send $\mathit{s_{2}}$. This CTP shows an instance of the orphaned receive pattern defined in \defref{def:mismatch}.
 
 \begin{definition}
 A orphaned receive pattern is a pair $(\mathit{r_w}, \mathit{r_c})$ where, 
@@ -82,11 +82,11 @@ The existence of a orphaned receive pattern instance does not mean a deadlock oc
 The soundness proof of the validation in \algoref{algo:vorphaned} is given in \lemmaref{lemma:mismatch}.
 
 \begin{lemma}[Soundness for Orphaned Receive]
-For any single-path MPI program, \textit{ctp}, a deadlock detected by \algoref{algo:main} is a real deadlock existing for a instance of the orphaned receive pattern, $\mathit{pt}$. 
+For any single-path MPI program, \textit{ctp}, a deadlock detected by \algoref{algo:vorphaned} is a real deadlock existing for a instance of the orphaned receive pattern, $\mathit{pt}$. 
 \label{lemma:mismatch}
 \end{lemma}
 \begin{proof}
-Proof by showing the existence of a real deadlock. Since \algoref{algo:main} detects a deadlock, the function $\mathrm{ENCODE}$ returns a satisfying assignment, say $\mathit{t}, $for $ctp_s$. Based on the encoding rules, $\mathit{t}$ assigns a sequential order over all the commands in $ctp_s$, matches each receive in $ctp_s$ with a send, and matches 
+Proof by showing the existence of a real deadlock. Since \algoref{algo:vorphaned} detects a deadlock, the function $\mathrm{ENCODE}$ returns a satisfying assignment, say $\mathit{t}, $for $ctp_s$. Based on the encoding rules, $\mathit{t}$ assigns a sequential order over all the commands in $ctp_s$, matches each receive in $ctp_s$ with a send, and matches 
 This assignment 
 
 First, assume $(\mathit{ctp}^\prime,$ $\mathit{ctp}_s,$ $\mathit{N_s},$ $\mathit{N_r},$ $\mathit{P_r},$ $\mathit{P_b},$ $\mathit{R_{pt}}^\prime)$ is the machine state after applying the operational semantics in \figref{fig:machine} and no reduction commands can be further applied. Second, assume the schedule $\mathit{ctp}_s$ is input to the function $\mathrm{ENCODE}$ in \algoref{algo:main}. Since $\mathrm{ENCODE}$ returns a satisfying assignment, say $\mathit{t}$, it implies that $\mathit{t}$ is a sequential order of all the operations in $\mathit{ctp}_s$ that is executable by the runtime system. Also, for the process that the deterministic receive $\mathit{r_c}$ in $\mathit{pt}$ resides in, say $\mathit{p}$, $\mathit{t}$ satisfies that each send with the destination $\mathit{p}$ is matched with some receive in $\mathit{ctp}_s$. As such, no sends can match $\mathit{r_c}$ as the nearest-enclosing wait for $\mathit{r_c}$ is stored in $\mathit{ctp}^\prime$ according to the \emph{Wait (Rcvi) Command 2} in \figref{fig:machine}. Further, for any process other than $\mathit{p}$ in $\mathit{pt}$, the first operation is blocked in $\mathit{ctp}^\prime$ according to the operational semantics in \figref{fig:machine}. As such, $\mathit{ctp}^\prime$ deadlocks. Since $\mathit{ctp}_s$ is executable and $\mathit{ctp}^\prime$ deadlocks, the program \textit{ctp} may deadlock for the pattern instance $\mathit{pt}$ in program execution. 
