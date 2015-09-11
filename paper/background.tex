@@ -1,23 +1,30 @@
 \section{Background}
-This presentation uses a concurrent trace program (CTP) syntax with semantics loosely based on MPI semantics for convenience. 
+This paper only considers non-determinism arising from message races and defines MPI program semantics in the context of concurrent trace programs (CTP) \cite[]. 
 %In an MPI program, it is assumed that only non-blocking sends and receives are used. A non-blocking operation is issued without blocking the program execution. It is usually paired with a wait function that witnesses the completion of this non-blocking operation.
 %% introduce the language aspects: non-blocking, blocking, barrier, collective, point-to-point in the introduction.
-In general, the language syntax is presented in \figref{fig:expr:stx} (a). 
-The presentation uses ellipses ($\ldots$) to represent zero or more repetitions, bold-face to indicate terminals. The language defines a CTP (\textit{ctp}) as a list of processes.  A process (\thread) is a list of commands. For simplicity, commands (\textit{e}) are non-blocking send (\sendi), non-blocking receive (\recvi), wait (\wait), and barrier (\barrier). Each command is a tuple. 
+The syntax is in \figref{fig:expr:stx} (a). Tuples use white space rather than commas to delineate members, ellipses ($\ldots$) represent zero or more repetitions, and bold-face font denotes terminals in the language.
+
+A CTP (\textit{ctp}) is a list of processes.  A process (\thread) is a list of commands. The commands (\textit{e}) are: non-blocking send (\sendi), non-blocking receive (\recvi), wait (\wait), and barrier (\barrier). 
 The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} associated with a receive, a send, or a wait. 
-A receive takes a second identifier belonging to the associated wait. 
+A receive indicates both its unique ID and the unique
+ID of its associated wait. That wait by definition is its
+nearest-enclosing wait (i.e., the first wait that witnesses the receive
+complete).
 %The MPI semantics use an infinite buffer, therefore, a non-block send is issued immediately. As such, it is not necessary to associate an identifier or a wait with the send. 
-A barrier \barrier\ is also associated with an identifier that is unique for its communicator. A communicator identifies a group of barriers. The barriers synchronize \textit{ctp} by blocking the program execution until all the members in the same group are witnessed.
-The non-terminal \num\ in the grammar is a number that represents a specific endpoint or a special notation $\ast$ that represents any endpoint. To be precise, a receive (or a send) is associated with a source endpoint and a destination endpoint. Note that if the source endpoint of a receive is $\ast$, this receive is a wildcard receive meaning it may be matched with a send from any source. 
-A pattern in this paper is a set of commands where each process has at most one command.
-Each command in a pattern instance is set as a point on a process. The program is expected to be executed up to each point by the abstract machine defined in Section 4. 
-The set \rcvp\ stores the identifiers for all the commands in a pattern instance. 
-\figref{fig:expr:stx} (b) further defines the evaluation syntax that is used to define the semantics in \figref{fig:machine}.
-The data and computation are ignored since only message communication is considered in the problem of deadlock. 
+A barrier \barrier\ is also associated with an identifier that is unique for its communicator. The communicator identifies a group of barrier commands. Processes block at the barrier commands until all members in the communicator arrive.
+The non-terminal \num\ in the grammar is used to denote endpoints, and it can be $\ast$ to indicate any endpoint. The receive and send commands include source and destination endpoints for communication. In the case of receive, the source may be $\ast$ indicating that the receive can match with any send to the same destination regardless of the source.
+
+A pattern instance (\rcvp) is a tuple of IDs indicating unique receive commands. Each process has at most one
+receive ID in the tuple. If a process has a receive ID in the tuple, then the receive attached to the ID marks a point of execution in
+the owning process. The intuition is that if each process is able to
+arrive at the indicated point of execution in the pattern instance, then a deadlock is imminent.
+
 
 %\figref{fig:deadlock2} shows an example of a CTP with three processes. 
 
 %Consider extending the syntax for data and computation so can use it for other errors
+
+
 
 
 
@@ -48,9 +55,9 @@ The data and computation are ignored since only message communication is conside
 \cfgstart
 \cfgrule{st}{\lp\cfgnt{ctp}\ \cfgnt{\epsnd}\ \cfgnt{\eprcv}\ \cfgnt{\epwait}\ \cfgnt{\epbarrier}\ \rcvp\rp}
 \cfgrule{\epsnd}{\cfgt{\mt}\
-   \cfgor\lp\cfgnt{\epsnd}~\lb\lp\cfgt{\num},\cfgt{\num}\rp~$\rightarrow$~\cfgt{\num}\rb\rp}
+   \cfgor\lp\cfgnt{\epsnd}~\lb\lp\cfgt{\num}\ \cfgt{\num}\rp~$\rightarrow$~\cfgt{\num}\rb\rp}
 \cfgrule{\eprcv}{\cfgt{\mt}\
-   \cfgor\lp\cfgnt{\eprcv}~\lb\lp\cfgt{\num},\cfgt{\num}\rp~$\rightarrow$~\cfgt{\num}\rb\rp}
+   \cfgor\lp\cfgnt{\eprcv}~\lb\lp\cfgt{\num}\ \cfgt{\num}\rp~$\rightarrow$~\cfgt{\num}\rb\rp}
 \cfgrule{\epwait}{\cfgt{\mt}\
    \cfgor\lp\cfgnt{\epwait}~\lb\cfgnt{\aid}~$\rightarrow$~\cfgnt{rcv}\rb\rp}
 \cfgrule{rcv}{\lp\lb\cfgt{\aid}~\cfgt{\num}~\cfgt{\num}\rb\ \ldots\rp}
