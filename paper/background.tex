@@ -1,14 +1,24 @@
 \section{Background}
-This presentation uses a concurrent trace program (CTP) syntax with semantics loosely based on MPI semantics for convenience. In an MPI program, it is assumed that only non-blocking sends and receives are used. 
-A non-blocking operation is issued without blocking the program execution. It is usually paired with a wait function that witnesses the completion of this non-blocking operation.
+This presentation uses a concurrent trace program (CTP) syntax with semantics loosely based on MPI semantics for convenience. 
+%In an MPI program, it is assumed that only non-blocking sends and receives are used. A non-blocking operation is issued without blocking the program execution. It is usually paired with a wait function that witnesses the completion of this non-blocking operation.
 %% introduce the language aspects: non-blocking, blocking, barrier, collective, point-to-point in the introduction.
-In general, the language syntax presented in \figref{fig:expr:stx} (a) is used for the abstract machine discussed in the next section. The presentation uses ellipses ($\ldots$) to represent zero or more repetitions, bold-face to indicate terminals. The language defines a CTP (\textit{ctp}) as a list of processes.  A process (\thread) is a list of commands.  For simplicity, commands (\textit{e}) are non-blocking send (\sendi), non-blocking receive (\recvi), wait (\wait) and barrier (\barrier). Each command is a tuple. A subscript is used to indicate a line number. 
-The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} associated with a receive or a wait. A receive takes a second identifier belonging to the associated wait. It is assumed that a message is sent out immediately once the non-blocking send is issued, therefore, it is not necessary to associate an identifier or a wait with the send. 
+In general, the language syntax is presented in \figref{fig:expr:stx} (a). 
+The presentation uses ellipses ($\ldots$) to represent zero or more repetitions, bold-face to indicate terminals. The language defines a CTP (\textit{ctp}) as a list of processes.  A process (\thread) is a list of commands. For simplicity, commands (\textit{e}) are non-blocking send (\sendi), non-blocking receive (\recvi), wait (\wait), and barrier (\barrier). Each command is a tuple. 
+The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} associated with a receive, a send, or a wait. 
+A receive takes a second identifier belonging to the associated wait. 
+%The MPI semantics use an infinite buffer, therefore, a non-block send is issued immediately. As such, it is not necessary to associate an identifier or a wait with the send. 
 A barrier \barrier\ is also associated with an identifier that is unique for its communicator. A communicator identifies a group of barriers. The barriers block the program execution until all the members in the same group are witnessed.
-The non-terminal \num\ in the grammar is a number that represents an endpoint. To be precise, a receive (or a send) is associated with a source endpoint and a destination endpoint. Note that if the source endpoint of a receive is $\ast$, this receive is a wildcard receive meaning it may be matched with a send from any source. The set \rcvp\ is a pattern instance that consists of a set of commands. \figref{fig:deadlock2} shows an example of a CTP with three processes. 
-%Consider extending the syntax for data and computation so can use it for other errors
-The data and computation are ignored since only message communication is considered in the problem of deadlock. 
+The non-terminal \num\ in the grammar is a number that represents a specific endpoint or a special notation $\ast$ that represents any endpoint. To be precise, a receive (or a send) is associated with a source endpoint and a destination endpoint. Note that if the source endpoint of a receive is $\ast$, this receive is a wildcard receive meaning it may be matched with a send from any source. 
+A pattern in this paper is a set of commands where each process has at most one command.
+Each command in a pattern instance is set as a point on a process. The program is expected to be executed up to each point by the abstract machine defined in Section 4. 
+The set \rcvp\ stores the identifiers for all the commands in a pattern instance. 
 \figref{fig:expr:stx} (b) further defines the evaluation syntax that is used to define the semantics in \figref{fig:machine}.
+The data and computation are ignored since only message communication is considered in the problem of deadlock. 
+
+%\figref{fig:deadlock2} shows an example of a CTP with three processes. 
+
+%Consider extending the syntax for data and computation so can use it for other errors
+
 
 
 \newsavebox{\boxLangSyntax}
@@ -18,11 +28,12 @@ The data and computation are ignored since only message communication is conside
 \cfgstart
 \cfgrule{ctp}{\lp\cfgnt{\thread}$~\ldots$\rp}
 \cfgrule{\thread}{\lp\cfgnt{\cmd}~$\ldots$~$\bot$\rp}
-\cfgrule{\cmd}{\lp\cfgt{\sendi}~\cfgt{\num}~\cfgt{\num}\rp}
+\cfgrule{\cmd}{\lp\cfgt{\sendi}~\cfgt{\aid}~\cfgt{\num}~\cfgt{\num}\rp}
    \cfgorline{\lp\cfgt{\recvi}~\cfgt{\aid}~\cfgt{\num}~\cfgt{\num}~\cfgt{\aid}\rp}
    \cfgorline{\lp\cfgt{\wait}~\cfgt{\aid}\rp}
    \cfgorline{\lp\cfgt{\barrier}~\cfgt{\aid}\rp}
-\cfgrule{\num}{\cfgt{number}}
+\cfgrule{\num}{\cfgt{number}}\
+    \cfgorline{\cfgt{$\ast$}}
 \cfgrule{\rcvp}{\lp\aid~$\ldots$\rp}
 %\cfgrule{\npro}{\cfgt{number}}
 \cfgrule{\aid}{\cfgt{ID}}

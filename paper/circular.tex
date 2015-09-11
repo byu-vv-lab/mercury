@@ -21,7 +21,7 @@ Given a set of sequential relations, $D$, a circular dependency pattern $\tau$ $
 \label{def:circular}
 \end{definition}
 
-In \figref{fig:deadlock2}, the CTP has a circular dependency in messages $\langle(p_0, \mathtt{r_{01}}, \mathtt{s_{03}}),$ $(p_1, \mathtt{r_{12}}, \mathtt{s_{14}}),$ $(p_2, \mathtt{r_{20}}, \mathtt{s_{22}})\rangle$. Each receive in the pattern instance waits for the issuing of a send from one of the other processes but never gets a response. For instance, $\mathtt{r_{01}}$ can never match $\mathtt{s_{22}}$ because of the circular dependency. For simplicity, only receives are stored to represent a circular dependency pattern instance (e.g., $(\mathtt{r_{01}}, \mathtt{r_{12}}, \mathtt{r_{20}})$ is a pattern instance for the program in \figref{fig:deadlock2}). 
+In \figref{fig:deadlock2}, the CTP has a circular dependency in messages $\langle(p_0, \mathtt{r_{01}}, \mathtt{s_{03}}),$ $(p_1, \mathtt{r_{12}}, \mathtt{s_{14}}),$ $(p_2, \mathtt{r_{20}}, \mathtt{s_{22}})\rangle$. Each receive in the pattern instance waits for the issuing of a send from one of the other processes but never gets a response. For instance, $\mathtt{r_{01}}$ can never match $\mathtt{s_{22}}$ because of the circular dependency. For simplicity, only receives are stored in a set to represent a instance of the circular dependency pattern (e.g., $(\mathtt{r_{01}}, \mathtt{r_{12}}, \mathtt{r_{20}})$ is a pattern instance for the program in \figref{fig:deadlock2}). 
 
 \begin{algorithm}
 \caption{Finding Circular Dependency}\label{algo:circular}
