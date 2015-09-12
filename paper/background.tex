@@ -1,8 +1,8 @@
-\section{Background}
+\section{Concurrent Trace Programs}
 This paper only considers non-determinism arising from message races and defines MPI program semantics in the context of concurrent trace programs (CTP) \cite{}. 
 %In an MPI program, it is assumed that only non-blocking sends and receives are used. A non-blocking operation is issued without blocking the program execution. It is usually paired with a wait function that witnesses the completion of this non-blocking operation.
 %% introduce the language aspects: non-blocking, blocking, barrier, collective, point-to-point in the introduction.
-The syntax is in \figref{fig:expr:stx} (a). Tuples use white space rather than commas to delineate members, ellipses ($\ldots$) represent zero or more repetitions, and bold-face font denotes terminals in the language.
+The syntax is in \figref{fig:expr:stx} (a). Lists use white space rather than commas to delineate members, ellipses ($\ldots$) represent zero or more repetitions, and bold-face font denotes terminals in the language.
 
 A CTP (\textit{ctp}) is a list of processes.  A process (\thread) is a list of commands. The commands (\textit{e}) are: non-blocking send (\sendi), non-blocking receive (\recvi), wait (\wait), and barrier (\barrier). 
 The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} associated with a receive, a send, or a wait. 
@@ -11,11 +11,11 @@ ID of its associated wait. That wait by definition is its
 nearest-enclosing wait (i.e., the first wait that witnesses the receive
 complete).
 %The MPI semantics use an infinite buffer, therefore, a non-block send is issued immediately. As such, it is not necessary to associate an identifier or a wait with the send. 
-A barrier \barrier\ is also associated with an identifier that is unique for its communicator. The communicator identifies a group of barrier commands. Processes block at the barrier commands until all members in the communicator arrive.
+A barrier \barrier\ is also associated with an identifier that is unique for its communicator. The communicator identifies a group of barrier commands and can only be used one time. Processes block at the barrier commands until all members in the communicator arrive.
 The non-terminal \num\ in the grammar is used to denote endpoints, and it can be $\ast$ to indicate any endpoint. The receive and send commands include source and destination endpoints for communication. In the case of receive, the source may be $\ast$ indicating that the receive can match with any send to the same destination regardless of the source.
 
-A pattern instance (\rcvp) is a tuple of IDs indicating unique receive commands. Each process has at most one
-receive ID in the tuple. If a process has a receive ID in the tuple, then the receive attached to the ID marks a point of execution in
+A pattern instance (\rcvp) is a list of IDs indicating unique receive commands. Each process has at most one
+receive ID in the list. If a process has a receive ID in the list, then the receive attached to the ID marks a point of execution in
 the owning process. The intuition is that if each process is able to
 arrive at the indicated point of execution in the pattern instance, then a deadlock is imminent.
 

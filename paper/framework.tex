@@ -3,19 +3,13 @@
 %%The general algorithm including three steps: Pattern Match, Feasible Check and Validation. The pseudocode needs to be revised so it shows each step. 
 
 
-The main framework is presented in \algoref{algo:main}. The variable $\mathit{PT}$ is a set of pattern instances where each instance $\mathit{pt}$ is a set of receives. The function $\mathrm{PATTERNMATCH}$ at line 1 computes the 
-%deadlock pattern or error pattern?
-deadlock patterns given a \emph{ctp} and a set \emph{M} where each receive is associated with potential sends with which it might match \cite{DBLP:conf/kbse/HuangMM13}. For convenience, the function $\mathit{M}(\mathtt{r_c}) = \{\mathtt{s_l}\mid(\mathtt{s_l},\mathtt{r_c})\in\mathit{M}\}$ returns all potential sends for the receive $\mathtt{r_c}$.  
-The function $\mathrm{FEASIBLECHECK}$ at line 3 checks for any schedules for \emph{ctp} if there exists one such that all the commands in \textit{pt} are reached. Such a schedule is potentially feasible for \textit{pt}. 
-The set $\mathit{pt^\prime}$ is returned by removing all the reached commands from the old set \textit{pt}.
-If $\mathit{pt^\prime}$ is not empty indicating that there does not exist any potentially feasible schedule for \textit{pt}, then the algorithm continues to check other pattern instances at line 5. Otherwise, the algorithm further validates if a real error exists for $\mathit{pt}$ by the function $\mathrm{VALIDATE}$ at line 6. 
-The variables $\mathit{N_s}$ and $\mathit{N_r}$ represent the number of issued sends and the number of issued receives, respectively.
-The algorithm aborts the verification process once an error is found at line 8 or repeats the steps for other pattern instances if no real deadlocks can be validated.
-As a note, the algorithm is only applied to verifying programs under infinite buffer semantics. If the zero buffer semantics are enforced, the algorithm needs to be modified as discussed in Section 5 and Section 6. 
+\algoref{algo:main} describes the general structure of the approach in this paper which consists of three distinct steps: pattern matching (line 1), feasibility checking (line 3), and validating (line 6). $\mathrm{PATTERNMATCH}$ statically generates a set ($\mathit{PT}$) of matched pattern instances in the \emph{ctp} with the help of an additional input, $M$, that defines all the potential match-pairs in the program. $M$ can be generated in quadratic time \cite{DBLP:conf/kbse/HuangMM13}. 
+
+$\mathrm{FEASIBLECHECK}$ is an abstract machine to prune pattern instances for which it is possible prove no feasible schedule exists. In other words, it is provably not possible to execute the \emph{ctp} such that each process associated with a receive ID in the pattern instance is at that receive. The machine removes matched receive IDs from the pattern instance as it executes the \emph{ctp}, so if $\mathit{pt^\prime}$ is not empty upon return, the pattern instance is provably not feasible and the algorithm continues with the next pattern instance (line 5). The algorithm additionally returns the number of issued sends ($\mathit{N_s}$) and the number of issued receives ($\mathit{N_r}$). These are used in validation depending on the type of the pattern instance: circular dependency or orphaned receive.
+
 %The framework is useful for error detection with appropriate pattern match and validation algorithms. This paper applies the framework for deadlock detection based on two types of deadlock patterns in the next two sections.
 
-
-\begin{algorithm}
+\begin{algorithm}[t]
 \caption{Main Framework}\label{algo:main}
 \begin{algorithmic}[1]
 %\Procedure{Main Entrance}{}
@@ -57,9 +51,23 @@ As a note, the algorithm is only applied to verifying programs under infinite bu
 
 %%The feasible check and the soundness proof of feasible check (assuming pattern match is sound and validation is sound and complete)
 
-The key insight of the framework is the function \textrm{FEASIBLECHECK} that is able to efficiently prune the schedules that are provably non-feasible. This function is presented as an abstract machine given by a term rewriting system using a \textit{CESK} style machine\footnote{The \textit{CESK} machine state is represented with a \textbf{C}ontrol string, \textbf{E}nvironment, \textbf{S}tore, and \textbf{K}ontinuation.}. Intuitively, the machine executes a CTP with several steps: 1) proceeding the non-blocking commands on any process; 2) counting the proceeded sends, receives and barriers; 3) using the counts to check whether or not a receive or a barrier can be matched; 4) matching receives and barriers when they can be matched, 5) proceeding the blocking commands,  and 6) repeating the above steps and terminating the machine if no process can be proceeded. 
+$\mathrm{VALIDATE}$ proves a pattern instance feasible, which means that it is a real deadlock in the \emph{ctp}. If the deadlock is real, the algorithm reports the error and exits (line 8); otherwise it continues with the next pattern instance.
+\textrm{FEASIBLECHECK} is able to efficiently prune schedules that are provably non-feasible with predictive analysis using counting and an auxiliary data structures to track FIFO ordering on messages. 
 
-\figref{fig:expr:stx}(b) defines the machine state and other syntax relating to evaluation. The machine state (\textit{st}) is a six-tuple of variables. The first variable \textit{ctp} defines the concurrent trace program being analyzed. The set \epsnd\ maps a destination endpoint and a source endpoint to a number that is used to count issued sends. The variable \eprcv\ has the same structure only the number is used to count the number of matched receives. The variable \epwait\ records the pending receives by mapping the unique identifier of a wait to a set of the issued receives $\mathit{rcv}$. 
+\figref{fig:machine} is a term rewriting system for a syntactic
+machine (i.e., the machine state is represented by a string) for
+$\mathrm{FEASIBLECHECK}$ to prove that a pattern instance is not
+feasible. \figref{fig:expr:stx}(b) is the syntax for that machine. The
+rewrites define how the machine executes an input \emph{ctp} and
+pattern instance \emph{pt} by evolving the machine state. At a high-level, the machine
+\begin{compactitem}
+\item Process a send, receive, or barrier by counting the send (\emph{Sndi Command}), queuing up the receive on the indicated wait ID (\emph{Rcvi Command}), or counting the barrier (\emph{Barrier Command 1}).
+\item Consume a waits when the associated queue is empty (\emph{Wait (Rcvi) Command 1})
+\item Remove a receive ID from the pattern instance when the associated receive is next on the queue for the indicated wait (\emph{Wait (Rcvi) Command 2}).
+\item Remove the next receive from the queue for the indicated wait and update the number of receives when feasible (\emph{Wait (Rcvi) Command 3}).
+\item Consume a barrier if all the processes have arrived (\emph{Barrier Command 2})---communicator groups may only be used once.
+\end{compactitem}
+At a lower-level, the machine state (\textit{st}) is a six-tuple of variables. The first variable \textit{ctp} defines the concurrent trace program being analyzed. The set \epsnd\ maps a destination endpoint and a source endpoint to a number that is used to count issued sends. The variable \eprcv\ has the same structure only the number is used to count the number of matched receives. The variable \epwait\ records the pending receives by mapping the unique identifier of a wait to a set of the issued receives $\mathit{rcv}$. 
 %A nearest-enclosing wait is the first wait that witnesses the completion of a receive by indicating that the message is delivered and that all the previous receives on the same process issued earlier are complete as well. 
 In this set, the action identifier, the source endpoint and the destination endpoint are recorded for each receive. The variable \epbarrier\ maps the unique identifier of a communicator to a number that is used to count the number of witnessed barriers.
 
@@ -137,8 +145,6 @@ In this set, the action identifier, the source endpoint and the destination endp
 \label{fig:machine}
 \end{figure*}
 
-A set of rewriting rules for the machine state is given in \figref{fig:machine}. These rules define how to execute a $\mathit{ctp}$ and determines whether or not a potentially feasible schedule exists for the pattern instance \textit{pt}. As discussed in the section of main framework, a potentially feasible schedule exists for \textit{pt} if all the receives in \textit{pt} are reached after the execution.
-
 The \emph{Sndi Command} in \figref{fig:machine} consumes sends. 
 $\epsnd^\prime$\ is a new set, just like the old set $\epsnd$, only the new set maps the destination
 endpoint $v_{to}$\ and the source endpoint $v_{frm}$ to the number $v_c + 1$ where $v_c$ is the content in the old set.
@@ -151,23 +157,44 @@ wait that witnesses the completion of $x_0$.
 The \emph{Wait (Rcvi) Command} operates in three ways. 
 If the wait $\aid_w$ maps to an empty set in \epwait, indicating that no receives need to be completed by $\aid_w$, then $\aid_w$ is simply consumed. 
 If the first receive $\aid_0$ in $\epwait(\aid_w)$ is stored in \rcvp\ where the notation $\in$ is used to indicate this condition, then $\aid_0$ is removed from \rcvp\ meaning that $\aid_0$ in \rcvp\ is reached. 
-The last way that a wait can move forward checks whether the first receive $\aid_0$\ in $\epwait(x_w)$ is able to be consumed if $\aid_0$ is not in \rcvp\ where the notation $\notin$ is used to indicate this condition. Note that the receives in $\epwait(\aid_0)$ are ordered as they are on the original process of $\mathit{ctp}$. 
-Therefore, if the first receive in $\epwait(x_w)$ cannot be consumed, the following receives are blocked as well. 
-This step requires that there are more sends than receives with common source and destination endpoints and there are more sends for the preceding wildcard receives, indicating that at least one send can be matched with $\aid_0$. If this conditions is satisfied, then the set \eprcv\ is updated where the new set maps the destination endpoint $v_{to}$\ and the source endpoint $v_{frm}$ to the number $v_c + 1$ where $v_c$ is the content in the old set. $\aid_0$ is then removed from \epwait. 
+The last rule for wait checks whether the first receive $\aid_0$\ in $\epwait(x_w)$ is able to be consumed. The rule is only active if $\aid_0$ is not in \rcvp. The rule requires that there are more counted sends than counted receives with common source and destination endpoints and that there are more counted sends than counted receives for any preceding wildcard receives. The condition indicate that at least one send can be matched with $\aid_0$. If this condition holds, then the set \eprcv\ is updated with the counted receive and $\aid_0$ is then removed from \epwait. 
 
 The \emph{Barrier Command} moves the barrier forward by its synchronization rule. It is assumed that the group of any barrier consists of all the processes in $\mathit{ctp}$. 
 If the count of the witnessed barriers $\epbarrier(\aid_0)$ for a specific communicator $\aid_0$ is less than the total number of the processes $N_{proc}$ indicating that the barriers for $\aid_0$ are not matched, then the barrier is not consumed and $\epbarrier(\aid_0)$ is incremented. The barrier can only be consumed when the count $\epbarrier(\aid_0)$ is equal to $N_{proc}$.
 
-The machine rewrites the state until no more reduction rules can be applied indicating that there is no way to further execute the program. The first statement that cannot be consumed on any process is either the bottom of the process or a blocking command. A blocking command could be a wait or a barrier. 
+The machine rewrites the state until no more reduction rules can be applied indicating that there is no way to further execute the program. The first statement that cannot be consumed on any process is either the bottom of the process or a blocking command. A blocking command could be a wait or a barrier. If at the end, there are receive IDs in the pattern instance, then the pattern instance is provably non-feasible. In such a case, the machine \emph{accepts} the program as free of deadlock on the pattern instance; otherwise, the machine \emph{rejects} the program as having a deadlock on the pattern instance.
 
+\begin{lemma}
+  The machine implementing \textrm{FEASIBLECHECK} is sound in that it
+  only accepts programs that do not deadlock on the associated pattern
+  instance (but it may reject some programs as having a deadlock on
+  that instance when in fact they do not).
+\label{lemma:sound}
+\end{lemma}
+\begin{proof}
+  \emph{Wait (RCVI) Command 3} is the most important rule in the
+  proof. It must never claim to not be able to consume a receive
+  command incorrectly.
+\end{proof}
+
+\begin{cor}
+  \algoref{algo:main} is sound and complete if and only if \textrm{PATTERNMATCH} is complete (i.e., it gives all pattern instances and possibly more) and validate is sound and complete.
+\end{cor}
+
+\begin{comment}
 %%Soundness Proof needs to be revised such that it shows the feasible check (operational semantics) is sound.
 The completeness proof for the abstract machine in \figref{fig:machine} is given in \lemmaref{lemma:complete}.
-This proof assumes that the function \textrm{PATTERNMATCH} detects all the instances for a particular pattern. This assumption is proved for the circular dependency pattern and the orphaned receive pattern in Section 4 and Section 5, respectively. 
+This proof assumes that the function \textrm{PATTERNMATCH} detects all the instances for a particular pattern. This assumption is proved for the circular dependency pattern and the orphaned receive pattern latter sections. 
 
 \begin{lemma}[Completeness for Feasible Check]
+  The machine implementing \textrm{FEASIBLECHECK} is sound for a given pattern instance in that only a program with no deadlock on that instance is accepted; thus, it may reject some programs as having a deadlock on an instance when in fact they do not.
+  
+  The machine implementing \textrm{FEASIBLECHECK} is sound for a given pattern instance in that it may reject a program as having a deadlock on that instance when in fact it does not.
+  
 For any single-path MPI program, \textit{ctp}, any feasible schedule for a deadlock pattern instance is demonstrated by the function \textrm{FEASIBLECHECK} in \algoref{algo:main}. 
 \label{lemma:complete}
 \end{lemma}
 \begin{proof}
-Proof by showing that the abstract machine in \figref{fig:machine} simulate the message communication under infinite buffer semantics. For \emph{Sndi Command} and \emph{Rcvi Command}, a send or receive is consumed immediately by incrementing two structures $\mathit{N_s}$ and $\mathit{N_r}$, respectively. This is consistent with the issuing of send and receive under infinite buffer semantics. The three cases of \emph{Wait Command} witness the completion of the receives that are not in the pattern $\mathit{pt}$ and intend to get to the receives in $\mathit{pt}$. The two cases of \emph{Barrier Command} block the execution of a member process until all the barriers in group are witnessed. Since the abstract machine in \figref{fig:machine} are able to simulate the behavior for infinite buffer semantics, any feasible schedule should be demonstrated by executing \textit{ctp} on the machine.
+Proof by showing that the abstract machine in \figref{fig:machine} simulates the message communication under infinite buffer semantics. For the \emph{Sndi Command} and \emph{Rcvi Command} rules, a send or receive is consumed immediately and two structures $\epsnd$ and $\epwait$, respectively, are updated. This is consistent with the issuing of send and receive under infinite buffer semantics. The three cases of \emph{Wait Command} witness the completion of the receives that are not in the pattern $\mathit{pt}$ and intend to get to the receives in $\mathit{pt}$. The two cases of \emph{Barrier Command} block the execution of a member process until all the barriers in the group are witnessed. Since the abstract machine in \figref{fig:machine} is able to simulate the behavior for infinite buffer semantics, any feasible schedule should be demonstrated by executing \textit{ctp} on the machine.
 \end{proof}
+\end{comment}
