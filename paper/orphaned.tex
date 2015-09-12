@@ -7,7 +7,7 @@
 A deadlock may occur when the runtime matches a wildcard receive with the send needed by a deterministic receive. For instance, in \figref{fig:deadlock1}, a deadlock may occur if the receive $\mathit{r_{0}}$ is matched with the send $\mathit{s_{1}}$ and there is no way to match the receive $\mathit{r_{1}}$ with the send $\mathit{s_{2}}$. This CTP shows an instance of the orphaned receive pattern defined in \defref{def:mismatch}.
 
 \begin{definition}
-A orphaned receive pattern is a pair $(\mathit{r_w}, \mathit{r_c})$ where, 
+An orphaned receive pattern is a pair $(\mathit{r_w}, \mathit{r_c})$ where, 
 \begin{compactenum}
 \item $\mathit{r_w}$ is a wildcard receive and $\mathit{r_c}$ is a deterministic receive that follows $\mathit{r_w}$ on an identical process $\mathit{p}$;
 \item at least two sends from different source endpoints other than $\mathit{p}$ may potentially match $\mathit{r_w}$; and
@@ -16,7 +16,7 @@ A orphaned receive pattern is a pair $(\mathit{r_w}, \mathit{r_c})$ where,
 \label{def:mismatch}
 \end{definition}
 
-For simplicity, only the deterministic receive is stored in a set to represent an instance of the orphaned receive pattern. For example, the CTP in \figref{fig:deadlock1} has a instance of the orphaned receive pattern $(r_1)$.
+For simplicity, only the deterministic receive is stored to represent an instance of the orphaned receive pattern. For example, the CTP in \figref{fig:deadlock1} has a instance of the orphaned receive pattern $(r_1)$.
 
 \subsection{Pattern Match for Orphaned Receive}
 
@@ -52,7 +52,7 @@ For simplicity, only the deterministic receive is stored in a set to represent a
 \algoref{algo:mismatch} shows the steps of finding the orphaned receive pattern instances for \textit{ctp}. The algorithm is part of the function $\mathrm{PATTERNMATCH}$ in \algoref{algo:main}.  
 The set $\mathit{PT}$ stores the matched pattern instances.
 The set $\mathit{R}$ stores the witnessed wildcard receives on the process \textit{p} that is a list of operations $(e_1, e_2, \dots, e_n)$. 
-Intuitively, this algorithm checks each pair of wildcard/deterministic receives on an identical process and inserts a new instance with the deterministic receive in $\mathit{PT}$ if the criteria in \defref{def:mismatch} is satisfied for this pair. 
+Intuitively, this algorithm checks each pair of wildcard/deterministic receives on an identical process and inserts a new instance into $\mathit{PT}$ if the criteria in \defref{def:mismatch} is satisfied for this pair. 
 The complexity of the algorithm is $O(\mathrm{N}^2)$, where $\mathrm{N}$ is the total number of operations in \textit{ctp}. 
 
 The completeness for \algoref{algo:mismatch} is given in \lemmaref{lemma:pmorphaned}. 
@@ -62,7 +62,8 @@ The completeness for \algoref{algo:mismatch} is given in \lemmaref{lemma:pmorpha
 The pattern match in \algoref{algo:mismatch} is complete indicating that all possible pattern instances are detected.
 \end{lemma}
 \begin{proof}
-\algoref{algo:mismatch} considers all possible pairs of wildcard/deterministic receives on each process. Also, the algorithm only removes the pairs that do not satisfy the criteria of \defref{def:mismatch}. Therefore, all possible instances for the orphaned receive pattern are detected. 
+\algoref{algo:mismatch} considers all possible pairs of wildcard/deterministic receives on each process. Also, only the pairs that never cause an orphaned deterministic receive are removed by the condition at line 10, because 1) there does not exist any common send that can potentially match the wildcard receive and the deterministic receive, or 2) there is no non-deterministic choice for the wildcard receive to be matched with. 
+Therefore, all possible instances for the orphaned receive pattern are detected. 
 \end{proof}
 
 %%add text for the following algorithm of validating orphaned receive pattern
@@ -79,9 +80,9 @@ The pattern match in \algoref{algo:mismatch} is complete indicating that all pos
 \end{algorithmic}
 \end{algorithm}
 
-The validation step in \algoref{algo:vorphaned} is much more complicated because it requires a higher cost SMT encoding for $\mathit{ctp_s}$ that is generated from a modification of the abstract machine in \figref{fig:machine}.
-This modification executes a CTP just like the old machine, only it has a new $\mathit{ctp_s}$ in the state such that only the reached commands are included. 
-The function $\mathrm{ENCODE}$ encodes $\mathit{ctp_s}$ into an SMT problem based on the rules in \cite{DBLP:conf/kbse/HuangMM13}. Further, a new rule is extended for the match pair encoding: for the receive $\mathit{r_c}$ in the pattern instance \textit{pt}, $\bigvee_{\mathit{r_i}\in\mathit{M}(\mathit{s_l})}(\mathit{s_l},\mathit{r_i})$ is encoded for any send $\mathit{s_l}\in\mathit{M}(\mathit{r_c})$ in $\mathit{ctp_s}$. This rule ensures that no send in $\mathit{ctp_s}$ can match $\mathit{r_c}$. The function $\mathrm{SAT}$ is true if the encoding is satisfiable. The existence of a satisfying assignment of the encoding implies a real deadlock for \textit{pt}. 
+The validation step in \algoref{algo:vorphaned} is much more complicated because it requires a higher cost SMT encoding for $\mathit{ctp_s}$ that is generated by a modification of the abstract machine in \figref{fig:machine}.
+This modification executes a CTP just like the old machine, only it updates a new $\mathit{ctp_s}$ by adding the consumed operations when executing the machine.
+The function $\mathrm{ENCODE}$ encodes $\mathit{ctp_s}$ into an SMT problem based on the rules in \cite{DBLP:conf/kbse/HuangMM13}. Further, a new rule is added to the encoding: for the receive $\mathit{r_c}$ in the pattern instance \textit{pt}, $\bigvee_{\mathit{r_i}\in\mathit{M}(\mathit{s_l})}(\mathit{s_l},\mathit{r_i})$ is encoded for any send $\mathit{s_l}\in\mathit{M}(\mathit{r_c})$ in $\mathit{ctp_s}$. This rule ensures that no send in $\mathit{ctp_s}$ can match $\mathit{r_c}$. The function $\mathrm{SAT}$ is true if the encoding is satisfiable. The existence of a satisfying assignment of the encoding implies a real deadlock for \textit{pt}. 
 
 \examplefigtwo
 
@@ -95,10 +96,10 @@ The validation method implementing \algoref{algo:vorphaned} for an instance of t
 \label{lemma:mismatch}
 \end{lemma}
 \begin{proof}
-The soundness and completeness relies on the correctness proof of the SMT encoding \cite{DBLP:conf/kbse/HuangMM13}. In general, a satisfying assignment returned represents a feasible schedule leading to an orphaned receive. Therefore, a real deadlock is detected. If the SMT encoding is unsatisfiable indicating that no schedules can be resolved for $pt$, then no real deadlock may occur.
+The soundness and completeness relies on the correctness proof of the SMT encoding \cite{DBLP:conf/kbse/HuangMM13}. In general, a satisfying assignment returned by \algoref{algo:vorphaned} represents a feasible schedule leading to an orphaned receive. Therefore, a real deadlock is detected. If the SMT encoding is unsatisfiable indicating that no schedules can be resolved for $pt$, then no real deadlock may occur.
 \end{proof}
 
-The SMT encoding used in the validation step for the orphaned receive pattern can be solved by a state-of-art SMT solver Z3 with a higher cost \cite{demoura:tacas08}. The general algorithm, however, can be modified to remove the validation for the orphaned receive pattern, which leads to a much faster deadlock detection. If so, the algorithm is not sound. The completeness, however, is maintained.
+%The SMT encoding used in the validation step for the orphaned receive pattern can be solved by a state-of-art SMT solver Z3 with a higher cost \cite{demoura:tacas08}. The general algorithm, however, can be modified to remove the validation for the orphaned receive pattern, which leads to a much faster deadlock detection. If so, the algorithm is not sound. The completeness, however, is maintained.
 
 %%zero buffer for orphaned receive
 

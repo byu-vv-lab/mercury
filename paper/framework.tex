@@ -52,6 +52,7 @@ $\mathrm{FEASIBLECHECK}$ is an abstract machine to prune pattern instances for w
 %%The feasible check and the soundness proof of feasible check (assuming pattern match is sound and validation is sound and complete)
 
 $\mathrm{VALIDATE}$ proves a pattern instance feasible, which means that it is a real deadlock in the \emph{ctp}. If the deadlock is real, the algorithm reports the error and exits (line 8); otherwise it continues with the next pattern instance.
+
 \textrm{FEASIBLECHECK} is able to efficiently prune schedules that are provably non-feasible with predictive analysis using counting and an auxiliary data structures to track FIFO ordering on messages. 
 
 \figref{fig:machine} is a term rewriting system for a syntactic
@@ -62,10 +63,10 @@ rewrites define how the machine executes an input \emph{ctp} and
 pattern instance \emph{pt} by evolving the machine state. At a high-level, the machine
 \begin{compactitem}
 \item Process a send, receive, or barrier by counting the send (\emph{Sndi Command}), queuing up the receive on the indicated wait ID (\emph{Rcvi Command}), or counting the barrier (\emph{Barrier Command 1}).
-\item Consume a waits when the associated queue is empty (\emph{Wait (Rcvi) Command 1})
+\item Consume a wait when the associated queue is empty (\emph{Wait (Rcvi) Command 1})
 \item Remove a receive ID from the pattern instance when the associated receive is next on the queue for the indicated wait (\emph{Wait (Rcvi) Command 2}).
 \item Remove the next receive from the queue for the indicated wait and update the number of receives when feasible (\emph{Wait (Rcvi) Command 3}).
-\item Consume a barrier if all the processes have arrived (\emph{Barrier Command 2})---communicator groups may only be used once.
+\item Consume a barrier if all the processes have arrived (\emph{Barrier Command 2}) -- communicator groups may only be used once.
 \end{compactitem}
 At a lower-level, the machine state (\textit{st}) is a six-tuple of variables. The first variable \textit{ctp} defines the concurrent trace program being analyzed. The set \epsnd\ maps a destination endpoint and a source endpoint to a number that is used to count issued sends. The variable \eprcv\ has the same structure only the number is used to count the number of matched receives. The variable \epwait\ records the pending receives by mapping the unique identifier of a wait to a set of the issued receives $\mathit{rcv}$. 
 %A nearest-enclosing wait is the first wait that witnesses the completion of a receive by indicating that the message is delivered and that all the previous receives on the same process issued earlier are complete as well. 

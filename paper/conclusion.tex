@@ -1,9 +1,10 @@
 \section{Conclusion and Future Work}
 This paper presents a new algorithm that first detects the potential deadlock pattern instances and then detects a real deadlock by pruning from these instances.
-The key insight in this paper is the abstract machine that prunes provably non-feasible schedules by simply counting the issued sends and receives. 
-This paper further defines two types of deadlock patterns, the circular dependency and the orphaned receive, and their validation. The circular dependency uses simple rules for validation. The orphaned receive, however, requires a higher cost SMT encoding that is extended form the prior work \cite{DBLP:conf/kbse/HuangMM13}. This paper additionally proves that the algorithm is sound and complete for the circular dependency pattern and the orphaned receive pattern.
+The key insight in this paper is the abstract machine that prunes provably non-feasible schedules by simply counting the issued sends and issued receives. 
+This paper further defines two types of deadlock patterns, the circular dependency and the orphaned receive, and their validation. The circular dependency uses simple rules for validation. The orphaned receive, however, requires a higher cost SMT encoding from the existing work. This paper additionally proves that the algorithm is sound and complete for the circular dependency pattern and the orphaned receive pattern.
 Further, the algorithm can be modified to check deadlocks for these two patterns under zero buffer semantics. Experiments demonstrate that the algorithm in this paper is able to detect all the deadlocks in the benchmarks and is more efficient than two state-of-art MPI verifiers.
 
-It is believed that an MPI program may be caused by the patterns other than the circular dependency and the orphaned receive. Therefore, future work will explore to define other deadlock patterns and to detect deadlocks for these patterns. Also, future work will explore to detect deadlocks for the programs with branching. 
+It is believed that there exist deadlock patterns other than the circular dependency and the orphaned receive in MPI programs.
+Future work will explore to define other deadlock patterns and to detect deadlocks for these patterns. Also, future work will explore to detect deadlocks for the programs with branching. 
 
 \newpage
