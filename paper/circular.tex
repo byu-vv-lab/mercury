@@ -146,7 +146,7 @@ The validation method implementing \algoref{algo:vcircular} for an instance of t
 \label{lemma:circular}
 \end{lemma}
 \begin{proof}
-Since the counts for \epsnd\ and \eprcv\ are correct (\coref{cor:count}), the condition at line 4 is able to correctly check if a instance is a real deadlock or not. If the condition does not hold for some $r_c$, then $r_c$ can be matched and the dependency in cycle does not exist. Therefore, $\mathit{pt}$ is not a real deadlock. If the condition holds for all the receives in $\mathit{pt}$, then no receive in $\mathit{pt}$ can be matched. Therefore, a real deadlock may occur for $\mathit{pt}$.
+Since the counts for \epsnd\ and \eprcv\ are correct (\coref{cor:count}), the condition at line 4 is able to correctly check if a instance is a real deadlock or not. If the condition does not hold for some $r_c$, then $r_c$ can be matched and the dependency in the cycle does not exist. Therefore, $\mathit{pt}$ is not a real deadlock. If the condition holds for all the receives in $\mathit{pt}$, then no receive in $\mathit{pt}$ can be matched. Therefore, a real deadlock may occur for $\mathit{pt}$.
 \end{proof} 
 
 %%zero buffer for circular dependency
