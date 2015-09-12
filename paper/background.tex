@@ -12,7 +12,7 @@ nearest-enclosing wait (i.e., the first wait that witnesses the receive
 complete).
 %The MPI semantics use an infinite buffer, therefore, a non-block send is issued immediately. As such, it is not necessary to associate an identifier or a wait with the send. 
 A barrier \barrier\ is also associated with an identifier that is unique for its communicator. The communicator identifies a group of barrier commands and can only be used one time. Processes block at the barrier commands until all members in the communicator arrive.
-The non-terminal \num\ in the grammar is used to denote endpoints, and it can be $\ast$ to indicate any endpoint. The receive and send commands include source and destination endpoints for communication. In the case of receive, the source may be $\ast$ indicating that the receive can match with any send to the same destination regardless of the source.
+The non-terminal \num\ in the grammar is used to denote endpoints, and it can be $\ast$ to indicate any endpoint. The receive and send commands include source and destination endpoints for communication. In the case of receive, the source may be $\ast$ indicating that the receive can match with any send to the same destination regardless of the source. The $\ast$ may not be used anywhere else in the program. The rest of the presentation assumes only well-formed programs as input.
 
 A pattern instance (\rcvp) is a list of IDs indicating unique receive commands. Each process has at most one
 receive ID in the list. If a process has a receive ID in the list, then the receive attached to the ID marks a point of execution in

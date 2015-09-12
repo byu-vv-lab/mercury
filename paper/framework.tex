@@ -172,14 +172,22 @@ The machine rewrites the state until no more reduction rules can be applied indi
 \label{lemma:sound}
 \end{lemma}
 \begin{proof}
-  \emph{Wait (RCVI) Command 3} is the most important rule in the
-  proof. It must never claim to not be able to consume a receive
-  command incorrectly.
+  Only \emph{Wait (RCVI) Command 3} is discussed since the
+  other rules are simple (and trivial to prove). \emph{Wait (RCVI) Command 3} must never
+  claim to not be able to consume a receive command incorrectly for
+  the machine to be sound.
 \end{proof}
 
 \begin{cor}
+  The machine implementing \textrm{FEASIBLECHECK} never miss counts the number of send and receives matched: \eprcv\ and \epsnd\ are correct.
+\end{cor}
+\begin{proof}
+  \emph{Sndi Command} increments count every time the rule activates and updates both the counter for the specified endpoints and special counter that records sends that can match with wildcard receives. The \emph{Wait (Rcvi) Command 3} rule only increments the indicated receive counter when it is possible to consume the receive and by \lemmaref{lemma:sound}, the machine only matches in a way that is sound. The counters are not incremented in any other rule. Therefore, nothing is missed, and nothing is double counted.
+\end{proof}
+\begin{cor}
   \algoref{algo:main} is sound and complete if and only if \textrm{PATTERNMATCH} is complete (i.e., it gives all pattern instances and possibly more) and validate is sound and complete.
 \end{cor}
+
 
 \begin{comment}
 %%Soundness Proof needs to be revised such that it shows the feasible check (operational semantics) is sound.
