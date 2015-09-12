@@ -174,13 +174,15 @@ The machine rewrites the state until no more reduction rules can be applied indi
 \begin{proof}
   Only \emph{Wait (RCVI) Command 3} is discussed since the
   other rules are simple (and trivial to prove). \emph{Wait (RCVI) Command 3} must never
-  claim to not be able to consume a receive command incorrectly for
-  the machine to be sound.
+  claim to be able to consume a receive command incorrectly for
+  the machine to be sound. The rule uses two conditions for the count of issued sends and the count of issued receives to check if the receive $\aid_0$ can be consumed. Note that the messages are received in a FIFO order on any process. If $\aid_0$ is a wildcard receive on the process $v_{to0}$, the two conditions are equivalent, both checking if there exists at least one send that can match $\aid_0$ after all the preceding wildcard receives on $v_{to0}$ are matched. 
+If $\aid_0$ is a deterministic receive on the process $v_{to0}$, then the first condition checks if there is at least one send that can match $\aid_0$ and all the preceding deterministic receives with identical source and destination are matched. The second condition checks if all the preceding wildcard receives on $v_{to0}$ are matched so that the message FIFO order is preserved. Both cases imply that $\aid_0$ can be consumed correctly. Therefore, the soundness of the machine is proved.  
 \end{proof}
 
 \begin{cor}
   The machine implementing \textrm{FEASIBLECHECK} never miss counts the number of send and receives matched: \eprcv\ and \epsnd\ are correct.
 \end{cor}
+\label{cor:count}
 \begin{proof}
   \emph{Sndi Command} increments count every time the rule activates and updates both the counter for the specified endpoints and special counter that records sends that can match with wildcard receives. The \emph{Wait (Rcvi) Command 3} rule only increments the indicated receive counter when it is possible to consume the receive and by \lemmaref{lemma:sound}, the machine only matches in a way that is sound. The counters are not incremented in any other rule. Therefore, nothing is missed, and nothing is double counted.
 \end{proof}

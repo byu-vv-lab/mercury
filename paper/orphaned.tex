@@ -55,6 +55,15 @@ The set $\mathit{R}$ stores the witnessed wildcard receives on the process \text
 Intuitively, this algorithm checks each pair of wildcard/deterministic receives on an identical process and inserts a new instance with the deterministic receive in $\mathit{PT}$ if the criteria in \defref{def:mismatch} is satisfied for this pair. 
 The complexity of the algorithm is $O(\mathrm{N}^2)$, where $\mathrm{N}$ is the total number of operations in \textit{ctp}. 
 
+The completeness for \algoref{algo:mismatch} is given in \lemmaref{lemma:pmorphaned}. 
+
+\begin{lemma}
+\label{lemma:pmorphaned}
+The pattern match in \algoref{algo:mismatch} is complete indicating that all possible pattern instances are detected.
+\end{lemma}
+\begin{proof}
+\algoref{algo:mismatch} considers all possible pairs of wildcard/deterministic receives on each process. Also, the algorithm only removes the pairs that do not satisfy the criteria of \defref{def:mismatch}. Therefore, all possible instances for the orphaned receive pattern are detected. 
+\end{proof}
 
 %%add text for the following algorithm of validating orphaned receive pattern
 \subsection{Validation for Orphaned Receive}
@@ -81,13 +90,12 @@ The existence of a orphaned receive pattern instance does not mean a deadlock oc
 %%Soundness proof for pattern match needs to be added. the following proof needs to be revised to show that the validation is sound and complete.
 The soundness proof of the validation in \algoref{algo:vorphaned} is given in \lemmaref{lemma:mismatch}.
 
-\begin{lemma}[Soundness for Orphaned Receive]
-For any single-path MPI program, \textit{ctp}, a deadlock detected by \algoref{algo:vorphaned} is a real deadlock for a instance of the orphaned receive pattern, $\mathit{pt}$. 
+\begin{lemma}
+The validation method implementing \algoref{algo:vorphaned} for an instance of the orphaned receive pattern, $\mathit{pt}$, is sound and complete indicating that any detected deadlock is a real deadlock and any instance rejected by \algoref{algo:vorphaned} is a not a real deadlock. 
 \label{lemma:mismatch}
 \end{lemma}
 \begin{proof}
-Proof by showing the existence of a real deadlock. Since \algoref{algo:vorphaned} detects a deadlock, the function $\mathrm{ENCODE}$ returns a satisfying assignment, say $\mathit{t}, $for $ctp_s$.  Assume the receive $r_c \in pt$. Based on the encoding rules, $\mathit{t}$ assigns a sequential order over all the commands in $ctp_s$, matches each receive in $ctp_s$ with a send, and matches each send $\mathit{s_l}\in\mathit{M}(\mathit{r_c})$ in $\mathit{ctp_s}$ with a receive other than $r_c$. Therefore, $\mathit{t}$ implies a schedule that is executable by the runtime which leads to a deadlock for $pt$.
-%First, assume $(\mathit{ctp}^\prime,$ $\mathit{ctp}_s,$ $\mathit{N_s},$ $\mathit{N_r},$ $\mathit{P_r},$ $\mathit{P_b},$ $\mathit{R_{pt}}^\prime)$ is the machine state after applying the operational semantics in \figref{fig:machine} and no reduction commands can be further applied. Second, assume the schedule $\mathit{ctp}_s$ is input to the function $\mathrm{ENCODE}$ in \algoref{algo:main}. Since $\mathrm{ENCODE}$ returns a satisfying assignment, say $\mathit{t}$, it implies that $\mathit{t}$ is a sequential order of all the operations in $\mathit{ctp}_s$ that is executable by the runtime system. Also, for the process that the deterministic receive $\mathit{r_c}$ in $\mathit{pt}$ resides in, say $\mathit{p}$, $\mathit{t}$ satisfies that each send with the destination $\mathit{p}$ is matched with some receive in $\mathit{ctp}_s$. As such, no sends can match $\mathit{r_c}$ as the nearest-enclosing wait for $\mathit{r_c}$ is stored in $\mathit{ctp}^\prime$ according to the \emph{Wait (Rcvi) Command 2} in \figref{fig:machine}. Further, for any process other than $\mathit{p}$ in $\mathit{pt}$, the first operation is blocked in $\mathit{ctp}^\prime$ according to the operational semantics in \figref{fig:machine}. As such, $\mathit{ctp}^\prime$ deadlocks. Since $\mathit{ctp}_s$ is executable and $\mathit{ctp}^\prime$ deadlocks, the program \textit{ctp} may deadlock for the pattern instance $\mathit{pt}$ in program execution. 
+The soundness and completeness relies on the correctness proof of the SMT encoding \cite{DBLP:conf/kbse/HuangMM13}. In general, a satisfying assignment returned represents a feasible schedule leading to an orphaned receive. Therefore, a real deadlock is detected. If the SMT encoding is unsatisfiable indicating that no schedules can be resolved for $pt$, then no real deadlock may occur.
 \end{proof}
 
 The SMT encoding used in the validation step for the orphaned receive pattern can be solved by a state-of-art SMT solver Z3 with a higher cost \cite{demoura:tacas08}. The general algorithm, however, can be modified to remove the validation for the orphaned receive pattern, which leads to a much faster deadlock detection. If so, the algorithm is not sound. The completeness, however, is maintained.

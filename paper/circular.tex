@@ -85,6 +85,16 @@ if $\mathit{e_i}$ is a send, the pair $(\mathit{r_c},\mathit{e_i})$ is inserted 
 
 Finally, the function $\mathrm{JOHNSON}$ implements the Johnson's algorithm to compute all the cycles in the graph. Since an edge in any computed cycle is either a receive-send HB relation on an identical process, or a send-receive match relation across two processes, there exists exactly one sequential relation for any process in the cycle. Therefore, each cycle computed by the function $\mathrm{JOHNSON}$ is a instance of the circular dependency pattern. As discussed earlier, only receives in each cycle are stored to represent a instance in the set $\mathit{PT}$. The complexity of program traversal is $O(\mathrm{N}^2)$, where $\mathrm{N}$ is the total number of operations in the program. The complexity of Johnson's algorithm is $O((\mathrm{v}+\mathrm{e})(\mathrm{c}+1))$ $\approx$ $O((\mathrm{c}+1)\mathrm{N}^2)$, where $\mathrm{v}$ is the number of vertices, $\mathrm{e}$ is the number of edges, and $\mathrm{c}$ is the number of cycles. Therefore, the total complexity of the algorithm is $O((\mathrm{c}+1)\mathrm{N}^2)$.
 
+The completeness for \algoref{algo:circular} is given in \lemmaref{lemma:pmcircular}. 
+
+\begin{lemma}
+\label{lemma:pmcircular}
+The pattern match in \algoref{algo:circular} is complete indicating that all possible pattern instances are detected.
+\end{lemma}
+\begin{proof}
+The graph built in \algoref{algo:circular} consists of all possible vertices and all possible edges because the algorithm statically traverses each process from the beginning to the end and adds an edge once the relation is detected. Also, the Johnson's algorithm is able to compute all the cycles in the graph. Therefore, all possible instances for the circular dependency pattern are detected. 
+\end{proof}
+
 \subsection{Validation for Circular Dependency}
 
 %%revise the following algorithm of validating circular dependency pattern
@@ -129,14 +139,14 @@ As an example, \algoref{algo:vcircular} reports that the CTP in \figref{fig:node
 
 %%Soundness proof for pattern match needs to be added. the following proof needs to be revised to show that the validation is sound and complete.
 
-The soundness proof for the validation in \algoref{algo:vcircular} is given in \lemmaref{lemma:circular}.
+The soundness and completeness proof for the validation method in \algoref{algo:vcircular} is given in \lemmaref{lemma:circular}.
 
-\begin{lemma}[Soundness for Circular Dependency]
-For any single-path MPI program, \textit{ctp}, the detection of a deadlock by \algoref{algo:vcircular} for an instance of the circular dependency pattern, $\mathit{pt}$, indicates a real deadlock. 
+\begin{lemma}
+The validation method implementing \algoref{algo:vcircular} for an instance of the circular dependency pattern, $\mathit{pt}$, is sound and complete indicating that any detected deadlock is a real deadlock and any instance rejected by \algoref{algo:vcircular} is a not a real deadlock. 
 \label{lemma:circular}
 \end{lemma}
 \begin{proof}
-Proof by showing the existence of a deadlock. Since \algoref{algo:vcircular} detects a deadlock for $\mathit{pt}$, the condition at line 4 is not satisfied for any receive $r_c$ in $\mathit{pt}$ indicating that no send in the potentially feasible schedule can match $r_c$. Also, this schedule is executable in the machine in \figref{fig:machine}. Thus, a feasible schedule exists such that all the receives in $\mathit{pt}$ are reached that indicates a real deadlock. 
+Since the counts for \epsnd\ and \eprcv\ are correct (\coref{cor:count}), the condition at line 4 is able to correctly check if a instance is a real deadlock or not. If the condition does not hold for some $r_c$, then $r_c$ can be matched and the dependency in cycle does not exist. Therefore, $\mathit{pt}$ is not a real deadlock. If the condition holds for all the receives in $\mathit{pt}$, then no receive in $\mathit{pt}$ can be matched. Therefore, a real deadlock may occur for $\mathit{pt}$.
 \end{proof} 
 
 %%zero buffer for circular dependency
