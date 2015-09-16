@@ -1,25 +1,23 @@
 package Parser;
 
-import JTASyntax.Program;
+import Syntax.Program;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @Category(Categories.Parser.class)
 public class ParserTest {
 
     @Test
-    public void stupidTest () {
-        assertTrue(true);
+    public void trivialPrograms () throws IOException {
+        Program p = ProgramFactory.loadProgramFromFile("test1.jta");
+        assertEquals(p, TestProgramFactory.test1());
+
+        p = ProgramFactory.loadProgramFromFile("test2.jta");
+        assertEquals(p, TestProgramFactory.test2());
     }
 
-    @Test
-    public void trivialProgram () throws IOException {
-        Program p = ProgramFactory.loadProgramFromFile("trivial.jta");
-        assertEquals(p, TestProgramFactory.dlg1());
-    }
 }

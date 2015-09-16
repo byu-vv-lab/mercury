@@ -1,7 +1,6 @@
 package Finder;
 
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.Stack;

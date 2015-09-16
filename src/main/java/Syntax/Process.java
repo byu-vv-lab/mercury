@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.Vector;
 
-import Finder.E;
-
 public class Process {
 	int rank;
 	LinkedList<Operation> ops;
@@ -17,7 +15,15 @@ public class Process {
 	public Hashtable<Operation, Set<Operation>> HB;
 	public int indicator;
 	Hashtable<Wait,LinkedList<Recv>> witnessedR;
-	
+
+	@Override
+	public String toString() {
+		return "Process{" +
+				"rank=" + rank +
+				", ops=" + ops +
+				'}';
+	}
+
 	public Process(int rank)
 	{
 		this.rank = rank;
@@ -250,7 +256,25 @@ public class Process {
 	{
 		return rank;
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Process process = (Process) o;
+
+		if (rank != process.rank) return false;
+		return ops.equals(process.ops);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = rank;
+		result = 31 * result + ops.hashCode();
+		return result;
+	}
+
 	public int size()
 	{
 		return ops.size();

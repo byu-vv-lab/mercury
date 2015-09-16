@@ -43,13 +43,13 @@ public class JTAParserBaseListener implements JTAParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpression(JTAParser.ExpressionContext ctx) { }
+	@Override public void enterOperation(JTAParser.OperationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpression(JTAParser.ExpressionContext ctx) { }
+	@Override public void exitOperation(JTAParser.OperationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -98,6 +98,18 @@ public class JTAParserBaseListener implements JTAParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSend(JTAParser.SendContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBlock(JTAParser.BlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBlock(JTAParser.BlockContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

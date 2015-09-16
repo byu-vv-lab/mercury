@@ -1,6 +1,6 @@
 package Parser;
 
-import JTASyntax.Program;
+import Syntax.Program;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 

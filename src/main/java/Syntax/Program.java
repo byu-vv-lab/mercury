@@ -13,7 +13,33 @@ public class Program {
 	boolean isPattern;
 	public LinkedList<Recv>[] recvlist;
 	public LinkedList<Send>[][] sendlist;
-	
+
+	@Override
+	public String toString() {
+		return "Program{" +
+				"name='" + name + '\'' +
+				", processes=" + processes +
+				'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Program program = (Program) o;
+
+		if (!name.equals(program.name)) return false;
+		return processes.equals(program.processes);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = name.hashCode();
+		result = 31 * result + processes.hashCode();
+		return result;
+	}
+
 	public Program(boolean mismatchedEndpoint)
 	{
 		isPattern = mismatchedEndpoint;
@@ -35,7 +61,7 @@ public class Program {
 	
 	public HashSet<UnmatchedEP_Pattern> getUnmatchedEP_Pattern()
 	{
-		HashSet<UnmatchedEP_Pattern> set = new HashSet<UnmatchedEP_Pattern>();
+		HashSet<UnmatchedEP_Pattern> set = new HashSet<>();
 		for(Process p: processes)
 		{
 			if(p.hasDeterminsticRecv())

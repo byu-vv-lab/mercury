@@ -3,11 +3,7 @@ package Finder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Random;
 import java.util.Stack;
-
-import com.microsoft.z3.Model;
-import com.microsoft.z3.Status;
 
 import Syntax.Barrier;
 import Syntax.Operation;
@@ -16,7 +12,6 @@ import Syntax.Process;
 import Syntax.Program;
 import Syntax.Recv;
 import Syntax.Send;
-import Syntax.UnmatchedEP_Pattern;
 import Syntax.Wait;
 
 public class ZeroSemantics_Finder {

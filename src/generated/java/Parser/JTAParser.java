@@ -19,20 +19,21 @@ public class JTAParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		Thread=1, Read=2, Mutate=3, Recv=4, Send=5, Identifier=6, Space=7, LineBreak=8, 
-		Number=9, Digit=10;
+		Thread=1, Read=2, Mutate=3, Recv=4, Send=5, Wait=6, Identifier=7, Space=8, 
+		LineBreak=9, Number=10, Digit=11;
 	public static final int
-		RULE_program = 0, RULE_thread = 1, RULE_expression = 2, RULE_mutate = 3, 
-		RULE_read = 4, RULE_receive = 5, RULE_send = 6;
+		RULE_program = 0, RULE_thread = 1, RULE_operation = 2, RULE_mutate = 3, 
+		RULE_read = 4, RULE_receive = 5, RULE_send = 6, RULE_block = 7;
 	public static final String[] ruleNames = {
-		"program", "thread", "expression", "mutate", "read", "receive", "send"
+		"program", "thread", "operation", "mutate", "read", "receive", "send", 
+		"block"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, "Thread", "Read", "Mutate", "Recv", "Send", "Identifier", "Space", 
-		"LineBreak", "Number", "Digit"
+		null, "Thread", "Read", "Mutate", "Recv", "Send", "Wait", "Identifier", 
+		"Space", "LineBreak", "Number", "Digit"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -112,21 +113,21 @@ public class JTAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(15); 
+			setState(17); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(14);
+				setState(16);
 				thread();
 				}
 				}
-				setState(17); 
+				setState(19); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==Thread );
-			setState(19);
+			setState(21);
 			match(EOF);
 			}
 		}
@@ -152,11 +153,11 @@ public class JTAParser extends Parser {
 		public TerminalNode Space(int i) {
 			return getToken(JTAParser.Space, i);
 		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
+		public List<OperationContext> operation() {
+			return getRuleContexts(OperationContext.class);
 		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
+		public OperationContext operation(int i) {
+			return getRuleContext(OperationContext.class,i);
 		}
 		public ThreadContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -179,51 +180,51 @@ public class JTAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(21);
+			setState(23);
 			match(Thread);
-			setState(23); 
+			setState(25); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(22);
+				setState(24);
 				match(Space);
 				}
 				}
-				setState(25); 
+				setState(27); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==Space );
-			setState(27);
+			setState(29);
 			match(Identifier);
-			setState(28);
+			setState(30);
 			match(LineBreak);
-			setState(32);
+			setState(34);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Read) | (1L << Mutate) | (1L << Recv) | (1L << Send))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << Read) | (1L << Mutate) | (1L << Recv) | (1L << Send) | (1L << Wait))) != 0)) {
 				{
 				{
-				setState(29);
-				expression();
+				setState(31);
+				operation();
 				}
 				}
-				setState(34);
+				setState(36);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(38);
+			setState(40);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==LineBreak) {
 				{
 				{
-				setState(35);
+				setState(37);
 				match(LineBreak);
 				}
 				}
-				setState(40);
+				setState(42);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -240,7 +241,7 @@ public class JTAParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ExpressionContext extends ParserRuleContext {
+	public static class OperationContext extends ParserRuleContext {
 		public MutateContext mutate() {
 			return getRuleContext(MutateContext.class,0);
 		}
@@ -253,61 +254,70 @@ public class JTAParser extends Parser {
 		public SendContext send() {
 			return getRuleContext(SendContext.class,0);
 		}
+		public BlockContext block() {
+			return getRuleContext(BlockContext.class,0);
+		}
 		public TerminalNode LineBreak() { return getToken(JTAParser.LineBreak, 0); }
-		public ExpressionContext(ParserRuleContext parent, int invokingState) {
+		public OperationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_expression; }
+		@Override public int getRuleIndex() { return RULE_operation; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JTAParserListener ) ((JTAParserListener)listener).enterExpression(this);
+			if ( listener instanceof JTAParserListener ) ((JTAParserListener)listener).enterOperation(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JTAParserListener ) ((JTAParserListener)listener).exitExpression(this);
+			if ( listener instanceof JTAParserListener ) ((JTAParserListener)listener).exitOperation(this);
 		}
 	}
 
-	public final ExpressionContext expression() throws RecognitionException {
-		ExpressionContext _localctx = new ExpressionContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_expression);
+	public final OperationContext operation() throws RecognitionException {
+		OperationContext _localctx = new OperationContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_operation);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(45);
+			setState(48);
 			switch (_input.LA(1)) {
 			case Mutate:
 				{
-				setState(41);
+				setState(43);
 				mutate();
 				}
 				break;
 			case Read:
 				{
-				setState(42);
+				setState(44);
 				read();
 				}
 				break;
 			case Recv:
 				{
-				setState(43);
+				setState(45);
 				receive();
 				}
 				break;
 			case Send:
 				{
-				setState(44);
+				setState(46);
 				send();
+				}
+				break;
+			case Wait:
+				{
+				setState(47);
+				block();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			setState(48);
+			setState(51);
 			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
 			case 1:
 				{
-				setState(47);
+				setState(50);
 				match(LineBreak);
 				}
 				break;
@@ -353,23 +363,23 @@ public class JTAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(50);
+			setState(53);
 			match(Mutate);
-			setState(52); 
+			setState(55); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(51);
+				setState(54);
 				match(Space);
 				}
 				}
-				setState(54); 
+				setState(57); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==Space );
-			setState(56);
+			setState(59);
 			match(Identifier);
 			}
 		}
@@ -412,23 +422,23 @@ public class JTAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(58);
+			setState(61);
 			match(Read);
-			setState(60); 
+			setState(63); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(59);
+				setState(62);
 				match(Space);
 				}
 				}
-				setState(62); 
+				setState(65); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==Space );
-			setState(64);
+			setState(67);
 			match(Identifier);
 			}
 		}
@@ -474,39 +484,39 @@ public class JTAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(66);
+			setState(69);
 			match(Recv);
-			setState(68); 
+			setState(71); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(67);
+				setState(70);
 				match(Space);
 				}
 				}
-				setState(70); 
+				setState(73); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==Space );
-			setState(72);
+			setState(75);
 			match(Identifier);
-			setState(74); 
+			setState(77); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(73);
+				setState(76);
 				match(Space);
 				}
 				}
-				setState(76); 
+				setState(79); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==Space );
-			setState(78);
+			setState(81);
 			match(Identifier);
 			}
 		}
@@ -552,39 +562,98 @@ public class JTAParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(80);
+			setState(83);
 			match(Send);
-			setState(82); 
+			setState(85); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(81);
+				setState(84);
 				match(Space);
 				}
 				}
-				setState(84); 
+				setState(87); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==Space );
-			setState(86);
+			setState(89);
 			match(Identifier);
-			setState(88); 
+			setState(91); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(87);
+				setState(90);
 				match(Space);
 				}
 				}
-				setState(90); 
+				setState(93); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==Space );
-			setState(92);
+			setState(95);
+			match(Identifier);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class BlockContext extends ParserRuleContext {
+		public TerminalNode Wait() { return getToken(JTAParser.Wait, 0); }
+		public TerminalNode Identifier() { return getToken(JTAParser.Identifier, 0); }
+		public List<TerminalNode> Space() { return getTokens(JTAParser.Space); }
+		public TerminalNode Space(int i) {
+			return getToken(JTAParser.Space, i);
+		}
+		public BlockContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_block; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JTAParserListener ) ((JTAParserListener)listener).enterBlock(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JTAParserListener ) ((JTAParserListener)listener).exitBlock(this);
+		}
+	}
+
+	public final BlockContext block() throws RecognitionException {
+		BlockContext _localctx = new BlockContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_block);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(97);
+			match(Wait);
+			setState(99); 
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			do {
+				{
+				{
+				setState(98);
+				match(Space);
+				}
+				}
+				setState(101); 
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			} while ( _la==Space );
+			setState(103);
 			match(Identifier);
 			}
 		}
@@ -600,31 +669,33 @@ public class JTAParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\fa\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\3\2\6\2\22\n\2\r\2\16\2\23"+
-		"\3\2\3\2\3\3\3\3\6\3\32\n\3\r\3\16\3\33\3\3\3\3\3\3\7\3!\n\3\f\3\16\3"+
-		"$\13\3\3\3\7\3\'\n\3\f\3\16\3*\13\3\3\4\3\4\3\4\3\4\5\4\60\n\4\3\4\5\4"+
-		"\63\n\4\3\5\3\5\6\5\67\n\5\r\5\16\58\3\5\3\5\3\6\3\6\6\6?\n\6\r\6\16\6"+
-		"@\3\6\3\6\3\7\3\7\6\7G\n\7\r\7\16\7H\3\7\3\7\6\7M\n\7\r\7\16\7N\3\7\3"+
-		"\7\3\b\3\b\6\bU\n\b\r\b\16\bV\3\b\3\b\6\b[\n\b\r\b\16\b\\\3\b\3\b\3\b"+
-		"\2\2\t\2\4\6\b\n\f\16\2\2g\2\21\3\2\2\2\4\27\3\2\2\2\6/\3\2\2\2\b\64\3"+
-		"\2\2\2\n<\3\2\2\2\fD\3\2\2\2\16R\3\2\2\2\20\22\5\4\3\2\21\20\3\2\2\2\22"+
-		"\23\3\2\2\2\23\21\3\2\2\2\23\24\3\2\2\2\24\25\3\2\2\2\25\26\7\2\2\3\26"+
-		"\3\3\2\2\2\27\31\7\3\2\2\30\32\7\t\2\2\31\30\3\2\2\2\32\33\3\2\2\2\33"+
-		"\31\3\2\2\2\33\34\3\2\2\2\34\35\3\2\2\2\35\36\7\b\2\2\36\"\7\n\2\2\37"+
-		"!\5\6\4\2 \37\3\2\2\2!$\3\2\2\2\" \3\2\2\2\"#\3\2\2\2#(\3\2\2\2$\"\3\2"+
-		"\2\2%\'\7\n\2\2&%\3\2\2\2\'*\3\2\2\2(&\3\2\2\2()\3\2\2\2)\5\3\2\2\2*("+
-		"\3\2\2\2+\60\5\b\5\2,\60\5\n\6\2-\60\5\f\7\2.\60\5\16\b\2/+\3\2\2\2/,"+
-		"\3\2\2\2/-\3\2\2\2/.\3\2\2\2\60\62\3\2\2\2\61\63\7\n\2\2\62\61\3\2\2\2"+
-		"\62\63\3\2\2\2\63\7\3\2\2\2\64\66\7\5\2\2\65\67\7\t\2\2\66\65\3\2\2\2"+
-		"\678\3\2\2\28\66\3\2\2\289\3\2\2\29:\3\2\2\2:;\7\b\2\2;\t\3\2\2\2<>\7"+
-		"\4\2\2=?\7\t\2\2>=\3\2\2\2?@\3\2\2\2@>\3\2\2\2@A\3\2\2\2AB\3\2\2\2BC\7"+
-		"\b\2\2C\13\3\2\2\2DF\7\6\2\2EG\7\t\2\2FE\3\2\2\2GH\3\2\2\2HF\3\2\2\2H"+
-		"I\3\2\2\2IJ\3\2\2\2JL\7\b\2\2KM\7\t\2\2LK\3\2\2\2MN\3\2\2\2NL\3\2\2\2"+
-		"NO\3\2\2\2OP\3\2\2\2PQ\7\b\2\2Q\r\3\2\2\2RT\7\7\2\2SU\7\t\2\2TS\3\2\2"+
-		"\2UV\3\2\2\2VT\3\2\2\2VW\3\2\2\2WX\3\2\2\2XZ\7\b\2\2Y[\7\t\2\2ZY\3\2\2"+
-		"\2[\\\3\2\2\2\\Z\3\2\2\2\\]\3\2\2\2]^\3\2\2\2^_\7\b\2\2_\17\3\2\2\2\16"+
-		"\23\33\"(/\628@HNV\\";
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\rl\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\6\2\24\n\2\r\2"+
+		"\16\2\25\3\2\3\2\3\3\3\3\6\3\34\n\3\r\3\16\3\35\3\3\3\3\3\3\7\3#\n\3\f"+
+		"\3\16\3&\13\3\3\3\7\3)\n\3\f\3\16\3,\13\3\3\4\3\4\3\4\3\4\3\4\5\4\63\n"+
+		"\4\3\4\5\4\66\n\4\3\5\3\5\6\5:\n\5\r\5\16\5;\3\5\3\5\3\6\3\6\6\6B\n\6"+
+		"\r\6\16\6C\3\6\3\6\3\7\3\7\6\7J\n\7\r\7\16\7K\3\7\3\7\6\7P\n\7\r\7\16"+
+		"\7Q\3\7\3\7\3\b\3\b\6\bX\n\b\r\b\16\bY\3\b\3\b\6\b^\n\b\r\b\16\b_\3\b"+
+		"\3\b\3\t\3\t\6\tf\n\t\r\t\16\tg\3\t\3\t\3\t\2\2\n\2\4\6\b\n\f\16\20\2"+
+		"\2s\2\23\3\2\2\2\4\31\3\2\2\2\6\62\3\2\2\2\b\67\3\2\2\2\n?\3\2\2\2\fG"+
+		"\3\2\2\2\16U\3\2\2\2\20c\3\2\2\2\22\24\5\4\3\2\23\22\3\2\2\2\24\25\3\2"+
+		"\2\2\25\23\3\2\2\2\25\26\3\2\2\2\26\27\3\2\2\2\27\30\7\2\2\3\30\3\3\2"+
+		"\2\2\31\33\7\3\2\2\32\34\7\n\2\2\33\32\3\2\2\2\34\35\3\2\2\2\35\33\3\2"+
+		"\2\2\35\36\3\2\2\2\36\37\3\2\2\2\37 \7\t\2\2 $\7\13\2\2!#\5\6\4\2\"!\3"+
+		"\2\2\2#&\3\2\2\2$\"\3\2\2\2$%\3\2\2\2%*\3\2\2\2&$\3\2\2\2\')\7\13\2\2"+
+		"(\'\3\2\2\2),\3\2\2\2*(\3\2\2\2*+\3\2\2\2+\5\3\2\2\2,*\3\2\2\2-\63\5\b"+
+		"\5\2.\63\5\n\6\2/\63\5\f\7\2\60\63\5\16\b\2\61\63\5\20\t\2\62-\3\2\2\2"+
+		"\62.\3\2\2\2\62/\3\2\2\2\62\60\3\2\2\2\62\61\3\2\2\2\63\65\3\2\2\2\64"+
+		"\66\7\13\2\2\65\64\3\2\2\2\65\66\3\2\2\2\66\7\3\2\2\2\679\7\5\2\28:\7"+
+		"\n\2\298\3\2\2\2:;\3\2\2\2;9\3\2\2\2;<\3\2\2\2<=\3\2\2\2=>\7\t\2\2>\t"+
+		"\3\2\2\2?A\7\4\2\2@B\7\n\2\2A@\3\2\2\2BC\3\2\2\2CA\3\2\2\2CD\3\2\2\2D"+
+		"E\3\2\2\2EF\7\t\2\2F\13\3\2\2\2GI\7\6\2\2HJ\7\n\2\2IH\3\2\2\2JK\3\2\2"+
+		"\2KI\3\2\2\2KL\3\2\2\2LM\3\2\2\2MO\7\t\2\2NP\7\n\2\2ON\3\2\2\2PQ\3\2\2"+
+		"\2QO\3\2\2\2QR\3\2\2\2RS\3\2\2\2ST\7\t\2\2T\r\3\2\2\2UW\7\7\2\2VX\7\n"+
+		"\2\2WV\3\2\2\2XY\3\2\2\2YW\3\2\2\2YZ\3\2\2\2Z[\3\2\2\2[]\7\t\2\2\\^\7"+
+		"\n\2\2]\\\3\2\2\2^_\3\2\2\2_]\3\2\2\2_`\3\2\2\2`a\3\2\2\2ab\7\t\2\2b\17"+
+		"\3\2\2\2ce\7\b\2\2df\7\n\2\2ed\3\2\2\2fg\3\2\2\2ge\3\2\2\2gh\3\2\2\2h"+
+		"i\3\2\2\2ij\7\t\2\2j\21\3\2\2\2\17\25\35$*\62\65;CKQY_g";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

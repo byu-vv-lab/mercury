@@ -31,15 +31,15 @@ public interface JTAParserListener extends ParseTreeListener {
 	 */
 	void exitThread(JTAParser.ThreadContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JTAParser#expression}.
+	 * Enter a parse tree produced by {@link JTAParser#operation}.
 	 * @param ctx the parse tree
 	 */
-	void enterExpression(JTAParser.ExpressionContext ctx);
+	void enterOperation(JTAParser.OperationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link JTAParser#expression}.
+	 * Exit a parse tree produced by {@link JTAParser#operation}.
 	 * @param ctx the parse tree
 	 */
-	void exitExpression(JTAParser.ExpressionContext ctx);
+	void exitOperation(JTAParser.OperationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JTAParser#mutate}.
 	 * @param ctx the parse tree
@@ -80,4 +80,14 @@ public interface JTAParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSend(JTAParser.SendContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JTAParser#block}.
+	 * @param ctx the parse tree
+	 */
+	void enterBlock(JTAParser.BlockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JTAParser#block}.
+	 * @param ctx the parse tree
+	 */
+	void exitBlock(JTAParser.BlockContext ctx);
 }
