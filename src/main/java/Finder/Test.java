@@ -29,7 +29,7 @@ public class Test {
 				true, null));
 	    finder1 = new UnmatchedEP_Finder(program);
 		
-		finder1.Run();
+		finder1.run();
 		
 		System.out.println("=========================================================");
 		
@@ -55,7 +55,7 @@ public class Test {
 				true, null));
 		finder1 = new UnmatchedEP_Finder(program);
 		
-		finder1.Run();
+		finder1.run();
 		
 		System.out.println("=========================================================");
 
@@ -88,7 +88,7 @@ public class Test {
 				true, null));
 		finder1 = new UnmatchedEP_Finder(program);
 		
-		finder1.Run();
+		finder1.run();
 		
 		
 		

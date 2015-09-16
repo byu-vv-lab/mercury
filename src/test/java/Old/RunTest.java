@@ -18,7 +18,7 @@ public class RunTest {
 			System.out.println("Program starts at " + t1);
 			System.out.println("Test on mismatched send-receive pattern:");
 		    finder1 = new UnmatchedEP_Finder(testprogram);
-			finder1.Run();
+			finder1.run();
 			System.out.println("====================================");
 			System.out.println("Test on circular dependency pattern:");
 			testprogram.InitGraph();
@@ -39,7 +39,7 @@ public class RunTest {
 			System.out.println("Program starts at " + t1);
 			System.out.println("Test on zero buffer semantics:");
 			finder3 = new ZeroSemantics_Finder(testprogram);
-			finder3.Run();
+			finder3.run();
 			long t2 = System.currentTimeMillis();
 			System.out.println("Program ends at " + t2);
 			System.out.println("Program executes " + ((double)(t2-t1))/(double)1000 + "seconds");

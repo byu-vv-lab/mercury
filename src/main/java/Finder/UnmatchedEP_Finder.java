@@ -64,7 +64,7 @@ public class UnmatchedEP_Finder {
 		}
 	}
 	
-	public void Run() throws Exception
+	public boolean run() throws Exception
 	{
 		Object[] patterns =  program.getUnmatchedEP_Pattern().toArray();
 		//Iterator<UnmatchedEP_Pattern> it = patterns.iterator();
@@ -74,7 +74,7 @@ public class UnmatchedEP_Finder {
 		{
 			//report no deadlock for unmatched ep pattern
 			System.out.printf("No deadlock is found for unmatched Endpoint patterns!\n");
-			return;
+			return false;
 		}
 		else
 		{
@@ -108,12 +108,10 @@ public class UnmatchedEP_Finder {
 			}
 			
 			//initialize the prefix
-			for(int i =0; i < program.size();i++)
-			{
-					program.get(i).NextBlockPoint();
+			for(int i =0; i < program.size();i++) {
+				program.get(i).NextBlockPoint();
 
 				tracker[i] = 0;
-				
 			}
 			
 			
@@ -154,8 +152,7 @@ public class UnmatchedEP_Finder {
 						encoder.Encoding();
 						//encoder.solver.displayFormulas();
 						Model model = encoder.solver.Check(Status.SATISFIABLE);
-						if(model != null)
-						{
+						if(model != null) {
 							//System.out.println("[SAT] Witness Example:\n" + model);
 							System.out.println("Verification ends for this program!");
 							System.out.println(count);
@@ -164,8 +161,10 @@ public class UnmatchedEP_Finder {
 							//continue to check even when a deadlock is found
 							//return;
 						}
-						else System.out.println("[UNSAT]:No deadlock is found for pattern: [" 
-							+ pattern.determinstic.toString() + "]");
+						else {
+							System.out.println("[UNSAT]:No deadlock is found for pattern: ["
+									+ pattern.determinstic.toString() + "]");
+						}
 						//System.out.printf("May Deadlock!\n");
 						//System.exit(0);
 						break breakpoint;
@@ -200,6 +199,7 @@ public class UnmatchedEP_Finder {
 			resetProgram();
 			count++;
 		}
+		return true;
 	}
 	
 	void resetProgram() throws Exception
