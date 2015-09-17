@@ -1,8 +1,32 @@
-\section{Background}
-This section introduces the necessary notations and definitions. To simplify the presentation, the MPI standard is used in the following discussion. The algorithm for deadlock detection is further adaptable to other message passing standards. In an MPI program, it is assumed that only non-blocking sends and receives are used. 
-%Also, this paper considers only single-path MPI programs in the following discussion. 
-In general, the syntax of an MPI program is presented in \figref{fig:expr:stx} (a). The syntax describes a concurrent trace program (CTP). The presentation uses ellipses ($\ldots$) to represent zero or more repetitions, bold-face to indicate terminals. The language defines a CTP (\textit{ctp}) as a list of processes.  A process (\thread) is a list of commands.  For simplicity, commands (\textit{e}) are restricted to non-blocking send (\sendi), non-blocking receive (\recvi), wait (\wait) and barrier (\barrier). Each command is a tuple. It is referred to each tuple as a single notation $\mathtt{o_c}$ in the following discussion, where $\mathtt{o}\in\{\sendi,\recvi,\wait,\barrier\}$ and $\mathtt{c}$ is the line number.  
-The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} associated with a receive or a wait. The wait takes a second identifier belonging to the associated receive. Similarly, a receive is paired with a wait by recording the identifier of this wait in the tuple. It is assumed that a message is sent out immediately once the non-blocking send is issued, therefore, it is not necessary to associate an identifier or a wait with the send. A barrier \barrier\ is also associated with an identifier that is unique for its communicator. A communicator identifies a group of barriers. The non-terminal \num\ in the grammar is a number that represents an endpoint. To be precise, a receive (or a send) is associated with a source endpoint and a destination endpoint. Note that if the source endpoint of a receive is $\ast$, this receive is a wildcard receive meaning it may be matched with a send from any source. The set \rcvp\ is a deadlock pattern instance that consists of a set of receives. The patterns are defined in the following section. The data and computation are ignored since only message communication is considered in the problem of deadlock. 
+\section{Concurrent Trace Programs}
+This paper only considers non-determinism arising from message races and defines MPI program semantics in the context of concurrent trace programs (CTP) \cite{DBLP:conf/sigsoft/WangCGY09}. 
+%In an MPI program, it is assumed that only non-blocking sends and receives are used. A non-blocking operation is issued without blocking the program execution. It is usually paired with a wait function that witnesses the completion of this non-blocking operation.
+%% introduce the language aspects: non-blocking, blocking, barrier, collective, point-to-point in the introduction.
+The syntax is in \figref{fig:expr:stx} (a). Lists use white space rather than commas to delineate members, ellipses ($\ldots$) represent zero or more repetitions, and bold-face font denotes terminals in the language.
+
+A CTP (\textit{ctp}) is a list of processes.  A process (\thread) is a list of commands. The commands (\textit{e}) are: non-blocking send (\sendi), non-blocking receive (\recvi), wait (\wait), and barrier (\barrier). 
+The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} associated with a receive, a send, or a wait. 
+A receive indicates both its unique ID and the unique
+ID of its associated wait. That wait by definition is its
+nearest-enclosing wait (i.e., the first wait that witnesses the receive
+complete).
+%The MPI semantics use an infinite buffer, therefore, a non-block send is issued immediately. As such, it is not necessary to associate an identifier or a wait with the send. 
+A barrier \barrier\ is also associated with an identifier that is unique for its communicator. The communicator identifies a group of barrier commands and can only be used one time. Processes block at the barrier commands until all members in the communicator arrive.
+The non-terminal \num\ in the grammar is used to denote endpoints, and it can be $\ast$ to indicate any endpoint. The receive and send commands include source and destination endpoints for communication. In the case of receive, the source may be $\ast$ indicating that the receive can match with any send to the same destination regardless of the source. The $\ast$ may not be used anywhere else in the program. The rest of the presentation assumes only well-formed programs as input.
+
+A pattern instance (\rcvp) is a list of IDs indicating unique receive commands. Each process has at most one
+receive ID in the list. If a process has a receive ID in the list, then the receive attached to the ID marks a point of execution in
+the owning process. The intuition is that if each process is able to
+arrive at the indicated point of execution in the pattern instance, then a deadlock is imminent.
+
+
+%\figref{fig:deadlock2} shows an example of a CTP with three processes. 
+
+%Consider extending the syntax for data and computation so can use it for other errors
+
+
+
+
 
 \newsavebox{\boxLangSyntax}
 
@@ -11,13 +35,14 @@ The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} 
 \cfgstart
 \cfgrule{ctp}{\lp\cfgnt{\thread}$~\ldots$\rp}
 \cfgrule{\thread}{\lp\cfgnt{\cmd}~$\ldots$~$\bot$\rp}
-\cfgrule{\cmd}{\lp\cfgt{\sendi}~\cfgt{\num}~\cfgt{\num}\rp}
+\cfgrule{\cmd}{\lp\cfgt{\sendi}~\cfgt{\aid}~\cfgt{\num}~\cfgt{\num}\rp}
    \cfgorline{\lp\cfgt{\recvi}~\cfgt{\aid}~\cfgt{\num}~\cfgt{\num}~\cfgt{\aid}\rp}
-   \cfgorline{\lp\cfgt{\wait}~\cfgt{\aid}~\cfgt{\aid}\rp}
+   \cfgorline{\lp\cfgt{\wait}~\cfgt{\aid}\rp}
    \cfgorline{\lp\cfgt{\barrier}~\cfgt{\aid}\rp}
-\cfgrule{\num}{\cfgt{number}}
+\cfgrule{\num}{\cfgt{number}}\
+    \cfgorline{\cfgt{$\ast$}}
 \cfgrule{\rcvp}{\lp\aid~$\ldots$\rp}
-\cfgrule{\npro}{\cfgt{number}}
+%\cfgrule{\npro}{\cfgt{number}}
 \cfgrule{\aid}{\cfgt{ID}}
 \cfgend
 \end{minipage}
@@ -28,11 +53,11 @@ The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} 
 \begin{lrbox}{\boxEvalSyntax}
 \begin{minipage}[c]{0.3\linewidth}
 \cfgstart
-\cfgrule{st}{\lp\cfgnt{ctp}\ \cfgnt{ctp}\ \cfgnt{\epsnd}\ \cfgnt{\eprcv}\ \cfgnt{\epwait}\ \cfgnt{\epbarrier}\ \rcvp\rp}
+\cfgrule{st}{\lp\cfgnt{ctp}\ \cfgnt{\epsnd}\ \cfgnt{\eprcv}\ \cfgnt{\epwait}\ \cfgnt{\epbarrier}\ \rcvp\rp}
 \cfgrule{\epsnd}{\cfgt{\mt}\
-   \cfgor\lp\cfgnt{\epsnd}~\lb\lp\cfgt{\num},\cfgt{\num}\rp~$\rightarrow$~\cfgt{\num}\rb\rp}
+   \cfgor\lp\cfgnt{\epsnd}~\lb\lp\cfgt{\num}\ \cfgt{\num}\rp~$\rightarrow$~\cfgt{\num}\rb\rp}
 \cfgrule{\eprcv}{\cfgt{\mt}\
-   \cfgor\lp\cfgnt{\eprcv}~\lb\lp\cfgt{\num},\cfgt{\num}\rp~$\rightarrow$~\cfgt{\num}\rb\rp}
+   \cfgor\lp\cfgnt{\eprcv}~\lb\lp\cfgt{\num}\ \cfgt{\num}\rp~$\rightarrow$~\cfgt{\num}\rb\rp}
 \cfgrule{\epwait}{\cfgt{\mt}\
    \cfgor\lp\cfgnt{\epwait}~\lb\cfgnt{\aid}~$\rightarrow$~\cfgnt{rcv}\rb\rp}
 \cfgrule{rcv}{\lp\lb\cfgt{\aid}~\cfgt{\num}~\cfgt{\num}\rb\ \ldots\rp}
@@ -53,8 +78,13 @@ The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} 
 (a) & (b)
 \end{tabular}
 \end{center}
-\caption{The language syntax with its evaluation syntax for the operational semantics--bold face indicates a terminal. (a) The input syntax. (b) The evaluation syntax.}
+\caption{The language syntax with its evaluation syntax for the abstract machine in \figref{fig:machine} -- bold face indicates a terminal. (a) The input syntax. (b) The evaluation syntax.}
 \label{fig:expr:stx}
 \end{figure}
 
-The operational semantics for the language are given by a term rewriting system using a \textit{CESK} style machine \footnote{The \textit{CESK} machine state is represented with a \textbf{C}ontrol string, \textbf{E}nvironment, \textbf{S}tore, and \textbf{K}ontinuation.}. \figref{fig:expr:stx}(b) defines the machine state and other syntax relating to evaluation. The machine state (\textit{st}) is a seven-tuple of variables. The first variable \textit{ctp} defines the trace program. The second variable \textit{ctp} represents a generated schedule that is initialized as an empty set $((\bot) (\bot) \ldots)$. The set \epsnd\ maps a destination endpoint and a source endpoint to a number that is used to record the number of the issued sends. The variable \eprcv\ has the same structure only the number is used to record the number of the matched receives. The variable \epwait\ records the pending receives by mapping the unique identifier of a nearest-enclosing wait to a set of the issued receives $\mathit{rcv}$. A nearest-enclosing wait witnesses the completion of a receive by indicating that the message is delivered and that all the previous receives on the same process issued earlier are complete as well. In this set, the action identifier, the source endpoint and the destination endpoint are recorded for each receive. The variable \epbarrier\ maps the unique identifier of a communicator to a number that is used to record the number of the witnessed barriers.
+\examplefigthree
+
+
+%%TODO: may move the machine state to where presenting the abstract machine.
+
+

@@ -1,0 +1,6 @@
+\section{Zero Buffer Semantics}
+The circular dependency and the orphaned receive patterns may also cause a program to deadlock under zero buffer semantics. Notice that the semantics in \figref{fig:machine} simulate the behavior for infinite buffer semantics (e.g., a send is issued immediately). 
+The zero buffer semantics, however, use a different way of message communication. 
+Therefore, a schedule validated by the function \textrm{VALIDATE} in \algoref{algo:main} may not be feasible for zero buffer. 
+
+To check if the circular dependency and the orphaned receive patterns cause deadlock under zero buffer, the zero buffer compatibility \cite{HuangNFM15} should be checked with two modifications to the validation methods: 1) the zero buffer encoding rules \cite{HuangNFM15} are extended to the function $\mathrm{ENCODE}$ in \algoref{algo:vorphaned}; 2) The circular dependency pattern requires the same SMT encoding function for validating the instances. 
