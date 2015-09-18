@@ -45,6 +45,7 @@ test {
     useJUnit {
         excludeCategories 'Categories.Benchmark'
     }
+    testLogging.showStandardStreams = true
     systemProperty 'java.library.path', project.libsDir
 }
 
