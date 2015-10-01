@@ -43,7 +43,7 @@ generateGrammarSource {
 
 test {
     useJUnit {
-        excludeCategories 'Categories.Benchmark'
+        excludeCategories 'Categories.Benchmark','Categories.Regression'
     }
     testLogging.showStandardStreams = true
     systemProperty 'java.library.path', project.libsDir

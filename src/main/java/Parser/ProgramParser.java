@@ -1,14 +1,13 @@
 package Parser;
 
-import Syntax.Program;
+import JTASyntax.Program;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 
-public class ProgramFactory {
+public class ProgramParser {
 
     public static Program loadProgramFromFile(URL filename) throws IOException {
         ANTLRInputStream stream = new ANTLRInputStream(filename.openStream());

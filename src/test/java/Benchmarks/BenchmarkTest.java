@@ -1,9 +1,16 @@
 package Benchmarks;
 
+import JTAFinder.AbstractFinder;
+import JTAFinder.UnmatchedEndpointFinder;
+import JTASyntax.Program;
+import Parser.ProgramParser;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static org.junit.Assert.assertTrue;
+import java.io.IOException;
+import java.net.URL;
+
+import static org.junit.Assert.*;
 
 @Category(Categories.Benchmark.class)
 public class BenchmarkTest {
@@ -117,7 +124,11 @@ public class BenchmarkTest {
     }
 
     @Test
-    public void monte_8core_mismatch() {
+    public void monte_8core_mismatch() throws IOException {
+        URL file = BenchmarkTest.class.getResource("monte_8core_mismatch.jta");
+        Program program = ProgramParser.loadProgramFromFile(file);
+        AbstractFinder finder = new UnmatchedEndpointFinder(program);
+        assertFalse(finder.verify());
     }
 
     @Test

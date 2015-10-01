@@ -1,50 +1,46 @@
 package Parser;
 
-import Syntax.*;
-import Syntax.Process;
+
+import JTASyntax.*;
+import JTASyntax.Process;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestProgramFactory {
 
     public static Program test1 () {
-        Program program = new Program(true);
-        Process process0 = new Syntax.Process(0);
-        Process process1 = new Process(1);
-        program.add(process0);
-        program.add(process1);
+        List<Process> procs = new ArrayList<>();
+        List<Operation> ops = new ArrayList<>();
+        ops.add(new Receive("0_0", 0, 0, -1, 0, null, null, true, true));
+        ops.add(new Receive("0_1", 0, 1, 1, 0, null, null, true, false));
+        procs.add(new Process(0, ops));
 
-        process0.add(new Recv(process0.getRank() + "_" + 0, process0, 0, -1,
-                0, null, true, null));
-        process0.add(new Recv(process0.getRank() + "_" + 1, process0, 1, 1,
-                0, null, true, null));
+        ops = new ArrayList<>();
+        ops.add(new Send("1_0", 1, 0, 1, 0, null, 2, true, null));
+        ops.add(new Send("1_1", 1, 1, 1, 0, null, 3, true, null));
+        procs.add(new Process(1, ops));
 
-        process1.add(new Send(process1.getRank() + "_" + 0, process1, 0, 1, 0, null, 2,
-                true, null));
-        process1.add(new Send(process1.getRank() + "_" + 1, process1, 1, 1, 0, null, 3,
-                true, null));
-
-        return program;
+        return new Program("", procs);
     }
 
     public static Program test2 () {
-        Program program = new Program(true);
-        Process process0 = new Process(0);
-        Process process1 = new Process(1);
-        Process process2 = new Process(2);
-        program.add(process0);
-        program.add(process1);
-        program.add(process2);
+        List<Process> procs = new ArrayList<>();
+        List<Operation> ops = new ArrayList<>();
 
-        process0.add(new Recv(process0.getRank()+ "_" + 0, process0, 0, -1,
-                0, null, true, null));
-        process0.add(new Recv(process0.getRank()+ "_" + 1, process0, 1,1,
-                0, null, true, null));
+        ops.add(new Receive("0_0", 0, 0, -1, 0, null, null, true, true));
+        ops.add(new Receive("0_1", 0, 1, 1, 0, null, null, true, false));
+        procs.add(new Process(0, ops));
 
-        process1.add(new Send(process1.getRank() + "_" + 0, process1,0, 1, 0, null, 2,
-                true, null));
-        process2.add(new Send(process2.getRank() + "_" + 0, process1,0, 2, 0, null, 3,
-                true, null));
+        ops = new ArrayList<>();
+        ops.add(new Send("1_0", 1, 0, 1, 0, null, 2, true, null));
+        procs.add(new Process(1, ops));
 
-        return program;
+        ops = new ArrayList<>();
+        ops.add(new Send("2_1", 2, 0, 2, 0, null, 3, true, null));
+        procs.add(new Process(2, ops));
+
+        return new Program("", procs);
     }
 
 }
