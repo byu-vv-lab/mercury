@@ -6,7 +6,7 @@ This paper considers only single-path MPI programs that are typical of many HPC 
 
 Deadlock in a single-path MPI program is difficult to detect for several reasons. First, message races, intended or not, lead to non-determinism because a receive may be matched with more than one send by the runtime. Second, the collective operations, such as barriers, synchronize a program in complex ways leading to unexpected behaviors. And finally, the two buffering semantics, infinite buffer (messages are buffered in the system) and zero buffer (no buffering in the system), lead to different runtime behaviors. All of these aspects make testing and debugging for deadlock very difficult. 
 
-There are several solutions proposed for deadlock detection. The match pair based analyses do not scale to large programs \cite{DBLP:conf/ppopp/VakkalankaSGK08, DBLP:conf/sbmf/SharmaGB12, DBLP:conf/fm/ForejtKNS14}. A match pair consists of a send and a receive that may potentially match in the runtime. The number of match pair resolutions can be massive for a large program.
+There are several solutions proposed for deadlock detection. The match pair based analyses do not scale to large programs \cite{DBLP:conf/ppopp/VakkalankaSGK08, DBLP:conf/sbmf/SharmaGB12, DBLP:conf/fm/ForejtKNS14}. A match pair consists of a send and a receive that may potentially match in the runtime. The number of match pair resolutions may be massive for a large program.
 There are also static analysis based solutions that are able to scale \cite{DBLP:conf/sc/SharmaGB12, DBLP:conf/pldi/JoshiPSN09, Subodh:Dissertation}. The general algorithm in this paper is inspired by such work.
 
 This paper presents a new algorithm that is able to detect a deadlock for a single-path MPI program in three steps. First, the algorithm uses a static analyzer to detect a set of deadlock pattern instances by statically traversing the program and matching patterns in the program text. The algorithm then uses an abstract machine to prune provably non-feasible pattern instances from the set of potential deadlocks. If needed, the algorithm finally validates whether or not any remaining instances imply a real deadlock. Novel in the approach is the abstract machine that efficiently rejects non-feasible instances by simply counting the issued sends and receives, instead of exhaustively enumerating all message races. The complexity of the abstract machine is quadratic in the number of communications. 
@@ -21,7 +21,7 @@ The presentation include proofs that the general algorithm is sound and complete
 
 The contributions are summarized as follows.
 \begin{itemize}
-\item The key contribution is an abstract machine that is able to efficiently prune non-feasible pattern instances from a set of potential deadlocks without false warnings; 
+\item The key contribution is an abstract machine that is able to efficiently prune provably non-feasible pattern instances from a set of potential deadlocks; 
 \item The second contribution is the definition of two typical patterns: circular dependency and orphaned receive, and their validations;
 \item The third contribution is the implementation of the algorithm with a comparison to two state-of-art MPI verifiers over a set of benchmark programs. The comparison shows that the new approach scales to large benchmark programs while other tools time out.
 \end{itemize}

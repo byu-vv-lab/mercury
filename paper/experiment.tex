@@ -101,13 +101,13 @@ The experiments are run on a AMD A8 Quad Core processor with 6 GB of memory runn
 \end{table*}
 \end{savenotes}
 
-The results of the comparison are in \tableref{table:benchmarks}. The column ``Match" records the approximated number of match possibilities. A program with a large number of match possibilities has a large degree of message non-determinism. The column ``Deadlock" indicates the existence of deadlocks. The column ``PT" is the number of pattern instances that the algorithm in this paper detects. The column ``PTR" is the number of pattern instances that are pruned by the approach in this paper. The column ``D" indicates whether the tool detects a deadlock or not. The ``Time" column for our approach is the time of static analysis and constraint solving (if necessary). The ``Time" column of MOPPER is for constraint generation and solving. The column ``Time" for ISP is the running time of dynamic analysis. 
+The results of the comparison are in \tableref{table:benchmarks}. The column ``Match" records the approximated number of match possibilities. A program with a large number of match possibilities has a large degree of message non-determinism. The column ``Deadlock" indicates the existence of deadlocks. The column ``PT" is the number of pattern instances that the algorithm in this paper detects. The column ``PTR" is the number of pattern instances that are pruned by the approach in this paper. The column ``D" indicates whether the tool detects a deadlock or not. The ``Time" column for the approach in this paper is the time of static analysis and constraint solving (if necessary). The ``Time" column of MOPPER is for constraint generation and solving. The column ``Time" for ISP is the running time of dynamic analysis. 
 
 %The meaning of the symbol ``--" is ``unavailable": either the test is not interesting for comparison or the error is detected in preprocessing.
  
 %\begin{compactitem}
 
-\textit{dlg1, dlg5 and dlg8} implement simple message communication \cite{DBLP:conf/fm/ForejtKNS14}. Each contains a deadlock for mismatched send and receive pattern. 
+\textit{dlg1, dlg5 and dlg8} implement simple message communications \cite{DBLP:conf/fm/ForejtKNS14}. Each contains a deadlock for the orphaned receive pattern. 
 
 \textit{Monte} implements the Monte Carlo method to compute $\pi$ \cite{benchmark:mentoCarlo}. It uses one manger process and multiple worker processes to send messages back and forth. In addition, barrier operations are used to synchronize the program. 
 
@@ -123,9 +123,9 @@ The results of the comparison are in \tableref{table:benchmarks}. The column ``M
 
 \textit{GE} is a message passing implementation for Gaussian Elimination  \cite{DBLP:conf/ppopp/XueLWGCZZV09}. Messages are communicated by issuing several wildcard receives on each node. 
 
-\textit{Mismatch} implements the message communication that contains a set of mismatched send and receive pattern. 
+\textit{Mismatch} implements the message communication that contains a set of the orphaned receive pattern. 
 
-\textit{Circular} implements the message communication that contains a deadlock for circular dependency pattern.
+\textit{Circular} implements the message communication that contains a deadlock for the circular dependency pattern.
 
 %\end{compactitem}
 
@@ -133,5 +133,3 @@ The results show that the algorithm in this paper is highly efficient compared t
 For the large benchmark programs with deadlocks, the approach in this paper remains faster than other tools, even though the higher cost SMT encoding is used this time. 
 Also, the approach in this paper is able to prune massive number of non-feasible pattern instances. For example, the program $\mathit{Circular}$ prunes about 132K non-feasible pattern instances and detects a real deadlock. 
 
-As a note, the approach in this paper does not detect any deadlock for patterns other than the circular dependency and the orphaned receive in the experiments. 
-However, the results show that all the deadlocks in the benchmark programs are detected by the approach in this paper. Based on this observation, it is believed that most deadlocks are caused by either the circular dependency or the orphaned receive.   
