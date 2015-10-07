@@ -4,10 +4,10 @@ apply plugin: 'antlr'
 project.ext.set('libsDir', 'lib')
 
 repositories {
-    mavenCentral()
     flatDir {
         dirs project.libsDir
     }
+    mavenCentral()
 }
 
 dependencies {
