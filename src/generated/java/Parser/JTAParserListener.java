@@ -1,4 +1,4 @@
-// Generated from /Users/joshuata/code/research/ppopp16/src/main/antlr/JTAParser.g4 by ANTLR 4.5
+// Generated from JTAParser.g4 by ANTLR 4.5
 
 package Parser;
 

@@ -1,4 +1,4 @@
-// Generated from /Users/joshuata/code/research/ppopp16/src/main/antlr/JTAParser.g4 by ANTLR 4.5
+// Generated from JTAParser.g4 by ANTLR 4.5
 
 package Parser;
 
@@ -19,8 +19,8 @@ public class JTAParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		Thread=1, Read=2, Mutate=3, Recv=4, Send=5, Wait=6, Identifier=7, Space=8, 
-		LineBreak=9, Number=10, Digit=11;
+		Comment=1, Thread=2, Read=3, Mutate=4, Recv=5, Send=6, Wait=7, Identifier=8, 
+		Space=9, LineBreak=10, Number=11, Digit=12;
 	public static final int
 		RULE_program = 0, RULE_thread = 1, RULE_operation = 2, RULE_mutate = 3, 
 		RULE_read = 4, RULE_receive = 5, RULE_send = 6, RULE_block = 7;
@@ -32,7 +32,7 @@ public class JTAParser extends Parser {
 	private static final String[] _LITERAL_NAMES = {
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, "Thread", "Read", "Mutate", "Recv", "Send", "Wait", "Identifier", 
+		null, "Comment", "Thread", "Read", "Mutate", "Recv", "Send", "Wait", "Identifier", 
 		"Space", "LineBreak", "Number", "Digit"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
@@ -669,7 +669,7 @@ public class JTAParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\rl\4\2\t\2\4\3\t"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\16l\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\6\2\24\n\2\r\2"+
 		"\16\2\25\3\2\3\2\3\3\3\3\6\3\34\n\3\r\3\16\3\35\3\3\3\3\3\3\7\3#\n\3\f"+
 		"\3\16\3&\13\3\3\3\7\3)\n\3\f\3\16\3,\13\3\3\4\3\4\3\4\3\4\3\4\5\4\63\n"+
@@ -680,22 +680,22 @@ public class JTAParser extends Parser {
 		"\2s\2\23\3\2\2\2\4\31\3\2\2\2\6\62\3\2\2\2\b\67\3\2\2\2\n?\3\2\2\2\fG"+
 		"\3\2\2\2\16U\3\2\2\2\20c\3\2\2\2\22\24\5\4\3\2\23\22\3\2\2\2\24\25\3\2"+
 		"\2\2\25\23\3\2\2\2\25\26\3\2\2\2\26\27\3\2\2\2\27\30\7\2\2\3\30\3\3\2"+
-		"\2\2\31\33\7\3\2\2\32\34\7\n\2\2\33\32\3\2\2\2\34\35\3\2\2\2\35\33\3\2"+
-		"\2\2\35\36\3\2\2\2\36\37\3\2\2\2\37 \7\t\2\2 $\7\13\2\2!#\5\6\4\2\"!\3"+
-		"\2\2\2#&\3\2\2\2$\"\3\2\2\2$%\3\2\2\2%*\3\2\2\2&$\3\2\2\2\')\7\13\2\2"+
+		"\2\2\31\33\7\4\2\2\32\34\7\13\2\2\33\32\3\2\2\2\34\35\3\2\2\2\35\33\3"+
+		"\2\2\2\35\36\3\2\2\2\36\37\3\2\2\2\37 \7\n\2\2 $\7\f\2\2!#\5\6\4\2\"!"+
+		"\3\2\2\2#&\3\2\2\2$\"\3\2\2\2$%\3\2\2\2%*\3\2\2\2&$\3\2\2\2\')\7\f\2\2"+
 		"(\'\3\2\2\2),\3\2\2\2*(\3\2\2\2*+\3\2\2\2+\5\3\2\2\2,*\3\2\2\2-\63\5\b"+
 		"\5\2.\63\5\n\6\2/\63\5\f\7\2\60\63\5\16\b\2\61\63\5\20\t\2\62-\3\2\2\2"+
 		"\62.\3\2\2\2\62/\3\2\2\2\62\60\3\2\2\2\62\61\3\2\2\2\63\65\3\2\2\2\64"+
-		"\66\7\13\2\2\65\64\3\2\2\2\65\66\3\2\2\2\66\7\3\2\2\2\679\7\5\2\28:\7"+
-		"\n\2\298\3\2\2\2:;\3\2\2\2;9\3\2\2\2;<\3\2\2\2<=\3\2\2\2=>\7\t\2\2>\t"+
-		"\3\2\2\2?A\7\4\2\2@B\7\n\2\2A@\3\2\2\2BC\3\2\2\2CA\3\2\2\2CD\3\2\2\2D"+
-		"E\3\2\2\2EF\7\t\2\2F\13\3\2\2\2GI\7\6\2\2HJ\7\n\2\2IH\3\2\2\2JK\3\2\2"+
-		"\2KI\3\2\2\2KL\3\2\2\2LM\3\2\2\2MO\7\t\2\2NP\7\n\2\2ON\3\2\2\2PQ\3\2\2"+
-		"\2QO\3\2\2\2QR\3\2\2\2RS\3\2\2\2ST\7\t\2\2T\r\3\2\2\2UW\7\7\2\2VX\7\n"+
-		"\2\2WV\3\2\2\2XY\3\2\2\2YW\3\2\2\2YZ\3\2\2\2Z[\3\2\2\2[]\7\t\2\2\\^\7"+
-		"\n\2\2]\\\3\2\2\2^_\3\2\2\2_]\3\2\2\2_`\3\2\2\2`a\3\2\2\2ab\7\t\2\2b\17"+
-		"\3\2\2\2ce\7\b\2\2df\7\n\2\2ed\3\2\2\2fg\3\2\2\2ge\3\2\2\2gh\3\2\2\2h"+
-		"i\3\2\2\2ij\7\t\2\2j\21\3\2\2\2\17\25\35$*\62\65;CKQY_g";
+		"\66\7\f\2\2\65\64\3\2\2\2\65\66\3\2\2\2\66\7\3\2\2\2\679\7\6\2\28:\7\13"+
+		"\2\298\3\2\2\2:;\3\2\2\2;9\3\2\2\2;<\3\2\2\2<=\3\2\2\2=>\7\n\2\2>\t\3"+
+		"\2\2\2?A\7\5\2\2@B\7\13\2\2A@\3\2\2\2BC\3\2\2\2CA\3\2\2\2CD\3\2\2\2DE"+
+		"\3\2\2\2EF\7\n\2\2F\13\3\2\2\2GI\7\7\2\2HJ\7\13\2\2IH\3\2\2\2JK\3\2\2"+
+		"\2KI\3\2\2\2KL\3\2\2\2LM\3\2\2\2MO\7\n\2\2NP\7\13\2\2ON\3\2\2\2PQ\3\2"+
+		"\2\2QO\3\2\2\2QR\3\2\2\2RS\3\2\2\2ST\7\n\2\2T\r\3\2\2\2UW\7\b\2\2VX\7"+
+		"\13\2\2WV\3\2\2\2XY\3\2\2\2YW\3\2\2\2YZ\3\2\2\2Z[\3\2\2\2[]\7\n\2\2\\"+
+		"^\7\13\2\2]\\\3\2\2\2^_\3\2\2\2_]\3\2\2\2_`\3\2\2\2`a\3\2\2\2ab\7\n\2"+
+		"\2b\17\3\2\2\2ce\7\t\2\2df\7\13\2\2ed\3\2\2\2fg\3\2\2\2ge\3\2\2\2gh\3"+
+		"\2\2\2hi\3\2\2\2ij\7\n\2\2j\21\3\2\2\2\17\25\35$*\62\65;CKQY_g";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
