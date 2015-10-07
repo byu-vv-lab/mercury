@@ -69,18 +69,17 @@ public class UnmatchedEndpointFinder extends AbstractFinder {
                         // --------------------
                         // <R(1)>          ...
 
-                        Encoder encoder = new UnmatchedEndpointEncoder(stepper, pattern, lastrInShape, lastsInShape, pattern_match, match_table);
+                        Encoder encoder = new UnmatchedEndpointEncoder(stepper,
+                                pattern,
+                                lastrInShape,
+                                lastsInShape,
+                                matchGenerator.getPattern_match(),
+                                matchGenerator.getMatch_table());
 
                         encoder.encodeProgram();
                         //encoder.solver.displayFormulas();
                         Model model = encoder.isSatisfiable();
                         if(model != null) {
-                            //System.out.println("[SAT] Witness Example:\n" + model);
-//                            System.out.println("Verification ends for this program!");
-//                            System.out.println(count);
-//                            if(endtime == 0)
-//                                endtime = System.currentTimeMillis();
-                            //continue to check even when a deadlock is found
                             log = "Found deadlock";
                             return (result = false);
                         }
