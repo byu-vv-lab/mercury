@@ -21,7 +21,6 @@ test {
     useJUnit {
         excludeCategories 'Categories.Benchmark','Categories.Regression'
     }
-    testLogging.showStandardStreams = true
     systemProperty 'java.library.path', project.libsDir
 }
 
@@ -36,5 +35,10 @@ task regression(type: Test) {
     useJUnit {
         includeCategories 'Categories.Regression'
     }
+    systemProperty 'java.library.path', project.libsDir
+}
+
+task testAll(type: Test) {
+    useJUnit {}
     systemProperty 'java.library.path', project.libsDir
 }

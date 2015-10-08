@@ -19,26 +19,44 @@ public class RegressionTests {
     // TODO: The MatG* tests loop
 //    @Test
     public void MatG3() throws Exception {
+        boolean actual, expected;
         URL file = BenchmarkTests.class.getResource("matg3.jta");
         Program program = ProgramParser.loadProgramFromFile(file);
         AbstractFinder finder = new UmEPFinder(program);
-        assertTrue(finder.verify());
+        assertTrue(actual = finder.verify());
+
+        Syntax.Program old = ProgramFactory.MatG3();
+        UnmatchedEP_Finder old_finder = new UnmatchedEP_Finder(old);
+        assertTrue(expected = old_finder.run());
+        assertEquals(actual, expected);
     }
 
 //    @Test
     public void MatG4() throws Exception {
+        boolean actual, expected;
         URL file = BenchmarkTests.class.getResource("matg4.jta");
         Program program = ProgramParser.loadProgramFromFile(file);
         AbstractFinder finder = new UmEPFinder(program);
-        assertTrue(finder.verify());
+        assertTrue(actual = finder.verify());
+
+        Syntax.Program old = ProgramFactory.MatG4();
+        UnmatchedEP_Finder old_finder = new UnmatchedEP_Finder(old);
+        assertTrue(expected = old_finder.run());
+        assertEquals(actual, expected);
     }
 
 //    @Test
     public void MatG10() throws Exception {
+        boolean actual, expected;
         URL file = BenchmarkTests.class.getResource("matg10.jta");
         Program program = ProgramParser.loadProgramFromFile(file);
         AbstractFinder finder = new UmEPFinder(program);
-        assertTrue(finder.verify());
+        assertTrue(actual = finder.verify());
+
+        Syntax.Program old = ProgramFactory.MatG10();
+        UnmatchedEP_Finder old_finder = new UnmatchedEP_Finder(old);
+        assertTrue(expected = old_finder.run());
+        assertEquals(actual, expected);
     }
 
     @Test
@@ -465,7 +483,7 @@ public class RegressionTests {
     }
 
     // TODO: Null Pointer Exception under old code
-//    @Test
+    @Test
     public void integrate_16core() throws Exception {
         boolean actual, expected;
         URL file = BenchmarkTests.class.getResource("integrate_10core.jta");
@@ -480,7 +498,7 @@ public class RegressionTests {
     }
 
     // TODO: Null Pointer Exception under old code
-//    @Test
+    @Test
     public void integrate_16core_mismatch() throws Exception {
         boolean actual, expected;
         URL file = BenchmarkTests.class.getResource("integrate_10core.jta");
