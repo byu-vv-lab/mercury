@@ -22,7 +22,6 @@ repositories {
 
 dependencies {
     compile name: 'com.microsoft.z3'
-    runtime group: 'org.antlr', name: 'antlr4-runtime', version: '4.5'
     antlr group: 'org.antlr', name: 'antlr4', version: '4.5'
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }
@@ -49,6 +48,5 @@ task regression(type: Test) {
 }
 
 task testAll(type: Test) {
-    useJUnit {}
     systemProperty 'java.library.path', project.libsDir
 }
