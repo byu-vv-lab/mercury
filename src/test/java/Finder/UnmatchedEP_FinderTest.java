@@ -7,13 +7,15 @@ import Syntax.Process;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Category(Categories.Regression.class)
+import static org.junit.Assert.*;
+
+@Category(Categories.Finder.class)
 public class UnmatchedEP_FinderTest {
 
     @Test
     public void testRun1() throws Exception {
         Program program;
-        Process process0,process1,process2;
+        Process process0,process1;
         UnmatchedEP_Finder finder1;
         //test case 1
         //R(*)    S(0)
@@ -34,7 +36,7 @@ public class UnmatchedEP_FinderTest {
                 true, null));
         finder1 = new UnmatchedEP_Finder(program);
 
-        finder1.run();
+        assertTrue(finder1.run());
     }
 
 
@@ -42,7 +44,6 @@ public class UnmatchedEP_FinderTest {
     public void testRun2() throws Exception {
         Program program;
         Process process0, process1, process2;
-        UnmatchedEP_Finder finder1;
 
         program = new Program(true);
         process0 = new Process(0);
@@ -60,9 +61,9 @@ public class UnmatchedEP_FinderTest {
                 true, null));
         process2.add(new Send(process2.getRank() + "_" + 0, process1,1, 2, 0, null, 3,
                 true, null));
-        finder1 = new UnmatchedEP_Finder(program);
 
-        finder1.run();
+        UnmatchedEP_Finder finder1 = new UnmatchedEP_Finder(program);
+        assertFalse(finder1.run());
     }
 
 
@@ -70,7 +71,6 @@ public class UnmatchedEP_FinderTest {
     public void testRun3() throws Exception {
         Program program;
         Process process0, process1, process2;
-        UnmatchedEP_Finder finder1;
 
         program = new Program(true);
         process0 = new Process(0);
@@ -91,8 +91,7 @@ public class UnmatchedEP_FinderTest {
                 true, null));
         process2.add(new Send(process2.getRank() + "_" + 0, process2,0, 2, 0, null, 4,
                 true, null));
-        finder1 = new UnmatchedEP_Finder(program);
-
-        finder1.run();
+        UnmatchedEP_Finder finder1 = new UnmatchedEP_Finder(program);
+        assertTrue(finder1.run());
     }
 }

@@ -159,7 +159,7 @@ public class UnmatchedEP_Finder {
 							if(endtime == 0)
 								endtime = System.currentTimeMillis();
 							//continue to check even when a deadlock is found
-							//return;
+							return false;
 						}
 						else {
 							System.out.println("[UNSAT]:No deadlock is found for pattern: ["
