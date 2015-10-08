@@ -29,7 +29,7 @@ Thread 6
 Send	7	1
 Recv	-1	6
 
-Thead 7
+Thread 7
 Recv	-1	7
 Send	0	1
 Recv	-1	7

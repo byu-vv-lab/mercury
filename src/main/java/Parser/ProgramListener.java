@@ -1,15 +1,22 @@
 package Parser;
 
-
+import Parser.JTAParserBaseListener;
+import Parser.JTAParser;
 import JTASyntax.Operation;
 import JTASyntax.Program;
 import JTASyntax.Receive;
 import JTASyntax.Send;
+import org.antlr.v4.runtime.tree.ErrorNode;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProgramListener extends JTAParserBaseListener {
+    @Override
+    public void visitErrorNode(ErrorNode node) {
+        System.out.println("Error in syntax: " + node.toString());
+        throw new RuntimeException("Error in syntax: " + node.toString());
+    }
 
     private ProgramBuilder programBuilder;
     private ProcessBuilder processBuilder;

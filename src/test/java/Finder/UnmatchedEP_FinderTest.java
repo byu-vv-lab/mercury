@@ -9,7 +9,7 @@ import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.*;
 
-@Category(Categories.Finder.class)
+@Category({Categories.Finder.class, Categories.Regression.class})
 public class UnmatchedEP_FinderTest {
 
     @Test

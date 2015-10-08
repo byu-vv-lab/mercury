@@ -4,7 +4,7 @@ lexer grammar JTALexer;
 package Parser;
 }
 
-Comment    : '//' .*? LineBreak -> channel(HIDDEN);
+Comment    : '//' .*? LineBreak+ -> channel(HIDDEN);
 Thread     : ('Thread' | 'thread');
 Read       : ('Read' | 'read');
 Mutate     : ('Mutate' | 'mutate');

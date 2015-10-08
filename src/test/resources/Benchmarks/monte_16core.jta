@@ -3,7 +3,7 @@ Send	15	1
 Recv	-1	0
 Send	15	1
 
-Thead 1
+Thread 1
 Send	15	1
 Recv	-1	1
 
