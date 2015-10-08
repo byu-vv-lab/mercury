@@ -1,4 +1,4 @@
-package JTAFinder;
+package JTASyntax;
 
 import JTASyntax.Operation;
 

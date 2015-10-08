@@ -1,7 +1,7 @@
 package Finder;
 
 import JTAFinder.AbstractFinder;
-import JTAFinder.UnmatchedEndpointFinder;
+import JTAFinder.UnmatchedEndpoint.UmEPFinder;
 import JTASyntax.Program;
 import Parser.ProgramParser;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class UnmatchedEndpointFinderTest {
         URL test = UnmatchedEndpointFinderTest.class.getResource("umep1.jta");
         Program p = ProgramParser.loadProgramFromFile(test);
 
-        AbstractFinder finder = new UnmatchedEndpointFinder(p);
+        AbstractFinder finder = new UmEPFinder(p);
         finder.verify();
         assertTrue(finder.getResult());
     }
@@ -29,7 +29,7 @@ public class UnmatchedEndpointFinderTest {
         URL test = UnmatchedEndpointFinderTest.class.getResource("umep2.jta");
         Program p = ProgramParser.loadProgramFromFile(test);
 
-        AbstractFinder finder = new UnmatchedEndpointFinder(p);
+        AbstractFinder finder = new UmEPFinder(p);
         finder.verify();
         assertFalse(finder.getResult());
     }
@@ -39,7 +39,7 @@ public class UnmatchedEndpointFinderTest {
         URL test = UnmatchedEndpointFinderTest.class.getResource("umep3.jta");
         Program p = ProgramParser.loadProgramFromFile(test);
 
-        AbstractFinder finder = new UnmatchedEndpointFinder(p);
+        AbstractFinder finder = new UmEPFinder(p);
         finder.verify();
         assertTrue(finder.getResult());
     }

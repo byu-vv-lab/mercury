@@ -1,7 +1,7 @@
 package Benchmarks;
 
 import JTAFinder.AbstractFinder;
-import JTAFinder.UnmatchedEndpointFinder;
+import JTAFinder.UnmatchedEndpoint.UmEPFinder;
 import JTASyntax.Program;
 import Parser.ProgramParser;
 import org.junit.Test;
@@ -127,7 +127,7 @@ public class BenchmarkTest {
     public void monte_8core_mismatch() throws IOException {
         URL file = BenchmarkTest.class.getResource("monte_8core_mismatch.jta");
         Program program = ProgramParser.loadProgramFromFile(file);
-        AbstractFinder finder = new UnmatchedEndpointFinder(program);
+        AbstractFinder finder = new UmEPFinder(program);
         assertFalse(finder.verify());
     }
 

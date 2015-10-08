@@ -1,15 +1,17 @@
-package JTAFinder;
+package JTAFinder.UnmatchedEndpoint;
 
-import JTAFinder.Patterns.UnmatchedEndpoint;
+import JTAFinder.AbstractEncoder;
+import JTAFinder.AbstractFinder;
+import JTAFinder.ProgramStepper;
 import JTASyntax.*;
 import JTASyntax.Process;
 import com.microsoft.z3.Model;
 
 import java.util.*;
 
-public class UnmatchedEndpointFinder extends AbstractFinder {
+public class UmEPFinder extends AbstractFinder {
 
-    public UnmatchedEndpointFinder(Program program) {
+    public UmEPFinder(Program program) {
         super(program);
     }
 
@@ -69,7 +71,7 @@ public class UnmatchedEndpointFinder extends AbstractFinder {
                         // --------------------
                         // <R(1)>          ...
 
-                        Encoder encoder = new UnmatchedEndpointEncoder(stepper,
+                        AbstractEncoder encoder = new UmEPEncoder(stepper,
                                 pattern,
                                 lastrInShape,
                                 lastsInShape,
@@ -77,10 +79,11 @@ public class UnmatchedEndpointFinder extends AbstractFinder {
                                 matchGenerator.getMatch_table());
 
                         encoder.encodeProgram();
-                        //encoder.solver.displayFormulas();
+//                        encoder.solver.displayFormulas();
                         Model model = encoder.isSatisfiable();
                         if(model != null) {
                             log = "Found deadlock";
+//                            System.out.println(model.toString());
                             return (result = false);
                         }
                         else {

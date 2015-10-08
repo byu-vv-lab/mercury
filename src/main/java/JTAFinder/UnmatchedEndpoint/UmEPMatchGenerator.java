@@ -1,4 +1,4 @@
-package JTAFinder;
+package JTAFinder.UnmatchedEndpoint;
 
 import JTASyntax.Program;
 import JTASyntax.Receive;
@@ -6,30 +6,15 @@ import JTASyntax.Send;
 
 import java.util.*;
 
-/**
- * Created by joshuata on 10/6/15.
- */
-public class MatchGenerator {
+public class UmEPMatchGenerator {
 
     private final Program program;
-    private final List<Receive>[] recvlist;
-    private final List<Send>[][] sendlist;
     private final Map<Receive, List<Send>> match_table = new HashMap<>();
     private final Map<Send, List<Receive>> pattern_match = new HashMap<>();
 
-    public MatchGenerator(Program program) {
+    public UmEPMatchGenerator(Program program) {
         this.program = program;
-        recvlist = new ArrayList[program.size()];
-        sendlist = new ArrayList[program.size()][program.size()];
         generateMatch();
-    }
-
-    public List<Receive>[] getRecvlist () {
-        return recvlist;
-    }
-
-    public List<Send>[][] getSendlist () {
-        return sendlist;
     }
 
     public Map<Receive, List<Send>> getMatch_table () {
@@ -41,6 +26,9 @@ public class MatchGenerator {
     }
 
     public void generateMatch() {
+        List<Receive>[] recvlist = new ArrayList[program.size()];
+        List<Send>[][] sendlist = new ArrayList[program.size()][program.size()];
+
         //store the rlist and slist of each process
         for (JTASyntax.Process process : program) {
             recvlist[process.rank] = new ArrayList<>(process.rlist);

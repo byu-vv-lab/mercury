@@ -1,4 +1,4 @@
-package JTAFinder.Patterns;
+package JTAFinder.UnmatchedEndpoint;
 
 import JTASyntax.*;
 import JTASyntax.Process;

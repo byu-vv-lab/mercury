@@ -1,6 +1,6 @@
 package JTAFinder;
 
-import JTAFinder.Patterns.UnmatchedEndpoint;
+import JTAFinder.UnmatchedEndpoint.UnmatchedEndpoint;
 import JTASyntax.*;
 import JTASyntax.Process;
 
@@ -10,11 +10,11 @@ import java.util.Map;
 import java.util.Set;
 
 public class ProgramStepper implements Iterable<Process> {
-    final Program program;
+    protected final Program program;
     private final Map<Process, Integer> blockMap;
     private final Map<Process, Integer> currentMap;
 
-    ProgramStepper (Program program) {
+    public ProgramStepper (Program program) {
         this.program = program;
         blockMap = new HashMap<>();
         currentMap = new HashMap<>();

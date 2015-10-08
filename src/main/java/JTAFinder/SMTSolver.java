@@ -1,6 +1,9 @@
 package JTAFinder;
 
+import JTASyntax.Receive;
 import com.microsoft.z3.*;
+
+import java.util.Collection;
 
 public class SMTSolver {
 
@@ -20,17 +23,23 @@ public class SMTSolver {
         solver = context.MkSolver();
         intsort = context.IntSort();
         Recv = context.MkTupleSort(context.MkSymbol("Recv"),
-                new Symbol[] {context.MkSymbol("src"), context.MkSymbol("dest"), context.MkSymbol("time"),
+                new Symbol[] {
+                        context.MkSymbol("src"),context.MkSymbol("dest"), context.MkSymbol("time"),
                         context.MkSymbol("match"), context.MkSymbol("var"), context.MkSymbol("nw") },
                 new Sort[]{ intsort, intsort, intsort, intsort, intsort, intsort});
         Send = context.MkTupleSort(context.MkSymbol("Send"),
                 new Symbol[] { context.MkSymbol("src"), context.MkSymbol("dest"), context.MkSymbol("time"),
                         context.MkSymbol("match"), context.MkSymbol("value") },
-                new Sort[] { intsort, intsort,intsort,intsort,intsort});
+                new Sort[] { intsort, intsort,intsort,intsort,intsort });
     }
 
     public BoolExpr mkOr(BoolExpr a, BoolExpr b) throws Z3Exception {
         return context.MkOr(new BoolExpr[]{a,b});
+    }
+
+    public BoolExpr mkOr(Collection<BoolExpr> exprs) throws Z3Exception {
+        BoolExpr[] exprArray = new BoolExpr[exprs.size()];
+        return context.MkOr(exprs.toArray(exprArray));
     }
 
     public Expr getRecvField(Expr recv, int index) throws Z3Exception {
@@ -40,7 +49,6 @@ public class SMTSolver {
     public Expr getSendField( Expr send, int index) throws Z3Exception {
         return context.MkApp(Send.FieldDecls()[index], send);
     }
-
 
     public BoolExpr Match(Expr r, Expr s) throws Z3Exception {
         BoolExpr cond = context.MkAnd(new BoolExpr[]{
@@ -89,7 +97,7 @@ public class SMTSolver {
         return q;
     }
 
-    public IntExpr MkTime( String event) throws Z3Exception {
+    public IntExpr MkTime(String event) throws Z3Exception {
         return context.MkIntConst(event);
     }
 
@@ -108,47 +116,53 @@ public class SMTSolver {
                 null,null);
     }
 
-    public Expr mkSend( String name) throws Z3Exception {
+    public Expr mkSend(String name) throws Z3Exception {
         Expr sExpr = context.MkConst(name, Send);
         if(display)
             System.out.println(sExpr);
         return sExpr;
     }
 
-    public BoolExpr initSend( Expr send, int src, int dest, IntExpr time, int value) throws Z3Exception {
-        BoolExpr sDf = context.MkAnd(new BoolExpr[]{context.MkEq(getSendField(send,0), context.MkInt(src)),
-                context.MkEq(getSendField(send,1), context.MkInt(dest)),
-                context.MkEq(getSendField(send,4), context.MkInt(value)),
-                context.MkEq(getSendField(send,2), time)
+    public BoolExpr initSend(Expr expr, IntExpr time, JTASyntax.Send send) throws Z3Exception {
+        BoolExpr sDf = context.MkAnd(
+                new BoolExpr[]{
+                        context.MkEq(getSendField(expr,0), context.MkInt(send.src)),
+                        context.MkEq(getSendField(expr,1), context.MkInt(send.dest)),
+                        context.MkEq(getSendField(expr,4), context.MkInt(send.value)),
+                        context.MkEq(getSendField(expr,2), time)
         });
-		if(display)
-			System.out.println(sDf);
+        if(display)
+            System.out.println(sDf);
         return sDf;
     }
 
-    public Expr mkRecv( String name) throws Z3Exception {
+    public Expr mkRecv(String name) throws Z3Exception {
         Expr rExpr = context.MkConst(name, Recv);
         if(display)
             System.out.println(rExpr);
         return rExpr;
     }
 
-    public BoolExpr initRecv( Expr recv, int src, int dest, IntExpr time, IntExpr var, IntExpr nw) throws Z3Exception {
+    public BoolExpr initRecv(Expr expr, IntExpr time, IntExpr var, IntExpr nw, Receive recv) throws Z3Exception {
         BoolExpr rDf;
         if(nw != null)
-            rDf = context.MkAnd(new BoolExpr[]{context.MkEq(getRecvField(recv,0), context.MkInt(src)),
-                    context.MkEq(getRecvField(recv,1), context.MkInt(dest)),
-                    context.MkEq(getRecvField(recv,4), var),
-                    context.MkEq(getRecvField(recv,5), nw),
-                    context.MkEq(getRecvField(recv,2), time)
+            rDf = context.MkAnd(
+                    new BoolExpr[]{
+                            context.MkEq(getRecvField(expr,0), context.MkInt(recv.src)),
+                            context.MkEq(getRecvField(expr,1), context.MkInt(recv.dest)),
+                            context.MkEq(getRecvField(expr,4), var),
+                            context.MkEq(getRecvField(expr,5), nw),
+                            context.MkEq(getRecvField(expr,2), time)
             });
-        else rDf = context.MkAnd(new BoolExpr[]{context.MkEq(getRecvField(recv,0), context.MkInt(src)),
-                context.MkEq(getRecvField(recv,1), context.MkInt(dest)),
-                context.MkEq(getRecvField(recv,4), var),
-                context.MkEq(getRecvField(recv,2), time)
+        else rDf = context.MkAnd(
+                new BoolExpr[]{
+                        context.MkEq(getRecvField(expr,0), context.MkInt(recv.src)),
+                        context.MkEq(getRecvField(expr,1), context.MkInt(recv.dest)),
+                        context.MkEq(getRecvField(expr,4), var),
+                        context.MkEq(getRecvField(expr,2), time)
         });
-		if(display)
-			System.out.println(rDf);
+        if(display)
+            System.out.println(rDf);
         return rDf;
     }
 
