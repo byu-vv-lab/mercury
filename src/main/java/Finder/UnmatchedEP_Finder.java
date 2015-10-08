@@ -74,7 +74,7 @@ public class UnmatchedEP_Finder {
 		{
 			//report no deadlock for unmatched ep pattern
 			System.out.printf("No deadlock is found for unmatched Endpoint patterns!\n");
-			return false;
+			return true;
 		}
 		else
 		{
