@@ -4,8 +4,6 @@ import JTAFinder.AbstractFinder;
 import JTAFinder.UnmatchedEndpoint.UmEPFinder;
 import JTASyntax.Program;
 import Parser.ProgramParser;
-import Regression.ProgramFactory;
-import Regression.RegressionTests;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -15,8 +13,6 @@ import static org.junit.Assert.*;
 
 @Category(Categories.Benchmark.class)
 public class BenchmarkTests {
-
-    private static ProgramFactory factory = new ProgramFactory();
 
     // TODO: The MatG* tests loop
 //    @Test
@@ -300,4 +296,3 @@ public class BenchmarkTests {
     }
 
 }
-
