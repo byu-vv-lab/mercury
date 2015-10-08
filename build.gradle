@@ -1,7 +1,17 @@
 apply plugin: 'java'
 apply plugin: 'antlr'
+apply plugin: 'idea'
 
 project.ext.set('libsDir', 'lib')
+
+idea {
+    module {
+        excludeDirs = [file(".gradle")]
+        ["classes", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
+            excludeDirs << file("$buildDir/$it")
+        }
+    }
+}
 
 repositories {
     flatDir {

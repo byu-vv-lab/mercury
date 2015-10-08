@@ -77,3 +77,5 @@ gradle-app.setting
 .idea/tasks.xml
 .idea/dictionaries
 *.iml
+*.ipr
+*.iws
