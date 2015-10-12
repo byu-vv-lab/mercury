@@ -185,12 +185,11 @@ public class Encoder
 			BoolExpr a = null;
 			BoolExpr b = null;
 			
-			continuepoint1:
 			for(Send s : match_table.get(r))
 			{
 				//only encode match when s is in shape
 				if(s.rank > lastsInShape[s.dest][s.src])
-					continue continuepoint1;
+					continue;
 				Expr sExpr = operation_expr_map.get(s).getFirst();
 //				IntExpr sTime = operation_expr_map.get(s).getSecond();
 				if(rExpr != null && sExpr != null)//should not be null

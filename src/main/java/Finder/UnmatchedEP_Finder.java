@@ -68,12 +68,12 @@ public class UnmatchedEP_Finder {
 	{
 		Object[] patterns =  program.getUnmatchedEP_Pattern().toArray();
 		//Iterator<UnmatchedEP_Pattern> it = patterns.iterator();
-		System.out.println("mismatched send-receive patterns: " + patterns.length);
+//		System.out.println("mismatched send-receive patterns: " + patterns.length);
 		
 		if(patterns.length == 0)
 		{
 			//report no deadlock for unmatched ep pattern
-			System.out.printf("No deadlock is found for unmatched Endpoint patterns!\n");
+//			System.out.printf("No deadlock is found for unmatched Endpoint patterns!\n");
 			return true;
 		}
 		else
@@ -86,7 +86,7 @@ public class UnmatchedEP_Finder {
 		Random rn = new Random();
 		//int start = (patterns.length == 0) ? 0 : rn.nextInt(patterns.length);
 		int start = 0;
-		System.out.println("start = " + start);
+//		System.out.println("start = " + start);
 		for(int s = start; s< patterns.length + start; s++)
 		{
 			UnmatchedEP_Pattern pattern = (UnmatchedEP_Pattern)patterns[s%patterns.length];
@@ -154,16 +154,16 @@ public class UnmatchedEP_Finder {
 						Model model = encoder.solver.Check(Status.SATISFIABLE);
 						if(model != null) {
 							//System.out.println("[SAT] Witness Example:\n" + model);
-							System.out.println("Verification ends for this program!");
-							System.out.println(count);
+//							System.out.println("Verification ends for this program!");
+//							System.out.println(count);
 							if(endtime == 0)
 								endtime = System.currentTimeMillis();
 							//continue to check even when a deadlock is found
 							return false;
 						}
 						else {
-							System.out.println("[UNSAT]:No deadlock is found for pattern: ["
-									+ pattern.determinstic.toString() + "]");
+//							System.out.println("[UNSAT]:No deadlock is found for pattern: ["
+//									+ pattern.determinstic.toString() + "]");
 						}
 						//System.out.printf("May Deadlock!\n");
 						//System.exit(0);
@@ -247,7 +247,7 @@ public class UnmatchedEP_Finder {
 						return true;
 					if(checkAvailable(rv))
 					{
-						System.out.println(rv);
+//						System.out.println(rv);
 						return true;
 					}
 				}
@@ -280,8 +280,8 @@ public class UnmatchedEP_Finder {
 			}
 		}
 		
-		System.out.printf("No deadlock is found for this pattern: (" 
-				 + pattern.determinstic.toString() + ")\n");
+//		System.out.printf("No deadlock is found for this pattern: ("
+//				 + pattern.determinstic.toString() + ")\n");
 		
 		//when false, is it a deadlock for the prefix?
 		return false;

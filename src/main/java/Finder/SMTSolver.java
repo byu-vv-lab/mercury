@@ -122,9 +122,9 @@ public class SMTSolver {
 //				solver.ctx.MkTrue()));
         solver.displayFormulas();
 		
-		System.out.println("Result ================");
+//		System.out.println("Result ================");
 		Model model = solver.Check(Status.SATISFIABLE);
-		System.out.println(model);
+//		System.out.println(model);
 		
 		//System.out.println("x = " + model.Evaluate(x, false) + ", y ="
               //  + model.Evaluate(y, false));
@@ -296,7 +296,7 @@ public class SMTSolver {
 		if (s.Check() != sat)
 		{
 //			throw new Exception("Check Failed!");
-			System.out.println("UNSAT!");
+//			System.out.println("UNSAT!");
 			return null;
 		}
 		if (sat == Status.SATISFIABLE)

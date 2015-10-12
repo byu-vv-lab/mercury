@@ -177,8 +177,11 @@ public class UmEPEncoder extends AbstractEncoder {
                     continue;
                 inner.add(new Match(send, receive));
             }
-            if (inner.size() > 0)
+            if (inner.size() > 0) {
                 results.add(inner);
+            } else {
+                throw new RuntimeException("No suitable match candidates");
+            }
         }
         for (Send send : pattern_match.keySet()) {
             if (send.dest != pattern.process.rank || send.src != pattern.deterministic.src
@@ -190,8 +193,11 @@ public class UmEPEncoder extends AbstractEncoder {
                     continue;
                 inner.add(new Match(send, receive));
             }
-            if (inner.size() > 0)
+            if (inner.size() > 0) {
                 results.add(inner);
+            } else {
+                throw new RuntimeException("No suitable match candidates");
+            }
         }
         return results;
     }
