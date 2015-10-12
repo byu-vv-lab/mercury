@@ -229,7 +229,9 @@ public class Encoder
 					b = (b!=null)?solver.mkOr(a, b):a;//make or for all matches for send s
 				}
 			}
-			solver.addFormula(b);
+			if (b != null) {
+				solver.addFormula(b);
+			}
 		}
 	}
 

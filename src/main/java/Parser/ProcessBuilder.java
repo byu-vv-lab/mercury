@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ProcessBuilder {
-    private int rank;
+    private int rank = 0;
 //    private int oprank = 0;
     private List<Operation> ops = new ArrayList<>();
 
