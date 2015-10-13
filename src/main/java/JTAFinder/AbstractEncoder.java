@@ -12,6 +12,7 @@ public abstract class AbstractEncoder {
     protected ProgramStepper program;
     protected SMTSolver solver;
     protected Map<Operation, Pair<Expr, IntExpr>> operation_expr_map = new HashMap<>();
+    protected Schedule schedule;
 
     public AbstractEncoder(ProgramStepper program) {
         this.program = program;
@@ -20,14 +21,17 @@ public abstract class AbstractEncoder {
 
     public Model isSatisfiable () {
         try {
-            return solver.Check(Status.SATISFIABLE);
+            Model model = solver.Check(Status.SATISFIABLE);
+            if (model != null)
+                schedule = this.getSchedule(model);
+            return model;
         } catch (Exception e) {
             return null;
         }
     }
 
-    public abstract Schedule getSchedule (Model model);
     public abstract boolean encodeProgram();
+    protected abstract Schedule getSchedule (Model model);
     protected abstract void encodeSend (Send op) throws Z3Exception;
     protected abstract void encodeReceive (Receive op) throws Z3Exception;
     protected abstract void encodeWait (Wait op) throws Z3Exception;

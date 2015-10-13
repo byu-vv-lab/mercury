@@ -45,7 +45,7 @@ public class UmEPEncoder extends AbstractEncoder {
     }
 
     @Override
-    public Schedule getSchedule(Model model) {
+    protected Schedule getSchedule(Model model) {
         Schedule schedule = new Schedule();
         try {
             for (Operation key : operation_expr_map.keySet()) {
