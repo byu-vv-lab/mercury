@@ -19,7 +19,7 @@ public class Send extends Operation {
 
     @Override
     public String toString() {
-        return "Send{" +
+        return "Send: {" +
                 "src=" + src +
                 ", dest=" + dest +
                 ", value=" + value +

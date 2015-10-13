@@ -10,7 +10,6 @@ import java.util.Map;
 public abstract class AbstractEncoder {
 
     protected ProgramStepper program;
-    protected Schedule schedule;
     protected SMTSolver solver;
     protected Map<Operation, Pair<Expr, IntExpr>> operation_expr_map = new HashMap<>();
 
@@ -27,10 +26,7 @@ public abstract class AbstractEncoder {
         }
     }
 
-    public Schedule getSchedule () {
-        return schedule;
-    }
-
+    public abstract Schedule getSchedule (Model model);
     public abstract boolean encodeProgram();
     protected abstract void encodeSend (Send op) throws Z3Exception;
     protected abstract void encodeReceive (Receive op) throws Z3Exception;

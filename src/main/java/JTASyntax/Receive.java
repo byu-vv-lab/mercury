@@ -24,11 +24,12 @@ public class Receive extends Operation {
 
     @Override
     public String toString() {
-        return "Recv{" +
+        return "Recv: {" +
                 "src=" + src +
                 ", dest=" + dest +
                 ", rank=" + rank +
                 ", isBlock=" + isBlock +
+                ", isWildcard=" + isWildcard +
                 '}';
     }
 

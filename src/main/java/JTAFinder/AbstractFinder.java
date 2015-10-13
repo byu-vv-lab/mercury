@@ -29,7 +29,7 @@ public abstract class AbstractFinder {
         return result;
     }
 
-    protected Schedule getSchedule() {
+    public Schedule getSchedule() {
         return schedule;
     }
 

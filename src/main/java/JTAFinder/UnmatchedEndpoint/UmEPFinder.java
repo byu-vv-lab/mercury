@@ -83,7 +83,7 @@ public class UmEPFinder extends AbstractFinder {
                         Model model = encoder.isSatisfiable();
                         if(model != null) {
                             log = "Found deadlock";
-//                            System.out.println(model.toString());
+                            this.schedule = encoder.getSchedule(model);
                             return (result = false);
                         }
                         else {

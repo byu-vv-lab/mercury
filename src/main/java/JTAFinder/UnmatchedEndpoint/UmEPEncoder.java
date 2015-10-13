@@ -2,13 +2,9 @@ package JTAFinder.UnmatchedEndpoint;
 
 import JTAFinder.AbstractEncoder;
 import JTAFinder.ProgramStepper;
-import JTAFinder.UnmatchedEndpoint.UnmatchedEndpoint;
 import JTASyntax.*;
 import JTASyntax.Process;
-import com.microsoft.z3.BoolExpr;
-import com.microsoft.z3.Expr;
-import com.microsoft.z3.IntExpr;
-import com.microsoft.z3.Z3Exception;
+import com.microsoft.z3.*;
 
 import java.util.*;
 
@@ -46,6 +42,23 @@ public class UmEPEncoder extends AbstractEncoder {
         this.match_table = match_table;
         lastwait = new Wait[program.size()];
         Arrays.fill(lastwait, null);
+    }
+
+    @Override
+    public Schedule getSchedule(Model model) {
+        Schedule schedule = new Schedule();
+        try {
+            for (Operation key : operation_expr_map.keySet()) {
+                Expr cont = model.ConstInterp(operation_expr_map.get(key).getSecond());
+                int time = Integer.parseInt(cont.toString());
+                key.order = time;
+                schedule.add(key);
+            }
+        } catch (Z3Exception e) {
+            e.printStackTrace();
+        }
+        Collections.sort(schedule);
+        return schedule;
     }
 
     @Override
