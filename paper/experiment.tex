@@ -1,11 +1,11 @@
 \section{Experiments}
-The experiments compare the performance of the approach in this paper with two state-of-art MPI verifiers including MOPPER \cite{DBLP:conf/fm/ForejtKNS14}, a SAT based tool, and ISP \cite{DBLP:conf/ppopp/VakkalankaSGK08,DBLP:conf/sbmf/SharmaGB12}, a dynamic analyzer. 
+The experiments compare the performance of the approach in this paper with two state-of-art MPI verifiers MOPPER \cite{DBLP:conf/fm/ForejtKNS14}, a SAT based tool, and ISP \cite{DBLP:conf/ppopp/VakkalankaSGK08,DBLP:conf/sbmf/SharmaGB12}, a dynamic analyzer. 
 
-MOPPER is designed to verify only single-path programs. 
+Similar to the approach in this paper, MOPPER is designed to verify only single-path programs. ISP can be applied to both single-path programs and programs with branching. Therefore, it is meaningful only when the benchmarks are single-path.
 %To compare with ISP, it is meaningful only when the benchmarks are single-path.   
-Therefore, a series of experiments are conducted for a set of single-path programs, including three small programs where each contains a deadlock, and seven typical benchmark programs. All the results show the comparison under infinite buffer semantics.  
+A series of experiments are conducted for a set of single-path programs, including three small programs where each contains a deadlock, and seven typical benchmark programs. All the results show the comparison under infinite buffer semantics.  
 %The computation is not included in each program because it is irrelevant to the problem of deadlock. 
-The experiments are run on a AMD A8 Quad Core processor with 6 GB of memory running Ubuntu 14.04 LTS. We set a time limit of 30 minutes for each test. We abort the verification process if it does not complete within the time limit. 
+The experiments are run on a AMD A8 Quad Core processor with 6 GB of memory running Ubuntu 14.04 LTS. A time limit of 30 minutes is set for each test. The test aborts the verification process if it does not complete within the time limit. 
 
 
 \begin{savenotes}
@@ -92,7 +92,7 @@ The experiments are run on a AMD A8 Quad Core processor with 6 GB of memory runn
           					& 3 & 800 & 2E40  & Yes  &100& 98 & $\surd$ & 11.027s  & $\surd$ & 514.852s & $\surd$ & 17.892s\\ \hline
           \hline
           
-           \textit{Circular} & 3 & 252 & 8E257  & Yes  & 132K & $\sim$132K & $\surd$ & 13.821s  &  & TO & $\surd$ & 728.722s\\ \hline
+           \textit{Circular} & 3 & 252 & 8E257  & Yes  & 132651 & 130804 & $\surd$ & 13.821s  &  & TO & $\surd$ & 728.722s\\ \hline
 
 						                       
 \end{tabular}
@@ -101,15 +101,14 @@ The experiments are run on a AMD A8 Quad Core processor with 6 GB of memory runn
 \end{table*}
 \end{savenotes}
 
-The results of the comparison are in \tableref{table:benchmarks}. The column ``Match" records the approximated number of match possibilities. A program with a large number of match possibilities has a large degree of message non-determinism. The column ``Deadlock" indicates the existence of deadlocks. The column ``PT" is the number of pattern instances that the algorithm in this paper detects. The column ``PTR" is the number of pattern instances that are pruned by the approach in this paper. The column ``D" indicates whether the tool detects a deadlock or not. The ``Time" column for the approach in this paper is the time of static analysis and constraint solving (if necessary). The ``Time" column of MOPPER is for constraint generation and solving. The column ``Time" for ISP is the running time of dynamic analysis. 
+The results of the comparison are in \tableref{table:benchmarks}. The column ``Match" records the approximated number of match possibilities. A program with a large number of match possibilities has a large degree of message non-determinism. The column ``Deadlock" indicates the existence of deadlocks. The column ``PT" is the number of pattern instances that the algorithm in this paper detects. The column ``PTR" is the number of pattern instances that are pruned by the approach in this paper. The column ``D" indicates whether the tool detects a deadlock or not. The ``Time" column for the approach in this paper is the time of static analysis and constraint solving (if necessary). The ``Time" column of MOPPER is for constraint generation and solving. The column ``Time" for ISP is the running time of dynamic analysis. The notation ``TO" means ``time out" (exceeding the time limit set for each test).
 
 %The meaning of the symbol ``--" is ``unavailable": either the test is not interesting for comparison or the error is detected in preprocessing.
  
 %\begin{compactitem}
+The experiments are launched for a set of benchmarks. The small test includes \textit{dlg1, dlg5 and dlg8} that implement simple message communications \cite{DBLP:conf/fm/ForejtKNS14}. Each contains a deadlock for the orphaned receive pattern.  
 
-\textit{dlg1, dlg5 and dlg8} implement simple message communications \cite{DBLP:conf/fm/ForejtKNS14}. Each contains a deadlock for the orphaned receive pattern. 
-
-\textit{Monte} implements the Monte Carlo method to compute $\pi$ \cite{benchmark:mentoCarlo}. It uses one manger process and multiple worker processes to send messages back and forth. In addition, barrier operations are used to synchronize the program. 
+The typical benchmarks are tested as well. \textit{Monte} implements the Monte Carlo method to compute $\pi$ \cite{benchmark:mentoCarlo}. It uses one manger process and multiple worker processes to send messages back and forth. In addition, barrier operations are used to synchronize the program. 
 
 \textit{Integrate} uses heavy non-determinism in message communication to compute an integral of the $\sin$ function over the interval $[0, \pi]$ \cite{benchmark:fevs}. This benchmark also has a manger-worker pattern where the root process divides the interval to a certain number of tasks. It then distributes those tasks to multiple worker processes. 
 
@@ -129,7 +128,7 @@ The results of the comparison are in \tableref{table:benchmarks}. The column ``M
 
 %\end{compactitem}
 
-The results show that the algorithm in this paper is highly efficient compared to ISP and MOPPER. For the small programs (e.g., \textit{dlg1}), all the tools correctly find the deadlocks and return very fast. For the large benchmark programs that do not have any deadlock (e.g., \textit{monte}), ISP runs much slower than MOPPER and the approach in this paper. For instance, it runs out of time when the program size of \textit{monte} increases to 8 processes. MOPPER runs fast when the number of processes is small, however, it may time out with a large the number of processes. The approach in this paper, however, returns very fast even with a large number of processes. This is because it  does not need to check feasibility or validate any pattern instances once it detects no instances are matched. 
+The results show that the algorithm in this paper is more efficient than ISP and MOPPER. For the small programs (e.g., \textit{dlg1}), all the tools correctly find the deadlocks and return very fast. For the large benchmark programs that do not have any deadlock (e.g., \textit{monte}), ISP runs much slower than MOPPER and the approach in this paper. For instance, it runs out of time when the program size of \textit{monte} increases to 8 processes. MOPPER runs fast when the number of processes is small, however, it may time out with a large the number of processes. The approach in this paper, however, returns very fast even with a large number of processes. This is because it  does not need to check feasibility or validate any pattern instances once it detects no instances are matched. 
 For the large benchmark programs with deadlocks, the approach in this paper remains faster than other tools, even though the higher cost SMT encoding is used this time. 
-Also, the approach in this paper is able to prune massive number of non-feasible pattern instances. For example, the program $\mathit{Circular}$ prunes about 132K non-feasible pattern instances and detects a real deadlock. 
+Also, the approach in this paper is able to prune a large number of non-feasible pattern instances. For example, the program $\mathit{Circular}$ prunes 130804 non-feasible pattern instances out of 132651 instances and detects a real deadlock. 
 
