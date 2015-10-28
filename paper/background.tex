@@ -1,25 +1,25 @@
 \section{Concurrent Trace Programs}
-This paper only considers non-determinism arising from message races and defines MPI program semantics in the context of concurrent trace programs (CTP) \cite{DBLP:conf/sigsoft/WangCGY09}. 
+The presentation only considers non-determinism arising from message races and defines MPI program semantics in the context of concurrent trace programs (CTP) \cite{DBLP:conf/sigsoft/WangCGY09}. 
 %In an MPI program, it is assumed that only non-blocking sends and receives are used. A non-blocking operation is issued without blocking the program execution. It is usually paired with a wait function that witnesses the completion of this non-blocking operation.
 %% introduce the language aspects: non-blocking, blocking, barrier, collective, point-to-point in the introduction.
 The syntax is in \figref{fig:expr:stx} (a). Lists use white space rather than commas to delineate members, ellipses ($\ldots$) represent zero or more repetitions, and bold-face font denotes terminals in the language.
 
-A CTP (\textit{ctp}) is a list of processes.  A process (\thread) is a list of commands. The commands (\textit{e}) are: non-blocking send (\sendi), non-blocking receive (\recvi), wait (\wait), and barrier (\barrier). 
-The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} associated with a receive, a send, or a wait. 
+A CTP (\textit{ctp}) is a list of processes.  A process (\thread) is a list of commands. The commands (\textit{e}) are: non-blocking send (\sendi), non-blocking receive (\recvi), wait (\wait), suspended wait ($\ast$\wait), barrier (\barrier), and counted barrier ($\ast$\barrier). 
+The non-terminal \aid\ in the grammar is a unique string identifier \textbf{ID} associated with a receive, a send, a wait, or a suspended wait. 
 A receive indicates both its unique ID and the unique
 ID of its associated wait. That wait by definition is its
 nearest-enclosing wait (i.e., the first wait that witnesses the receive
-being completed).
+being completed). A suspended wait on a process indicates that the process blocks at the the wait.
 
 %The MPI semantics use an infinite buffer, therefore, a non-block send is issued immediately. As such, it is not necessary to associate an identifier or a wait with the send. 
-A barrier \barrier\ is also associated with an identifier that is unique for its communicator. The communicator identifies a group of barrier commands and can only be used one time. Processes block at the barrier commands until all members in the communicator arrive.
+A barrier \barrier\ or a counted barrier $\ast$\barrier\ is also associated with an identifier that is unique for its communicator. The communicator identifies a group of barrier commands and can only be used one time. A counted barrier on any process indicates that the process arrives at the barrier. Processes block at the barrier commands until all members in the communicator arrive indicating that all the barriers for the communicator are counted. 
 
 The non-terminal \num\ in the grammar is used to denote endpoints, and it can be $\ast$ to indicate any endpoint. The receive and send commands include source and destination endpoints for communication. In the case of receive, the source may be $\ast$ indicating that the receive can match with any send to the same destination regardless of the source. The $\ast$ may not be used anywhere else in the program. The rest of the presentation assumes only well-formed programs as input.
 
 A pattern instance (\rcvp) is a list of IDs indicating unique receive commands. Each process has at most one
 receive ID in the list. If a process has a receive ID in the list, then the receive attached to the ID marks a point of execution in
 the owning process. The intuition is that if each process is able to
-arrive at the indicated point of execution in the pattern instance, then a deadlock is imminent.
+arrive at the indicated point of execution in the pattern instance, then a deadlock is imminent. If such a point of execution is arrived, the wait that witnesses the receive is suspended, indicating that all the commands preceding the receive may be scheduled to have the deadlock. All the commands following the receive should not be in the schedule. The suspended wait is not used anywhere other than identifying commands preceding a point of execution.
 
 
 %\figref{fig:deadlock2} shows an example of a CTP with three processes. 
@@ -40,7 +40,9 @@ arrive at the indicated point of execution in the pattern instance, then a deadl
 \cfgrule{\cmd}{\lp\cfgt{\sendi}~\cfgt{\aid}~\cfgt{\num}~\cfgt{\num}\rp}
    \cfgorline{\lp\cfgt{\recvi}~\cfgt{\aid}~\cfgt{\num}~\cfgt{\num}~\cfgt{\aid}\rp}
    \cfgorline{\lp\cfgt{\wait}~\cfgt{\aid}\rp}
+   \cfgorline{\lp\cfgt{$\ast$\wait}~\cfgt{\aid}\rp}
    \cfgorline{\lp\cfgt{\barrier}~\cfgt{\aid}\rp}
+   \cfgorline{\lp\cfgt{$\ast$\barrier}~\cfgt{\aid}\rp}
 \cfgrule{\num}{\cfgt{number}}\
     \cfgorline{\cfgt{$\ast$}}
 \cfgrule{\rcvp}{\lp\aid~$\ldots$\rp}
@@ -80,7 +82,7 @@ arrive at the indicated point of execution in the pattern instance, then a deadl
 (a) & (b)
 \end{tabular}
 \end{center}
-\caption{The language syntax with its evaluation syntax for the abstract machine in \figref{fig:machine} -- bold face indicates a terminal. (a) The input syntax. (b) The evaluation syntax.}
+\caption{The language syntax with its machine syntax for the abstract machine in \figref{fig:machine} -- bold face indicates a terminal. (a) The surface syntax. (b) The machine syntax.}
 \label{fig:expr:stx}
 \end{figure}
 

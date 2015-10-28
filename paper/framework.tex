@@ -2,10 +2,9 @@
 
 %%The general algorithm including three steps: Pattern Match, Feasible Check and Validation. The pseudocode needs to be revised so it shows each step. 
 
+\algoref{algo:main} describes the general structure of the approach in this presentation which consists of three distinct steps: pattern matching (line 1), feasibility checking (line 3), and validating (line 6). $\mathrm{PATTERNMATCH}$ statically generates a set ($\mathit{PT}$) of matched pattern instances in the \emph{ctp} with the help of an additional input, $M$, that defines all the potential match-pairs in the program. $M$ can be generated in quadratic time \cite{DBLP:conf/kbse/HuangMM13}. 
 
-\algoref{algo:main} describes the general structure of the approach in this paper which consists of three distinct steps: pattern matching (line 1), feasibility checking (line 3), and validating (line 6). $\mathrm{PATTERNMATCH}$ statically generates a set ($\mathit{PT}$) of matched pattern instances in the \emph{ctp} with the help of an additional input, $M$, that defines all the potential match-pairs in the program. $M$ can be generated in quadratic time \cite{DBLP:conf/kbse/HuangMM13}. 
-
-$\mathrm{FEASIBLECHECK}$ is an abstract machine to prune pattern instances for which it is possible prove no feasible schedule exists. In other words, it is provably not possible to execute the \emph{ctp} such that each process associated with a receive ID in the pattern instance is at that receive. The machine removes matched receive IDs from the pattern instance as it executes the \emph{ctp}, so if $\mathit{pt^\prime}$ is not empty upon return, the pattern instance is provably not feasible and the algorithm continues with the next pattern instance (line 5). The algorithm additionally returns the number of issued sends ($\mathit{N_s}$) and the number of issued receives ($\mathit{N_r}$). These are used in validation depending on the type of the pattern instance: circular dependency or orphaned receive.
+$\mathrm{FEASIBLECHECK}$ is an abstract machine to prune pattern instances for which it is possible to prove that no feasible schedule exists. In other words, it is provably not possible to execute the \emph{ctp} such that each process associated with a receive ID in the pattern instance is at that receive. The machine removes matched receive IDs from the pattern instance as it executes the \emph{ctp}, so if $\mathit{pt^\prime}$ is not empty upon return, the pattern instance is provably not feasible and the algorithm continues with the next pattern instance (line 5). The algorithm additionally returns the number of issued sends ($\mathit{N_s}$) and the number of issued receives ($\mathit{N_r}$). These are used in validation depending on the type of the pattern instance: circular dependency or orphaned receive.
 
 %The framework is useful for error detection with appropriate pattern match and validation algorithms. This paper applies the framework for deadlock detection based on two types of deadlock patterns in the next two sections.
 
@@ -60,11 +59,11 @@ machine (i.e., the machine state is represented by a string) for
 $\mathrm{FEASIBLECHECK}$ to prove that a pattern instance is not
 feasible. \figref{fig:expr:stx}(b) is the syntax for that machine. The
 rewrites define how the machine executes an input \emph{ctp} and
-pattern instance \emph{pt} by evolving the machine state. At a high-level, the machine
+pattern instance \emph{pt} by evolving the machine state. At a high-level, the machine can
 \begin{compactitem}
-\item Process a send, receive, or barrier by counting the send (\emph{Sndi Command}), queuing up the receive on the indicated wait ID (\emph{Rcvi Command}), or counting the barrier (\emph{Barrier Command 1}).
-\item Consume a wait when the associated queue is empty (\emph{Wait (Rcvi) Command 1})
-\item Remove a receive ID from the pattern instance when the associated receive is next on the queue for the indicated wait (\emph{Wait (Rcvi) Command 2}).
+\item Process a send, receive, or barrier from a process by counting the send (\emph{Sndi Command}), queuing up the receive on the indicated wait ID (\emph{Rcvi Command}), or counting the barrier (\emph{Barrier Command 1}).
+\item Consume a wait from a process when the associated queue is empty (\emph{Wait (Rcvi) Command 1})
+\item Remove a receive ID from the pattern instance and suspend the indicated wait when the associated receive is next on the queue for the wait (\emph{Wait (Rcvi) Command 2}).
 \item Remove the next receive from the queue for the indicated wait and update the number of receives when feasible (\emph{Wait (Rcvi) Command 3}).
 \item Consume a barrier if all the processes have arrived (\emph{Barrier Command 2}) -- communicator groups may only be used once.
 \end{compactitem}
@@ -110,7 +109,7 @@ In this queue, the action identifier, the source endpoint and the destination en
    \epwait(\aid_w) = ([\aid_0\ v_{frm0}\ v_{to0}]\ [\aid_1\ v_{frm1}\ v_{to1}]\ \ldots) \\ \rcvp = (\aid_a\ \ldots\ \aid_0\ \aid_b\ \ldots) \\ \aid_0 \in \rcvp \\ \rcvp^\prime = (\aid_a\ \ldots\ \aid_b\ \ldots)
 }{
   ((\thread_0\ \ldots\ ((\wait\ \aid_w)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp) \reduce{m}
-  ((\thread_0\ \ldots\ ((\wait\ \aid_w)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp^\prime)
+  ((\thread_0\ \ldots\ ((\ast\wait\ \aid_w)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp^\prime)
 }
 \and
 \inferrule[Wait (rcvi) Command 3]
@@ -118,7 +117,7 @@ In this queue, the action identifier, the source endpoint and the destination en
   \epwait(\aid_w) = ([\aid_0\ v_{frm0}\ v_{to0}]\ [\aid_1\ v_{frm1}\ v_{to1}]\ \ldots) \\
   \aid_0 \notin \rcvp \\ \eprcv(v_{to0},v_{frm0}) < \epsnd(v_{to0},v_{frm0}) \\ \eprcv(v_{to0},\ast) < \epsnd(v_{to0},\ast) \\
    \eprcv(v_{to0},v_{frm0}) = v_c \\
-    \eprcv^\prime = \eprcv [(v_{to0}, v_{frm0}) \mapsto v_c + 1]] \\ 
+    \eprcv^\prime = \eprcv [(v_{to0}, v_{frm0}) \mapsto v_c + 1] \\ 
     \epwait^\prime = \epwait [\aid_w\ \mapsto\ ([\aid_1\ v_{frm1}\ v_{to1}]\ \ldots)]
 }{
   ((\thread_0\ \ldots\ ((\wait\ \aid_w)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp) \reduce{m}
@@ -130,14 +129,14 @@ In this queue, the action identifier, the source endpoint and the destination en
   \epbarrier(\aid_0) = v_c \\ v_c < N_{proc} \\ \epbarrier^\prime = \epbarrier[\aid_0 \mapsto  v_c + 1]
 }{
  ((\thread_0\ \ldots\ ((\barrier\ \aid_0)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp) \reduce{m}
- ((\thread_0\ \ldots\ ((\barrier\ \aid_0)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier^\prime\ \rcvp)
+ ((\thread_0\ \ldots\ ((\ast\barrier\ \aid_0)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier^\prime\ \rcvp)
 }
 \and
 \inferrule[Barrier Command 2]
 {
   \epbarrier(\aid_0) = N_{proc}
 }{
- ((\thread_0\ \ldots\ ((\barrier\ \aid_0)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp) \reduce{m}
+ ((\thread_0\ \ldots\ ((\ast\barrier\ \aid_0)\ \cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp) \reduce{m}
  ((\thread_0\ \ldots\ (\cmd_1\ \ldots\ \bot)\ \thread_2\ \ldots)\ \epsnd\ \eprcv\ \epwait\ \epbarrier\ \rcvp)
 }
 
@@ -146,10 +145,10 @@ In this queue, the action identifier, the source endpoint and the destination en
 \label{fig:machine}
 \end{figure*}
 
-The \emph{Sndi Command} in \figref{fig:machine} consumes sends. 
+The \emph{Sndi Command} in \figref{fig:machine} consumes sends in a process. 
 $\epsnd^\prime$\ is a new set, just like the old set $\epsnd$, only the new set maps the destination
 endpoint $v_{to}$\ and the source endpoint $v_{frm}$ to the number $v_c + 1$ where $v_c$ is the value in the old set on the same $(v_{to},v_{frm})$ key. 
-It also maps $v_{to}$\ and $\ast$ to the number $v_i + 1$ where $v_i$ is the value in the old set on the same $(v_{to},\ast)$ key. Note that the notation $\ast$ is a special source endpoint indicating any source.
+It also maps $v_{to}$\ and $\ast$ to the number $v_i + 1$ where $v_i$ is the value in the old set on the same $(v_{to},\ast)$ key. As mentioned previously, the notation $\ast$ is a special source endpoint indicating any source.
 
 The \emph{Rcvi Command} in \figref{fig:machine} consumes receives by updating \epwait. 
 Similar to the rule \emph{Sndi Command}, \epwait\ merely inserts a new record for the receive $x_0$ to the tail of the queue indexed by the 
@@ -158,7 +157,9 @@ wait that witnesses the completion of $x_0$.
 The \emph{Wait (Rcvi) Command} operates in three ways. 
 If the wait $\aid_w$ maps to an empty queue in \epwait, indicating that no receives need to be completed by $\aid_w$, then $\aid_w$ is simply consumed (\emph{Wait (Rcvi) Command 1}). 
 
-If the next receive $\aid_0$ in the queue $\epwait(\aid_w)$ is stored in \rcvp\ where the notation $\in$ is used to indicate this condition, then $\aid_0$ is removed from \rcvp\ meaning that $\aid_0$ in \rcvp\ is reached (\emph{Wait (Rcvi) Command 2}). 
+If the next receive $\aid_0$ in the queue $\epwait(\aid_w)$ is found in \rcvp\ where the notation $\in$ is used to indicate this condition, then $\aid_0$ is removed from \rcvp\ and the wait $\aid_w$ is suspended in a process by replacing the notation \wait\ with $\ast$\wait, meaning that $\aid_0$ in \rcvp\ is reached and this process blocks at $\aid_w$ in execution.
+
+(\emph{Wait (Rcvi) Command 2}). 
 
 The last rule for wait (\emph{Wait (Rcvi) Command 3}) checks whether the next receive $\aid_0$\ in the queue $\epwait(x_w)$ is able to be consumed. The rule is only active if $\aid_0$ is not in \rcvp. The rule requires two conditions: 
 \[\eprcv(v_{to0},v_{frm0}) < \epsnd(v_{to0},v_{frm0})\]
@@ -168,13 +169,13 @@ and
 checks whether there are more counted sends than counted receives for any preceding wildcard receives. These conditions indicate that at least one send can be matched with $\aid_0$. If both conditions hold, then \eprcv\ is updated with the counted receive, and $\aid_0$ is removed from \epwait. 
 
 The \emph{Barrier Command} moves the barrier forward by its synchronization rule. It is assumed that the group of any barrier consists of all the processes in the $\mathit{ctp}$. 
-If the count of the witnessed barriers $\epbarrier(\aid_0)$ for a specific communicator $\aid_0$ is less than the total number of the processes $N_{proc}$ indicating that the barriers for $\aid_0$ are not matched, then the barrier is not consumed, and $\epbarrier(\aid_0)$ is incremented (\emph{Barrier Command 1}). 
+If the count of the witnessed barriers $\epbarrier(\aid_0)$ for a specific communicator $\aid_0$ is less than the total number of the processes ($N_{proc}$), indicating that the barriers for $\aid_0$ are not matched, then the barrier is not consumed. Rather, the barrier is counted by incrementing $\epbarrier(\aid_0)$ and replacing the notation \barrier\ with $\ast$\barrier\ for the same communicator in the $\mathit{ctp}$ (\emph{Barrier Command 1}). 
 
 If $\epbarrier(\aid_0)$ is equal to $N_{proc}$ indicating that all the barriers for $\aid_0$ are matched, then they can be consumed (\emph{Barrier Command 2}).
 
 The machine rewrites the state until no more reduction rules can be applied indicating that there is no way to further execute the program. The first statement that cannot be consumed on any process is either the bottom of the process or a blocking command. A blocking command could be a wait or a barrier. If at the end, there are receive IDs in the pattern instance, then the pattern instance is provably non-feasible. In such a case, the machine \emph{accepts} the program as free of deadlock on the pattern instance; otherwise, the machine \emph{rejects} the program as having a deadlock on the pattern instance.
 
-\figref{fig:machineexample} is an example of machine reduction given the CTP in \figref{fig:deadlock2}. The reduction applies the \emph{Sndi Command} in \figref{fig:machine} to consume the send $s_0$ on process $\thread_0$. The reduction shows that $s_0$ is removed from the $ctp$ in the state. Also, the count of issued sends is incremented by one on the keys $(1\ 0)$ and $(1\ \ast)$, respectively.
+\figref{fig:machineexample} is an example of the machine reduction given the CTP in \figref{fig:deadlock2}. The reduction applies the \emph{Sndi Command} in \figref{fig:machine} to consume the send $s_0$ on process $\thread_0$. The reduction shows that $s_0$ is removed from the $ctp$ in the state. Also, the count of issued sends is incremented by one on the keys $(1\ 0)$ and $(1\ \ast)$, respectively.
 
 \begin{figure*}[tb]
 \centering
@@ -211,17 +212,17 @@ If $\aid_0$ is a deterministic receive on the process $v_{to0}$, then the first 
 \end{proof}
 
 \begin{cor}
-  The machine implementing \textrm{FEASIBLECHECK} never miss counts the number of send and receives matched: \eprcv\ and \epsnd\ are correct.
+  The machine implementing \textrm{FEASIBLECHECK} never miss counts the number of sends, receives matched and barriers: \eprcv, \epsnd\ and \epbarrier\ are correct.
 \end{cor}
 \label{cor:count}
 \begin{proof}
-  The \emph{Sndi Command} increments count every time the rule activates and updates both the counter for the specified endpoints and special counter that records sends that can match with wildcard receives. The \emph{Wait (Rcvi) Command 3} only increments the indicated receive counter when it is possible to consume the receive and by \lemmaref{lemma:sound}, the machine only matches in a way that is sound. The counters are not incremented in any other rule. Therefore, nothing is missed, and nothing is double counted.
+  The \emph{Sndi Command} increments count every time the rule activates and updates both the counter for the specified endpoints and special counter that records sends that can match with wildcard receives. The \emph{Wait (Rcvi) Command 3} only increments the indicated receive counter when it is possible to consume the receive and by \lemmaref{lemma:sound}, the machine only matches in a way that is sound. The \emph{Barrier Command 1} only increments the indicated barrier counter when the barrier is witnessed. The counters are not incremented in any other rule. Therefore, nothing is missed, and nothing is double counted.
 \end{proof}
 \begin{cor}
   \algoref{algo:main} is sound and complete if and only if the function \textrm{PATTERNMATCH} is complete (i.e., it gives all pattern instances and possibly more) and the function \textrm{VALIDATE} is sound and complete (i.e., any deadlock it detects is a real one and no real deadlocks are rejected).
 \end{cor}
   
-The paper further discusses the completeness of the function \textrm{PATTERNMATCH} and the soundness and completeness of the function \textrm{VALIDATE} for two distinct deadlock patterns, circular dependency and orphaned receive. 
+The presentation further discusses the completeness of the function \textrm{PATTERNMATCH} and the soundness and completeness of the function \textrm{VALIDATE} for two distinct deadlock patterns, circular dependency and orphaned receive. 
 
 \begin{comment}
 %%Soundness Proof needs to be revised such that it shows the feasible check (operational semantics) is sound.

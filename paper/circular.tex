@@ -77,9 +77,9 @@ In \figref{fig:deadlock2}, the CTP has a circular dependency in messages $\langl
 
 \algoref{algo:circular} shows the steps for finding all the instances of the circular dependency pattern in a $\mathit{ctp}$. As a reminder, $M$ is the set of potential match pairs for the \emph{ctp}. In general, the algorithm is part of the function $\mathrm{PATTERNMATCH}$ in \algoref{algo:main}. 
 It first maps a $\mathit{ctp}$ to a graph that consists of a set of vertices $\mathit{V}$ and a set of edges $\mathit{E}$. 
-It then detects all the cycles in the graph based on the Johnson's algorithm \cite{DBLP:journals/siamcomp/Johnson75}.
+It then detects all the cycles in the graph based on Johnson's algorithm \cite{DBLP:journals/siamcomp/Johnson75}.
  
-In \algoref{algo:circular}, the variable $\mathit{V}$ is a set of operations. The variable $\mathit{E}$ is a set of edges each representing a relation from one operation to another. 
+%In \algoref{algo:circular}, the variable $\mathit{V}$ is a set of operations. The variable $\mathit{E}$ is a set of edges each representing a relation from one operation to another. 
 The set $\mathit{PT}$ stores the matched pattern instances.
 The set $\mathit{R}$ stores the witnessed receives on a process that is represented as a list of operations $(e_1, e_2, \dots, e_n)$. 
 The set $\mathit{R_w}$ stores the receives that are recently witnessed on $p$.
@@ -93,7 +93,7 @@ If $\mathit{e_i}$ is a wait, all the receives in $\mathit{R}$ are inserted to $\
 Therefore, the happens-before relation (a partial order over two operations) on a witnessed receive to a following send on an identical process is considered as an edge in the graph because they can be potentially matched as a sequential relation.
 As such, if $\mathit{e_i}$ is a send, the algorithm checks each witnessed receive $\mathit{r_c}\in \mathit{R_w}$ at line 19, and inserts the happens-before relation $(\mathit{r_c},\mathit{e_i})$ into $\mathit{E}$ at line 20. 
 
-Finally, the function $\mathrm{JOHNSON}$ implements the Johnson's algorithm to compute all the cycles in the graph. Since an edge in any computed cycle is either a receive-send happens-before relation on an identical process, or a send-receive match relation across two processes, there exists exactly one sequential relation for any process in the cycle. Therefore, each cycle computed by the function $\mathrm{JOHNSON}$ is an instance of the circular dependency pattern. As discussed earlier, only receives in each cycle are stored to represent an instance in the set $\mathit{PT}$. The complexity of program traversal is $O(\mathrm{N}^2)$, where $\mathrm{N}$ is the total number of operations in the program. The complexity of Johnson's algorithm is $O((|V|+|E|)(\mathrm{c}+1))$ $\approx$ $O((\mathrm{c}+1)\mathrm{N}^2)$, where $\mathrm{c}$ is the number of cycles. Therefore, the total complexity of the algorithm is $O((\mathrm{c}+1)\mathrm{N}^2)$.
+Finally, the function $\mathrm{JOHNSON}$ implements Johnson's algorithm to compute all the cycles in the graph. Since an edge in any computed cycle is either a receive-send happens-before relation on an identical process, or a send-receive match relation across two processes, there exists exactly one sequential relation for any process in the cycle. Therefore, each cycle computed by the function $\mathrm{JOHNSON}$ is an instance of the circular dependency pattern. As discussed earlier, only receives in each cycle are stored to represent an instance in the set $\mathit{PT}$. The complexity of program traversal is $O(\mathrm{N}^2)$, where $\mathrm{N}$ is the total number of operations in the program. The complexity of Johnson's algorithm is $O((|V|+|E|)(\mathrm{c}+1))$ $\approx$ $O((\mathrm{c}+1)\mathrm{N}^2)$, where $\mathrm{c}$ is the number of cycles. Therefore, the total complexity of the algorithm is $O((\mathrm{c}+1)\mathrm{N}^2)$.
 
 \begin{figure}[h]
 \centering
@@ -102,24 +102,24 @@ Finally, the function $\mathrm{JOHNSON}$ implements the Johnson's algorithm to c
 \label{fig:circulargraph}
 \end{figure}
 
-\figref{fig:circulargraph} shows a graph that is built on the example CTP in \figref{fig:deadlock2} by \algoref{algo:circular}. 
-In the graph, the vertices include $s_0,$ $r_0,$ $s_1,$ $r_1,$ $r_2,$ $s_2,$ $r_3,$ and $s_3$. The edges include the match relations $(s_3,r_0),$ $(s_0,r_1),$ $(s_1,r_2),$ and $(s_2,r_3),$, and the happens-before relations $(r_0,s_1),$ $(r_1,s_2),$ $(r_2,s_2),$ and $(r_3,s_3)$. 
+\figref{fig:circulargraph} shows the graph that is built on the example CTP in \figref{fig:deadlock2} by \algoref{algo:circular}. 
+In the graph, the vertices include $s_0,$ $r_0,$ $s_1,$ $r_1,$ $r_2,$ $s_2,$ $r_3,$ and $s_3$. The edges include the match relations $(s_3,r_0),$ $(s_0,r_1),$ $(s_1,r_2),$ and $(s_2,r_3),$ and the happens-before relations $(r_0,s_1),$ $(r_1,s_2),$ $(r_2,s_2),$ and $(r_3,s_3)$. 
 As shown in the graph, a cycle $r_0\rightarrow s_1\rightarrow r_2\rightarrow s_2\rightarrow r_3\rightarrow s_3\rightarrow r_0$ exists where the receives are stored as an instance of the circular dependency pattern.
 
-The completeness for \algoref{algo:circular} is given in \lemmaref{lemma:pmcircular}. 
+%The completeness for \algoref{algo:circular} is given in \lemmaref{lemma:pmcircular}. 
 \begin{lemma}
 \label{lemma:pmcircular}
 The pattern match in \algoref{algo:circular} is complete indicating that all possible pattern instances are detected (it may include some instances that do not have deadlocks).
 \end{lemma}
 \begin{proof}
-The graph built by \algoref{algo:circular} consists of all possible vertices and all possible edges because the algorithm statically traverses each process from the beginning to the end and adds an edge once the relation is detected. Also, the Johnson's algorithm is able to compute all the cycles in the graph. Therefore, all possible instances for the circular dependency pattern are detected. 
+The graph built by \algoref{algo:circular} consists of all possible vertices and all possible edges because the algorithm statically traverses each process from the beginning to the end and adds an edge once the relation is detected. Also, Johnson's algorithm is able to compute all the cycles in the graph. Therefore, all possible instances for the circular dependency pattern are detected. 
 \end{proof}
 
 \subsection{Validation for Circular Dependency}
 
 %%revise the following algorithm of validating circular dependency pattern
 
-If the function \textrm{FEASIBLECHECK} demonstrates that a potentially feasible schedule exists, the deadlock is further validated by the formula (1) for the pattern instance \textit{pt}. 
+If the function \textrm{FEASIBLECHECK} demonstrates that a potentially feasible schedule exists, the deadlock is further validated by (1) for the pattern instance \textit{pt}. 
 \begin{equation}
 \forall r_c\in \mathit{pt}(\mathit{N_s}(\mathit{dest},\mathit{src}) \leq \mathit{N_r}(\mathit{dest},\mathit{src}))
 \end{equation}
@@ -130,7 +130,7 @@ The function $\mathit{N_s}(\mathit{dest},\mathit{src})$ returns the count of iss
 If the formula is satisfied, then the algorithm detects a real deadlock for \textit{pt}.
 If the formula is unsatisfiable for any receive $r_c$ in \textit{pt}, then no real deadlock exists for \textit{pt}.
 
-The CTP in \figref{fig:nodeadlock2} is an example that has no deadlock for the circular dependency pattern instance. In \figref{fig:nodeadlock2}, process $p_0$ sends a message to $p_1$, receives a message from any source, and then sends another message to $p_1$. Process $p_1$ receives a message from any source, and then sends a message to $p_2$. Process $p_2$ receives a message from $p_1$, and then sends a message to $p_0$. As shown, the underlined commands represent an instance of the circular dependency $(r_0,r_1,r_2)$. However, the formula (1) is not satisfied because the send $s_0$ matches the receive $r_1$ and the cycle does not exist any more. 
+The CTP in \figref{fig:nodeadlock2} is an example that has no deadlock for the circular dependency pattern instance. In \figref{fig:nodeadlock2}, process $p_0$ sends a message to $p_1$, receives a message from any source, and then sends another message to $p_1$. Process $p_1$ receives a message from any source, and then sends a message to $p_2$. Process $p_2$ receives a message from $p_1$, and then sends a message to $p_0$. As shown, the underlined commands represent an instance of the circular dependency $(r_0,r_1,r_2)$. However, (1) is not satisfied because the send $s_0$ matches the receive $r_1$ and the cycle does not exist any more. 
 
 \begin{comment}
 
@@ -170,14 +170,14 @@ The CTP in \figref{fig:nodeadlock2} is an example that has no deadlock for the c
 
 %%Soundness proof for pattern match needs to be added. the following proof needs to be revised to show that the validation is sound and complete.
 
-The soundness and completeness proof for the validation in the formula (1) is given in \lemmaref{lemma:circular}.
+%The soundness and completeness proof for the validation in the formula (1) is given in \lemmaref{lemma:circular}.
 
 \begin{lemma}
-The validation in the formula (1) for an instance of the circular dependency pattern, $\mathit{pt}$, is sound and complete indicating that any detected deadlock is a real deadlock and any instance that does not satisfy the formula (1) is a not a real deadlock. 
+The validation in (1) for an instance of the circular dependency pattern, $\mathit{pt}$, is sound and complete indicating that any detected deadlock is a real deadlock and any instance that does not satisfy (1) is a not a real deadlock. 
 \label{lemma:circular}
 \end{lemma}
 \begin{proof}
-Since the counts stored in \epsnd\ and \eprcv\ are correct (\coref{cor:count}), the formula (1) is able to correctly check if an instance is a real deadlock or not. If the formula is unsatisfiable for some receive $r_c$, then $r_c$ can be matched and the dependency in the cycle does not exist. Therefore, $\mathit{pt}$ does not imply a real deadlock. If the formula is satisfied, then no receive in $\mathit{pt}$ can be matched. Therefore, a real deadlock occurs for $\mathit{pt}$.
+Since the counts stored in \epsnd\ and \eprcv\ are correct (\coref{cor:count}), (1) is able to correctly check if an instance is a real deadlock or not. If the formula is unsatisfiable for some receive $r_c$, then $r_c$ can be matched and the dependency in the cycle does not exist. Therefore, $\mathit{pt}$ does not imply a real deadlock. If the formula is satisfied, then no receive in $\mathit{pt}$ can be matched. Therefore, a real deadlock occurs for $\mathit{pt}$.
 \end{proof} 
 
 %%zero buffer for circular dependency
