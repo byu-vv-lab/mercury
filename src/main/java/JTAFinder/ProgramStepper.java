@@ -1,8 +1,11 @@
 package JTAFinder;
 
-import JTAFinder.UnmatchedEndpoint.UnmatchedEndpoint;
-import JTASyntax.*;
+import JTAFinder.UnmatchedEndpoint.UnmatchedEndpointPattern;
+import JTASyntax.Operations.Operation;
+import JTASyntax.Operations.Receive;
+import JTASyntax.Operations.Wait;
 import JTASyntax.Process;
+import JTASyntax.Program;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,7 +17,7 @@ public class ProgramStepper implements Iterable<Process> {
     private final Map<Process, Integer> blockMap;
     private final Map<Process, Integer> currentMap;
 
-    public ProgramStepper (Program program) {
+    public ProgramStepper(Program program) {
         this.program = program;
         blockMap = new HashMap<>();
         currentMap = new HashMap<>();
@@ -24,23 +27,23 @@ public class ProgramStepper implements Iterable<Process> {
         }
     }
 
-    public int incrementLocation (Process process) {
+    public int incrementLocation(Process process) {
         return currentMap.put(process, (currentMap.get(process) + 1));
     }
 
-    public int currentLocation (Process process) {
+    public int currentLocation(Process process) {
         return currentMap.get(process);
     }
 
-    public Operation currentOp (Process process) {
+    public Operation currentOp(Process process) {
         return process.getOp(currentMap.get(process));
     }
 
-    public Operation blockOp (Process process) {
+    public Operation blockOp(Process process) {
         return process.getOp(blockPoint(process));
     }
 
-    public int blockPoint (Process process) {
+    public int blockPoint(Process process) {
         return blockMap.get(process);
     }
 
@@ -61,7 +64,7 @@ public class ProgramStepper implements Iterable<Process> {
         return (currentMap.get(process) >= blockMap.get(process));
     }
 
-    public boolean atEnd (Process process) {
+    public boolean atEnd(Process process) {
         return currentMap.get(process) >= process.size();
     }
 
@@ -74,7 +77,7 @@ public class ProgramStepper implements Iterable<Process> {
         return program.iterator();
     }
 
-    public void moveBlockPoints(Set<Process> reachableProcesses, UnmatchedEndpoint pattern) {
+    public void moveBlockPoints(Set<Process> reachableProcesses, UnmatchedEndpointPattern pattern) {
         for (Process process : reachableProcesses) {
             // if it is a pattern process and it reaches the determinstic receive in pattern,
             // do not need to increment indicator
@@ -89,16 +92,16 @@ public class ProgramStepper implements Iterable<Process> {
         // Make sure I don't run off the end
 //        if (blockPoint(process) < (process.size())) {
 //            blockMap.put(process, blockMap.get(process) + 1);
-            while (blockPoint(process) < process.size()) {
-                Operation op = blockOp(process);
-                if ((op instanceof Receive) || (op instanceof Wait)) {
-                    if (op.isBlock) {
-                        break;
-                    }
-                } else {
-                    blockMap.put(process, blockMap.get(process) + 1);
+        while (blockPoint(process) < process.size()) {
+            Operation op = blockOp(process);
+            if ((op instanceof Receive) || (op instanceof Wait)) {
+                if (op.isBlock) {
+                    break;
                 }
+            } else {
+                blockMap.put(process, blockMap.get(process) + 1);
             }
+        }
 //        }
     }
 

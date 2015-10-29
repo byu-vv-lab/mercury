@@ -1,11 +1,12 @@
 package JTAFinder.UnmatchedEndpoint;
 
+import JTASyntax.Operations.Receive;
+import JTASyntax.Operations.Send;
 import JTASyntax.Program;
-import JTASyntax.Receive;
-import JTASyntax.Send;
 
 import java.util.*;
 
+// TODO: Extend AbstractMatchGenerator
 public class UmEPMatchGenerator {
 
     private final Program program;
@@ -17,11 +18,11 @@ public class UmEPMatchGenerator {
         generateMatch();
     }
 
-    public Map<Receive, List<Send>> getMatch_table () {
+    public Map<Receive, List<Send>> getMatch_table() {
         return Collections.unmodifiableMap(match_table);
     }
 
-    public Map<Send, List<Receive>> getPattern_match () {
+    public Map<Send, List<Receive>> getPattern_match() {
         return Collections.unmodifiableMap(pattern_match);
     }
 

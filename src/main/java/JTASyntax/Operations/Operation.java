@@ -1,4 +1,4 @@
-package JTASyntax;
+package JTASyntax.Operations;
 
 public abstract class Operation implements Comparable<Operation> {
 
@@ -8,7 +8,7 @@ public abstract class Operation implements Comparable<Operation> {
     public final int process_rank;
     public int order;
 
-    Operation(String name, int rank, boolean isBlock, int process_rank) {
+    public Operation(String name, int rank, boolean isBlock, int process_rank) {
         this.name = name;
         this.rank = rank;
         this.isBlock = isBlock;
@@ -19,4 +19,5 @@ public abstract class Operation implements Comparable<Operation> {
     public int compareTo(Operation o) {
         return Integer.compare(this.order, o.order);
     }
+
 }

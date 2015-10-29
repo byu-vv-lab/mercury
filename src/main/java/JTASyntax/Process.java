@@ -1,5 +1,9 @@
 package JTASyntax;
 
+import JTASyntax.Operations.Operation;
+import JTASyntax.Operations.Receive;
+import JTASyntax.Operations.Send;
+
 import java.util.*;
 
 public class Process implements Iterable<Operation> {
@@ -15,11 +19,11 @@ public class Process implements Iterable<Operation> {
         this.smap = getSendMap();
     }
 
-    public Operation getOp (int rank) {
+    public Operation getOp(int rank) {
         return operations.get(rank);
     }
 
-    private List<Receive> getReceiveList () {
+    private List<Receive> getReceiveList() {
         List<Receive> rlist = new ArrayList<>();
         for (Operation op : this) {
             if (op instanceof Receive) {

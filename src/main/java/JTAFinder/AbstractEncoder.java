@@ -1,6 +1,9 @@
 package JTAFinder;
 
-import JTASyntax.*;
+import JTASyntax.Match;
+import JTASyntax.Operations.*;
+import JTASyntax.Pair;
+import JTASyntax.Schedule;
 import com.microsoft.z3.*;
 
 import java.util.Collection;
@@ -19,7 +22,7 @@ public abstract class AbstractEncoder {
         this.solver = new SMTSolver();
     }
 
-    public Model isSatisfiable () {
+    public Model isSatisfiable() {
         try {
             Model model = solver.Check(Status.SATISFIABLE);
             if (model != null)
@@ -31,13 +34,21 @@ public abstract class AbstractEncoder {
     }
 
     public abstract boolean encodeProgram();
-    protected abstract Schedule getSchedule (Model model);
-    protected abstract void encodeSend (Send op) throws Z3Exception;
-    protected abstract void encodeReceive (Receive op) throws Z3Exception;
-    protected abstract void encodeWait (Wait op) throws Z3Exception;
-    protected abstract void encodeBarrier (Barrier op) throws Z3Exception;
-    protected abstract void encodeMatches () throws Z3Exception;
-    protected abstract Collection<Collection<Match>> filterMatches ();
-    protected abstract void encodeMatchSet (Collection<Match> matches) throws Z3Exception;
+
+    protected abstract Schedule getSchedule(Model model);
+
+    protected abstract void encodeSend(Send op) throws Z3Exception;
+
+    protected abstract void encodeReceive(Receive op) throws Z3Exception;
+
+    protected abstract void encodeWait(Wait op) throws Z3Exception;
+
+    protected abstract void encodeBarrier(Barrier op) throws Z3Exception;
+
+    protected abstract void encodeMatches() throws Z3Exception;
+
+    protected abstract Collection<Collection<Match>> filterMatches();
+
+    protected abstract void encodeMatchSet(Collection<Match> matches) throws Z3Exception;
 
 }

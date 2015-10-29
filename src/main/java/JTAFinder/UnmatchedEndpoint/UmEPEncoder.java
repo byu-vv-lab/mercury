@@ -2,15 +2,18 @@ package JTAFinder.UnmatchedEndpoint;
 
 import JTAFinder.AbstractEncoder;
 import JTAFinder.ProgramStepper;
-import JTASyntax.*;
+import JTASyntax.Match;
+import JTASyntax.Operations.*;
+import JTASyntax.Pair;
 import JTASyntax.Process;
+import JTASyntax.Schedule;
 import com.microsoft.z3.*;
 
 import java.util.*;
 
 public class UmEPEncoder extends AbstractEncoder {
 
-    UnmatchedEndpoint pattern;
+    UnmatchedEndpointPattern pattern;
     int[] lastrInShape;
     int[][] lastsInShape;
 
@@ -29,7 +32,7 @@ public class UmEPEncoder extends AbstractEncoder {
     public boolean zeroSemantics = false;
 
     public UmEPEncoder(ProgramStepper program,
-                       UnmatchedEndpoint pattern,
+                       UnmatchedEndpointPattern pattern,
                        int[] lastrInShape,
                        int[][] lastsInShape,
                        Map<Send, List<Receive>> pattern_match,

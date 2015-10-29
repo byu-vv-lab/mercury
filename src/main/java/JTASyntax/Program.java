@@ -1,6 +1,5 @@
 package JTASyntax;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -9,27 +8,17 @@ public class Program implements Iterable<Process> {
 
     public final String name;
     public final List<Process> processes;
-//    public List<Receive>[] recvlist;
-//    public List<Send>[][] sendlist;
 
     public Program(String name, List<Process> procs) {
         this.name = name;
         this.processes = Collections.unmodifiableList(procs);
-//        recvlist = new ArrayList[this.size()];
-//        sendlist = new ArrayList[this.size()][this.size()];
-//        for (Process process : this) {
-//            recvlist[process.rank] = process.rlist;
-//            for (Integer dest : process.smap.keySet()) {
-//                sendlist[dest][process.rank] = process.smap.get(dest);
-//            }
-//        }
     }
 
-    public int size () {
+    public int size() {
         return processes.size();
     }
 
-    public Process get (int index) {
+    public Process get(int index) {
         return processes.get(index);
     }
 

@@ -2,6 +2,9 @@ package Parser;
 
 
 import JTASyntax.*;
+import JTASyntax.Operations.Operation;
+import JTASyntax.Operations.Receive;
+import JTASyntax.Operations.Send;
 import JTASyntax.Process;
 
 import java.util.ArrayList;

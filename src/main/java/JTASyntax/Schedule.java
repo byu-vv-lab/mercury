@@ -1,5 +1,7 @@
 package JTASyntax;
 
+import JTASyntax.Operations.Operation;
+
 import java.util.ArrayList;
 
 public class Schedule extends ArrayList<Operation> {

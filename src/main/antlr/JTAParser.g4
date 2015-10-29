@@ -7,19 +7,25 @@ options {
 tokenVocab=JTALexer;
 }
 
-program : thread+ EOF;
+program      : thread+ EOF;
 
-thread     : Thread Space+ Identifier LineBreak
-             (operation)* LineBreak*;
+thread       : threadHeader
+               (operation)*;
 
-operation  : (mutate | read | receive | send | block) LineBreak?;
+branch       : IF OpenBlock Identifier Comparator Number CloseBlock
+               OpenBlock (operation)* CloseBlock
+               OpenBlock (operation)* CloseBlock;
 
-mutate     : Mutate Space+ Identifier;
+threadHeader : Thread Identifier;
 
-read       : Read Space+ Identifier;
+operation    : (mutate | read | receive | send | block);
 
-receive    : Recv Space+ Identifier Space+ Identifier;
+mutate       : Mutate Identifier;
 
-send       : Send Space+ Identifier Space+ Identifier;
+read         : Read Identifier;
 
-block      : Wait Space+ Identifier;
+receive      : Recv Identifier Identifier;
+
+send         : Send Identifier Identifier;
+
+block        : Wait Identifier;
