@@ -1,0 +1,47 @@
+digraph CircularDependencyGraph {
+node [shape=circle,fixedsize=true,width=0.5]; 
+
+s_0[label=<<I>s<SUB>0</SUB></I>>];
+s_1[label=<<I>s<SUB>1</SUB></I>>];
+s_2[label=<<I>s<SUB>2</SUB></I>>];
+s_3[label=<<I>s<SUB>3</SUB></I>>];
+r_0[label=<<I>r<SUB>0</SUB></I>>];
+r_1[label=<<I>r<SUB>1</SUB></I>>];
+r_2[label=<<I>r<SUB>2</SUB></I>>];
+r_3[label=<<I>r<SUB>3</SUB></I>>];
+
+subgraph cluster_0{
+	label="";
+ 	 color="#FFFFFF";
+	s_0 -> r_0[style=invis];
+	r_0->s_1;
+
+}
+
+subgraph cluster_1{
+label="";
+  color="#FFFFFF";
+	//r_1->r_2[style=invis];
+	r_1->s_2;
+	r_2->s_2;
+}
+
+subgraph cluster_2{
+
+label="";
+  color="#FFFFFF";
+r_3->s_3;
+}
+
+s_0->r_1;
+s_0->r_3[style=invis];
+s_1->r_2;
+s_2->r_3;
+s_3->r_0;
+
+
+
+overlap=false
+fontsize=12;
+}
+
