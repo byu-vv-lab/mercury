@@ -78,8 +78,8 @@ public class UmEPFinder extends AbstractFinder {
                                 pattern,
                                 lastrInShape,
                                 lastsInShape,
-                                matchGenerator.getPattern_match(),
-                                matchGenerator.getMatch_table());
+                                matchGenerator.getPatternMatch(),
+                                matchGenerator.getMatchTable());
 
                         encoder.encodeProgram();
 //                        encoder.solver.displayFormulas();

@@ -24,6 +24,12 @@ public abstract class AbstractFinder {
         program = p;
     }
 
+    public static class DeadlockException extends Exception {
+        private String message;
+        public DeadlockException (String message) { this.message = message; }
+        public String getMessage () { return message; }
+    }
+
     /**
      * Checks whether the program supplied is correct under the given finder
      *
@@ -49,7 +55,7 @@ public abstract class AbstractFinder {
                                          AbstractPattern pattern,
                                          Map<Integer, Map<Integer, Integer>> sendNums,
                                          Map<Integer, Map<Integer, Integer>> recvNums,
-                                         Map<Wait, List<Receive>> witnessedRecv) {
+                                         Map<Wait, List<Receive>> witnessedRecv) throws DeadlockException {
         return false;
     }
 

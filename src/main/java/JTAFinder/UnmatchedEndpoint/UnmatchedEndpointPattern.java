@@ -1,6 +1,7 @@
 package JTAFinder.UnmatchedEndpoint;
 
 import JTAFinder.AbstractPattern;
+import JTASyntax.Operations.Operation;
 import JTASyntax.Operations.Receive;
 import JTASyntax.Process;
 
@@ -28,6 +29,11 @@ public class UnmatchedEndpointPattern extends AbstractPattern {
     @Override
     public boolean hasReceive(Receive recv) {
         return recv.equals(deterministic);
+    }
+
+    @Override
+    public boolean hasOp(Operation op) {
+        return false;
     }
 
 }

@@ -77,11 +77,11 @@ public class ProgramStepper implements Iterable<Process> {
         return program.iterator();
     }
 
-    public void moveBlockPoints(Set<Process> reachableProcesses, UnmatchedEndpointPattern pattern) {
+    public void moveBlockPoints(Set<Process> reachableProcesses, AbstractPattern pattern) {
         for (Process process : reachableProcesses) {
             // if it is a pattern process and it reaches the determinstic receive in pattern,
             // do not need to increment indicator
-            if (!(process.equals(pattern.process) && blockOp(process).equals(pattern.deterministic))) {
+            if (!(pattern.hasProcess(process) && pattern.hasOp(blockOp(process)))) {
                 blockMap.put(process, blockMap.get(process) + 1);
                 advanceToNextBlockPoint(process);
             }
@@ -90,8 +90,6 @@ public class ProgramStepper implements Iterable<Process> {
 
     public void advanceToNextBlockPoint(Process process) {
         // Make sure I don't run off the end
-//        if (blockPoint(process) < (process.size())) {
-//            blockMap.put(process, blockMap.get(process) + 1);
         while (blockPoint(process) < process.size()) {
             Operation op = blockOp(process);
             if ((op instanceof Receive) || (op instanceof Wait)) {
@@ -103,6 +101,11 @@ public class ProgramStepper implements Iterable<Process> {
             }
         }
 //        }
+    }
+
+    public void advanceToPoint(Process proc, Operation op) {
+        int index = proc.operations.indexOf(op);
+        currentMap.put(proc, index);
     }
 
 }

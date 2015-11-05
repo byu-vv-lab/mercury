@@ -1,5 +1,6 @@
 package JTAFinder;
 
+import JTASyntax.Operations.Operation;
 import JTASyntax.Operations.Receive;
 import JTASyntax.Process;
 
@@ -10,4 +11,12 @@ public abstract class AbstractPattern {
     public abstract boolean hasProcess(Process proc);
 
     public abstract boolean hasReceive(Receive recv);
+
+    public boolean hasOp(Operation op) {
+        if (op instanceof Receive) {
+            return hasReceive((Receive) op);
+        } else {
+            return false;
+        }
+    }
 }
