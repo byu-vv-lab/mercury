@@ -1,9 +1,9 @@
 package Parser;
 
-import JTASyntax.Operations.Operation;
-import JTASyntax.Operations.Receive;
-import JTASyntax.Operations.Send;
-import JTASyntax.Program;
+import Syntax.Operations.Operation;
+import Syntax.Operations.Receive;
+import Syntax.Operations.Send;
+import Syntax.Program;
 import org.antlr.v4.runtime.tree.ErrorNode;
 
 import java.util.HashMap;

@@ -1,8 +1,8 @@
 package Benchmarks;
 
-import JTAFinder.AbstractFinder;
-import JTAFinder.UnmatchedEndpoint.UmEPFinder;
-import JTASyntax.Program;
+import Finder.AbstractFinder;
+import Finder.UnmatchedEndpoint.UmEPFinder;
+import Syntax.Program;
 import Parser.ProgramParser;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

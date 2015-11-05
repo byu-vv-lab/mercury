@@ -1,7 +1,7 @@
 package Parser;
 
-import JTASyntax.Process;
-import JTASyntax.Program;
+import Syntax.Process;
+import Syntax.Program;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ class ProgramBuilder {
         this.name = name;
     }
 
-    public void addProcess(JTASyntax.Process process) {
+    public void addProcess(Syntax.Process process) {
         procs.add(process);
     }
 

@@ -1,6 +1,6 @@
 package Parser;
 
-import JTASyntax.Program;
+import Syntax.Program;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

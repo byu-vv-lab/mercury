@@ -1,7 +1,7 @@
 package Parser;
 
-import JTASyntax.Operations.Operation;
-import JTASyntax.Process;
+import Syntax.Operations.Operation;
+import Syntax.Process;
 
 import java.util.ArrayList;
 import java.util.List;

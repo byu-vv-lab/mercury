@@ -1,11 +1,11 @@
 package Parser;
 
 
-import JTASyntax.*;
-import JTASyntax.Operations.Operation;
-import JTASyntax.Operations.Receive;
-import JTASyntax.Operations.Send;
-import JTASyntax.Process;
+import Syntax.*;
+import Syntax.Operations.Operation;
+import Syntax.Operations.Receive;
+import Syntax.Operations.Send;
+import Syntax.Process;
 
 import java.util.ArrayList;
 import java.util.List;
