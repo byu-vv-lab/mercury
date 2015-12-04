@@ -16,7 +16,7 @@ This presentation further defines two distinct patterns of deadlock with their v
 
 This presentation presents how to detect all the instances for each of the patterns above by statically traversing the program. Further, this presentation presents how to validate the instances of the circular dependency pattern, by simply comparing the counts of issued operations, and how to validate instances of the orphaned receive pattern that requires a higher cost SMT encoding. The presentation first gives the pattern match algorithm and the validation algorithm for infinite buffer semantics. The modification to zero buffer semantics is discussed latter.  
 
-The presentation includes proofs that the general algorithm is sound and complete for the patterns of circular dependency and orphaned receive. Also, the comparison with two state-of-art MPI verifiers shows that the new approach scales to large benchmark programs while other tools time out.
+The presentation includes proofs that the general algorithm is sound and complete for the patterns of circular dependency and orphaned receive. Also, the comparison with two state-of-art MPI verifiers shows that the new approach scales to large benchmark programs while other tools time out. The experiments further show that the two deadlock patterns in this presentation cover all the deadlock cases in benchmark programs.
 
 %As a note, the algorithm is designed for infinite buffer semantics. Nevertheless, it is adaptable to zero buffer semantics with a few changes in deadlock validation.
 
