@@ -200,10 +200,11 @@ The soundness for the abstract machine is given in \lemmaref{lemma:sound}.
 \label{lemma:sound}
 \end{lemma}
 \begin{proof}
-  Only \emph{Wait (RCVI) Command 3} is discussed since the
-  other rules are simple (and trivial to prove). \emph{Wait (RCVI) Command 3} must never
-  claim to be able to consume a receive command incorrectly for
-  the machine to be sound. The rule uses two conditions 
+The commands defined in \figref{fig:machineexample} must never claim to be able to consume a send, a receive, or a barrier incorrectly for the machine to be sound.
+
+Some rules are trivial to prove. In precise, \emph{Send Command} and \emph{Receive Command} simply consume a non-blocking send or a non-blocking receive according to the semantics. The rules also update the associated counts \epsnd\ and \epwait\ with correct values. \emph{Wait (RCVI) Command 1} consumes a wait because there is no receives in $\epwait$ to be witnessed by the wait. \emph{Wait (RCVI) Command 2} suspends a wait because the next receive that the wait witnesses is in the pattern instance. The program that reaches all the receives in the pattern instance may have a deadlock and is rejected by the machine. \emph{Barrier Command 1} suspends a barrier because not all the barriers in the same group are witnessed. \emph{Barrier Command 2} consume a suspended barrier because all the barriers in the same group are witnessed.
+
+  Only \emph{Wait (RCVI) Command 3} is non-trivial to prove. The rule uses two conditions 
   $\eprcv(v_{to0},v_{frm0}) < \epsnd(v_{to0},v_{frm0})$
 and 
 $\eprcv(v_{to0},\ast) < \epsnd(v_{to0},\ast)$
