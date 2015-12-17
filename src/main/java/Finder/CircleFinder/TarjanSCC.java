@@ -75,7 +75,7 @@ public class TarjanSCC {
                 minlocal = wrank;
             }
             if (sccs.size() <= count)
-                sccs.add(new HashSet<>());
+                sccs.add(new HashSet<Operation>());
             sccs.get(count).add(w);
 //            id[wrank] = count;
             low[wrank] = G.size();

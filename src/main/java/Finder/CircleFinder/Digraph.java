@@ -49,7 +49,7 @@ public class Digraph {
                     continue;
 
                 if (!eTable.containsKey(s))
-                    eTable.put(s, new HashSet<>());
+                    eTable.put(s, new HashSet<Operation>());
 
                 eTable.get(s).add(r);
             }
@@ -95,12 +95,12 @@ public class Digraph {
                 if (r.isBlock) {
                     lastr = r;
                     if (!HB.containsKey(lastr))
-                        HB.put(lastr, new HashSet<>());
+                        HB.put(lastr, new HashSet<Operation>());
                 } else {
                     //record this receive and its nw
                     Wait nw = r.NearestWait;
                     if (!witnessedR.containsKey(nw))
-                        witnessedR.put(nw, new ArrayList<>());
+                        witnessedR.put(nw, new ArrayList<Receive>());
                     witnessedR.get(nw).add(r);
                 }
                 if (r.src == -1) {
@@ -121,7 +121,7 @@ public class Digraph {
                             } else {
                                 lastr = r;
                                 if (!HB.containsKey(lastr))
-                                    HB.put(lastr, new HashSet<>());
+                                    HB.put(lastr, new HashSet<Operation>());
                             }
                         }
                     }

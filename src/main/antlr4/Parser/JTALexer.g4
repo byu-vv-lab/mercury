@@ -1,9 +1,5 @@
 lexer grammar JTALexer;
 
-@header {
-package Parser;
-}
-
 Comment    : '//' .*? LineBreak+ -> channel(HIDDEN);
 IF         : ('IF' | 'If' | 'if');
 Thread     : ('Thread' | 'thread');

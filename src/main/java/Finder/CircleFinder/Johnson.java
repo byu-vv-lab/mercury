@@ -49,7 +49,7 @@ public class Johnson {
                 s = leastvertex;
                 for (Operation v : leastSCC) {
                     blocked.put(v, false);
-                    blockedNodes.put(v, new LinkedList<>());
+                    blockedNodes.put(v, new LinkedList<Operation>());
                 }
 
                 boolean dummy = circuit(leastSCC, s, s, stack, blocked, blockedNodes);

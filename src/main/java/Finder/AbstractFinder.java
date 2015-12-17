@@ -86,7 +86,7 @@ public abstract class AbstractFinder {
                         int dest = recv.dest;
                         lastrInShape[dest] = recv.rank;
                         if (!recvNums.containsKey(dest)) {
-                            recvNums.put(dest, new HashMap<>());
+                            recvNums.put(dest, new HashMap<Integer, Integer>());
                         }
                         if (!recvNums.get(dest).containsKey(src)) {
                             recvNums.get(dest).put(src, 0);
@@ -105,7 +105,7 @@ public abstract class AbstractFinder {
                         lastsInShape[dest][src] = send.rank;
 
                         if (!sendNums.containsKey(dest)) {
-                            sendNums.put(dest, new HashMap<>());
+                            sendNums.put(dest, new HashMap<Integer, Integer>());
                         }
                         if (!sendNums.get(dest).containsKey(src)) {
                             sendNums.get(dest).put(src, 0);
@@ -139,7 +139,7 @@ public abstract class AbstractFinder {
                         } else {
                             Wait nw = receive.NearestWait;
                             if (!witnessedRecv.containsKey(nw)) {
-                                witnessedRecv.put(nw, new ArrayList<>());
+                                witnessedRecv.put(nw, new ArrayList<Receive>());
                             }
                             witnessedRecv.get(nw).add(receive);
                         }
@@ -158,7 +158,7 @@ public abstract class AbstractFinder {
                                     int dest = recv.dest;
 
                                     if (!recvNums.containsKey(dest)) {
-                                        recvNums.put(dest, new HashMap<>());
+                                        recvNums.put(dest, new HashMap<Integer, Integer>());
                                     }
                                     if (!recvNums.get(dest).containsKey(src)) {
                                         recvNums.get(dest).put(src, 0);

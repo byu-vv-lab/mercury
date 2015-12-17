@@ -1,8 +1,5 @@
 parser grammar JTAParser;
 
-@header {
-package Parser;
-}
 options {
 tokenVocab=JTALexer;
 }
