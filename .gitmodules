@@ -1,0 +1,12 @@
+[submodule "modules/civl"]
+	path = modules/civl
+	url = git@github.com:byu-vv-lab/civl.git
+[submodule "modules/abc"]
+	path = modules/abc
+	url = git@github.com:byu-vv-lab/abc.git
+[submodule "modules/sarl"]
+	path = modules/sarl
+	url = git@github.com:byu-vv-lab/sarl.git
+[submodule "modules/gmc"]
+	path = modules/gmc
+	url = git@github.com:byu-vv-lab/gmc.git
