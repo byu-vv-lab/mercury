@@ -7,13 +7,15 @@
     <properties>
         <project.libsdir>${project.basedir}/libs</project.libsdir>
         <antlr4.version>4.5.1-1</antlr4.version>
+        <antlr3.version>3.5.2</antlr3.version>
         <surefire.version>2.19</surefire.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <groupId>edu.byu.cs.vv</groupId>
     <artifactId>mercury</artifactId>
     <name>Mercury</name>
     <version>0.1.0</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <repositories>
         <repository>
@@ -22,14 +24,20 @@
         </repository>
     </repositories>
 
-    <modules>
-        <module>modules/sarl</module>
-        <module>modules/gmc</module>
-        <module>modules/abc</module>
-        <module>modules/civl</module>
-    </modules>
+    <!--<modules>-->
+        <!--<module>modules/sarl</module>-->
+        <!--<module>modules/gmc</module>-->
+        <!--<module>modules/abc</module>-->
+        <!--<module>modules/civl</module>-->
+    <!--</modules>-->
 
     <dependencies>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-complete</artifactId>
+            <version>${antlr3.version}</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
@@ -46,6 +54,12 @@
             <groupId>com.microsoft</groupId>
             <artifactId>z3</artifactId>
             <version>4.3.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.udel.cis.vsl</groupId>
+            <artifactId>civl</artifactId>
+            <version>0.1.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -83,7 +97,7 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <argLine>-Djava.library.path=${project.libsdir}</argLine>
-                    <excludedGroups>Categories.Benchmark</excludedGroups>
+                    <excludedGroups>edu.byu.cs.vv.Categories.Benchmark</excludedGroups>
                 </configuration>
             </plugin>
         </plugins>
