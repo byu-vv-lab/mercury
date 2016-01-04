@@ -1,12 +1,12 @@
-[submodule "modules/civl"]
-	path = modules/civl
+[submodule "libs/civl"]
+	path = libs/civl
 	url = git@github.com:byu-vv-lab/civl.git
-[submodule "modules/abc"]
-	path = modules/abc
+[submodule "libs/abc"]
+	path = libs/abc
 	url = git@github.com:byu-vv-lab/abc.git
-[submodule "modules/sarl"]
-	path = modules/sarl
+[submodule "libs/sarl"]
+	path = libs/sarl
 	url = git@github.com:byu-vv-lab/sarl.git
-[submodule "modules/gmc"]
-	path = modules/gmc
+[submodule "libs/gmc"]
+	path = libs/gmc
 	url = git@github.com:byu-vv-lab/gmc.git
