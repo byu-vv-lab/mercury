@@ -1,16 +1,15 @@
 package edu.byu.cs.vv.Syntax;
 
-import java.lang.*;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class Program implements Iterable<java.lang.Process> {
+public class Program implements Iterable<Process> {
 
     public final String name;
-    public final List<java.lang.Process> processes;
+    public final List<Process> processes;
 
-    public Program(String name, List<java.lang.Process> procs) {
+    public Program(String name, List<Process> procs) {
         this.name = name;
         this.processes = Collections.unmodifiableList(procs);
     }
@@ -19,13 +18,13 @@ public class Program implements Iterable<java.lang.Process> {
         return processes.size();
     }
 
-    public java.lang.Process get(int index) {
+    public Process get(int index) {
         return processes.get(index);
     }
 
 
     @Override
-    public Iterator<java.lang.Process> iterator() {
+    public Iterator<Process> iterator() {
         return processes.iterator();
     }
 

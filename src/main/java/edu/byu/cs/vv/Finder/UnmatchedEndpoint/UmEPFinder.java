@@ -1,15 +1,15 @@
 package edu.byu.cs.vv.Finder.UnmatchedEndpoint;
 
-import Finder.AbstractEncoder;
-import Finder.AbstractFinder;
-import Finder.AbstractPattern;
-import Finder.ProgramStepper;
-import Syntax.Operations.Barrier;
-import Syntax.Operations.Operation;
-import Syntax.Operations.Receive;
-import Syntax.Operations.Wait;
-import Syntax.Process;
-import Syntax.Program;
+import edu.byu.cs.vv.Finder.AbstractEncoder;
+import edu.byu.cs.vv.Finder.AbstractFinder;
+import edu.byu.cs.vv.Finder.AbstractPattern;
+import edu.byu.cs.vv.Finder.ProgramStepper;
+import edu.byu.cs.vv.Syntax.Operations.Barrier;
+import edu.byu.cs.vv.Syntax.Operations.Operation;
+import edu.byu.cs.vv.Syntax.Operations.Receive;
+import edu.byu.cs.vv.Syntax.Operations.Wait;
+import edu.byu.cs.vv.Syntax.Process;
+import edu.byu.cs.vv.Syntax.Program;
 import com.microsoft.z3.Model;
 
 import java.util.*;

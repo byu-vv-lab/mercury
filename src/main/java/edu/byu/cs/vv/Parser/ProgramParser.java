@@ -1,8 +1,6 @@
 package edu.byu.cs.vv.Parser;
 
-import Parser.JTALexer;
-import Parser.JTAParser;
-import Syntax.Program;
+import edu.byu.cs.vv.Syntax.Program;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;

@@ -1,9 +1,9 @@
 package edu.byu.cs.vv.Finder;
 
-import Syntax.Match;
-import Syntax.Operations.*;
-import Syntax.Pair;
-import Syntax.Schedule;
+import edu.byu.cs.vv.Syntax.Match;
+import edu.byu.cs.vv.Syntax.Operations.*;
+import edu.byu.cs.vv.Syntax.Pair;
+import edu.byu.cs.vv.Syntax.Schedule;
 import com.microsoft.z3.*;
 
 import java.util.Collection;

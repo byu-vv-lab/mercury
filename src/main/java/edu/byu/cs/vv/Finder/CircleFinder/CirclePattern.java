@@ -1,8 +1,8 @@
 package edu.byu.cs.vv.Finder.CircleFinder;
 
-import Finder.AbstractPattern;
-import Syntax.Operations.Receive;
-import Syntax.Process;
+import edu.byu.cs.vv.Finder.AbstractPattern;
+import edu.byu.cs.vv.Syntax.Operations.Receive;
+import edu.byu.cs.vv.Syntax.Process;
 
 import java.util.Map;
 

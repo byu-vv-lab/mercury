@@ -1,9 +1,10 @@
 package edu.byu.cs.vv.Finder;
 
-import Syntax.Match;
-import Syntax.Operations.Receive;
-import Syntax.Operations.Send;
-import Syntax.Program;
+import edu.byu.cs.vv.Syntax.Match;
+import edu.byu.cs.vv.Syntax.Operations.Receive;
+import edu.byu.cs.vv.Syntax.Operations.Send;
+import edu.byu.cs.vv.Syntax.Program;
+import edu.byu.cs.vv.Syntax.Process;
 
 import java.util.*;
 
@@ -33,7 +34,7 @@ public abstract class AbstractMatchGenerator {
         List<Send>[][] sendlist = new ArrayList[program.size()][program.size()];
 
         //store the rlist and slist of each process
-        for (Syntax.Process process : program) {
+        for (Process process : program) {
             recvlist[process.rank] = new ArrayList<>(process.rlist);
             for (Integer dest : process.smap.keySet()) {
                 sendlist[dest][process.rank] = new ArrayList<>(process.smap.get(dest));

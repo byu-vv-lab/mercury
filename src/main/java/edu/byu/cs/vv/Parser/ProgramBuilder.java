@@ -1,7 +1,7 @@
 package edu.byu.cs.vv.Parser;
 
-import Syntax.Process;
-import Syntax.Program;
+import edu.byu.cs.vv.Syntax.Process;
+import edu.byu.cs.vv.Syntax.Program;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ class ProgramBuilder {
         this.name = name;
     }
 
-    public void addProcess(Syntax.Process process) {
+    public void addProcess(Process process) {
         procs.add(process);
     }
 

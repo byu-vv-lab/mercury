@@ -1,10 +1,10 @@
 package edu.byu.cs.vv.Finder.UnmatchedEndpoint;
 
-import Finder.AbstractMatchGenerator;
-import Syntax.Match;
-import Syntax.Program;
+import edu.byu.cs.vv.Finder.AbstractMatchGenerator;
+import edu.byu.cs.vv.Syntax.Match;
+import edu.byu.cs.vv.Syntax.Program;
 
-import java.util.*;
+import java.util.Collection;
 
 // TODO: Extend AbstractMatchGenerator
 public class UmEPMatchGenerator extends AbstractMatchGenerator {

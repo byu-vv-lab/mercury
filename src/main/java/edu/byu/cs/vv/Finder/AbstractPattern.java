@@ -1,8 +1,8 @@
 package edu.byu.cs.vv.Finder;
 
-import Syntax.Operations.Operation;
-import Syntax.Operations.Receive;
-import Syntax.Process;
+import edu.byu.cs.vv.Syntax.Operations.Operation;
+import edu.byu.cs.vv.Syntax.Operations.Receive;
+import edu.byu.cs.vv.Syntax.Process;
 
 public abstract class AbstractPattern {
 

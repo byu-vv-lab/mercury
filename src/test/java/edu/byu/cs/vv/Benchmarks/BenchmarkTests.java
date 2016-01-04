@@ -1,9 +1,9 @@
-package Benchmarks;
+package edu.byu.cs.vv.Benchmarks;
 
-import Finder.AbstractFinder;
-import Finder.UnmatchedEndpoint.UmEPFinder;
-import Syntax.Program;
-import Parser.ProgramParser;
+import edu.byu.cs.vv.Finder.AbstractFinder;
+import edu.byu.cs.vv.Finder.UnmatchedEndpoint.UmEPFinder;
+import edu.byu.cs.vv.Syntax.Program;
+import edu.byu.cs.vv.Parser.ProgramParser;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -11,7 +11,7 @@ import java.net.URL;
 
 import static org.junit.Assert.*;
 
-@Category(Categories.Benchmark.class)
+@Category(edu.byu.cs.vv.Categories.Benchmark.class)
 public class BenchmarkTests {
 
     // TODO: The MatG* tests loop

@@ -1,11 +1,11 @@
-package Parser;
+package edu.byu.cs.vv.Parser;
 
 
-import Syntax.*;
-import Syntax.Operations.Operation;
-import Syntax.Operations.Receive;
-import Syntax.Operations.Send;
-import Syntax.Process;
+import edu.byu.cs.vv.Syntax.Operations.Operation;
+import edu.byu.cs.vv.Syntax.Operations.Receive;
+import edu.byu.cs.vv.Syntax.Operations.Send;
+import edu.byu.cs.vv.Syntax.Process;
+import edu.byu.cs.vv.Syntax.Program;
 
 import java.util.ArrayList;
 import java.util.List;

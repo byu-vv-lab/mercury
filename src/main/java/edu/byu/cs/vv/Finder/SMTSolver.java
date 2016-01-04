@@ -1,15 +1,16 @@
 package edu.byu.cs.vv.Finder;
 
-import Syntax.Operations.Receive;
+import edu.byu.cs.vv.Syntax.Operations.Receive;
 import com.microsoft.z3.*;
+import edu.byu.cs.vv.Syntax.Operations.Send;
 
 import java.util.Collection;
 
 public class SMTSolver {
 
     IntSort intsort;
-    TupleSort Recv;
-    TupleSort Send;
+    TupleSort recv_sort;
+    TupleSort send_sort;
     Context context;
     com.microsoft.z3.Solver solver;
     FuncDecl HB;
@@ -23,12 +24,12 @@ public class SMTSolver {
         context = new Context();
         solver = context.MkSolver();
         intsort = context.IntSort();
-        Recv = context.MkTupleSort(context.MkSymbol("Recv"),
+        recv_sort = context.MkTupleSort(context.MkSymbol("recv_sort"),
                 new Symbol[]{
                         context.MkSymbol("src"), context.MkSymbol("dest"), context.MkSymbol("time"),
                         context.MkSymbol("match"), context.MkSymbol("var"), context.MkSymbol("nw")},
                 new Sort[]{intsort, intsort, intsort, intsort, intsort, intsort});
-        Send = context.MkTupleSort(context.MkSymbol("Send"),
+        send_sort = context.MkTupleSort(context.MkSymbol("send_sort"),
                 new Symbol[]{context.MkSymbol("src"), context.MkSymbol("dest"), context.MkSymbol("time"),
                         context.MkSymbol("match"), context.MkSymbol("value")},
                 new Sort[]{intsort, intsort, intsort, intsort, intsort});
@@ -44,11 +45,11 @@ public class SMTSolver {
     }
 
     public Expr getRecvField(Expr recv, int index) throws Z3Exception {
-        return context.MkApp(Recv.FieldDecls()[index], recv);
+        return context.MkApp(recv_sort.FieldDecls()[index], recv);
     }
 
     public Expr getSendField(Expr send, int index) throws Z3Exception {
-        return context.MkApp(Send.FieldDecls()[index], send);
+        return context.MkApp(send_sort.FieldDecls()[index], send);
     }
 
     public BoolExpr Match(Expr r, Expr s) throws Z3Exception {
@@ -80,8 +81,8 @@ public class SMTSolver {
     }
 
     public BoolExpr initMATCH() throws Z3Exception {
-        Expr recv = context.MkConst("R", Recv);
-        Expr send = context.MkConst("S", Send);
+        Expr recv = context.MkConst("R", recv_sort);
+        Expr send = context.MkConst("S", send_sort);
         Expr fapp = context.MkApp(MATCH, new Expr[]{recv, send});
         BoolExpr cond = context.MkAnd(new BoolExpr[]{
                 context.MkOr(new BoolExpr[]{context.MkEq(getRecvField(recv, 0), getSendField(send, 0)),
@@ -118,13 +119,13 @@ public class SMTSolver {
     }
 
     public Expr mkSend(String name) throws Z3Exception {
-        Expr sExpr = context.MkConst(name, Send);
+        Expr sExpr = context.MkConst(name, send_sort);
         if (display)
             System.out.println(sExpr);
         return sExpr;
     }
 
-    public BoolExpr initSend(Expr expr, IntExpr time, Syntax.Operations.Send send) throws Z3Exception {
+    public BoolExpr initSend(Expr expr, IntExpr time, Send send) throws Z3Exception {
         BoolExpr sDf = context.MkAnd(
                 new BoolExpr[]{
                         context.MkEq(getSendField(expr, 0), context.MkInt(send.src)),
@@ -138,7 +139,7 @@ public class SMTSolver {
     }
 
     public Expr mkRecv(String name) throws Z3Exception {
-        Expr rExpr = context.MkConst(name, Recv);
+        Expr rExpr = context.MkConst(name, recv_sort);
         if (display)
             System.out.println(rExpr);
         return rExpr;

@@ -1,12 +1,12 @@
 package edu.byu.cs.vv.Finder.UnmatchedEndpoint;
 
-import Finder.AbstractEncoder;
-import Finder.ProgramStepper;
-import Syntax.Match;
-import Syntax.Operations.*;
-import Syntax.Pair;
-import Syntax.Process;
-import Syntax.Schedule;
+import edu.byu.cs.vv.Finder.AbstractEncoder;
+import edu.byu.cs.vv.Finder.ProgramStepper;
+import edu.byu.cs.vv.Syntax.Match;
+import edu.byu.cs.vv.Syntax.Operations.*;
+import edu.byu.cs.vv.Syntax.Pair;
+import edu.byu.cs.vv.Syntax.Process;
+import edu.byu.cs.vv.Syntax.Schedule;
 import com.microsoft.z3.*;
 
 import java.util.*;
@@ -94,7 +94,6 @@ public class UmEPEncoder extends AbstractEncoder {
         //TODO: add HB for barriers and other operations
     }
 
-    @Override
     protected void encodeReceive(Receive op) throws Z3Exception {
         IntExpr time = solver.MkTime("T" + op.name);
         Expr recv = solver.mkRecv("R" + op.name);

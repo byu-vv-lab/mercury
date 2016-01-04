@@ -5,7 +5,7 @@ import org.junit.experimental.categories.Category;
 
 import java.net.URL;
 
-@Category(Categories.Finder.class)
+@Category(edu.byu.cs.vv.Categories.Finder.class)
 public class CircleFinderTest {
     @Test
     public void test1 () throws Exception {

@@ -1,10 +1,10 @@
 package edu.byu.cs.vv.Finder;
 
-import Syntax.Operations.Operation;
-import Syntax.Operations.Receive;
-import Syntax.Operations.Wait;
-import Syntax.Process;
-import Syntax.Program;
+import edu.byu.cs.vv.Syntax.Operations.Operation;
+import edu.byu.cs.vv.Syntax.Operations.Receive;
+import edu.byu.cs.vv.Syntax.Operations.Wait;
+import edu.byu.cs.vv.Syntax.Process;
+import edu.byu.cs.vv.Syntax.Program;
 
 import java.util.HashMap;
 import java.util.Iterator;

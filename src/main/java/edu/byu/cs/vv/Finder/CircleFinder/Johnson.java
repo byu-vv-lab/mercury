@@ -1,7 +1,7 @@
 package edu.byu.cs.vv.Finder.CircleFinder;
 
-import Syntax.Operations.Operation;
-import Syntax.Operations.Receive;
+import edu.byu.cs.vv.Syntax.Operations.Operation;
+import edu.byu.cs.vv.Syntax.Operations.Receive;
 
 import java.util.*;
 

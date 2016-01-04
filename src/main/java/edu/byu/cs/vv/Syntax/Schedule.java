@@ -1,6 +1,6 @@
 package edu.byu.cs.vv.Syntax;
 
-import Syntax.Operations.Operation;
+import edu.byu.cs.vv.Syntax.Operations.Operation;
 
 import java.util.ArrayList;
 

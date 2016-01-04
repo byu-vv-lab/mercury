@@ -1,7 +1,7 @@
 package edu.byu.cs.vv.Finder.CircleFinder;
 
-import Syntax.Operations.Receive;
-import Syntax.Operations.Send;
+import edu.byu.cs.vv.Syntax.Operations.Receive;
+import edu.byu.cs.vv.Syntax.Operations.Send;
 
 public class Vertex {
     public Receive recv;

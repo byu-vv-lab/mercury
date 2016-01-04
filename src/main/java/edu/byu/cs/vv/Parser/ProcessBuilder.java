@@ -1,7 +1,7 @@
 package edu.byu.cs.vv.Parser;
 
-import Syntax.Operations.Operation;
-import Syntax.Process;
+import edu.byu.cs.vv.Syntax.Operations.Operation;
+import edu.byu.cs.vv.Syntax.Process;
 
 import java.util.ArrayList;
 import java.util.List;

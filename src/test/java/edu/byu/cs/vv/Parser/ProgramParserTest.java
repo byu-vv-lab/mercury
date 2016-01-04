@@ -1,6 +1,7 @@
-package Parser;
+package edu.byu.cs.vv.Parser;
 
-import Syntax.Program;
+import edu.byu.cs.vv.Syntax.Program;
+import edu.byu.cs.vv.Parser.ProgramParser;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -9,7 +10,7 @@ import java.net.URL;
 
 import static org.junit.Assert.*;
 
-@Category(Categories.Parser.class)
+@Category(edu.byu.cs.vv.Categories.Parser.class)
 public class ProgramParserTest {
 
     @Test

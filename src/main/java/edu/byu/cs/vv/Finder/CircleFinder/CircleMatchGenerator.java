@@ -1,8 +1,8 @@
 package edu.byu.cs.vv.Finder.CircleFinder;
 
-import Finder.AbstractMatchGenerator;
-import Syntax.Match;
-import Syntax.Program;
+import edu.byu.cs.vv.Finder.AbstractMatchGenerator;
+import edu.byu.cs.vv.Syntax.Match;
+import edu.byu.cs.vv.Syntax.Program;
 
 import java.util.Collection;
 
