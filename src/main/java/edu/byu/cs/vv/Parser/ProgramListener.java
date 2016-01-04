@@ -1,4 +1,4 @@
-package Parser;
+package edu.byu.cs.vv.Parser;
 
 import Syntax.Operations.Operation;
 import Syntax.Operations.Receive;
@@ -6,6 +6,7 @@ import Syntax.Operations.Send;
 import Syntax.Program;
 import org.antlr.v4.runtime.tree.ErrorNode;
 
+import java.lang.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public class ProgramListener extends Parser.JTAParserBaseListener {
     }
 
     private ProgramBuilder programBuilder;
-    private ProcessBuilder processBuilder;
+    private java.lang.ProcessBuilder processBuilder;
     private Map<Integer, Integer> sends;
     private int recv_rank;
 
@@ -33,7 +34,7 @@ public class ProgramListener extends Parser.JTAParserBaseListener {
 
     @Override
     public void enterThread(Parser.JTAParser.ThreadContext ctx) {
-        processBuilder = new ProcessBuilder();
+        processBuilder = new java.lang.ProcessBuilder();
         processBuilder.setRank(programBuilder.size());
         sends = new HashMap<>();
         recv_rank = 0;

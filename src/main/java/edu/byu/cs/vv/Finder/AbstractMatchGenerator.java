@@ -1,4 +1,4 @@
-package Finder;
+package edu.byu.cs.vv.Finder;
 
 import Syntax.Match;
 import Syntax.Operations.Receive;

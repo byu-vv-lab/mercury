@@ -1,4 +1,4 @@
-package Syntax;
+package edu.byu.cs.vv.Syntax;
 
 import Syntax.Operations.Operation;
 

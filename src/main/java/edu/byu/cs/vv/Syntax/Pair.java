@@ -1,4 +1,4 @@
-package Syntax;
+package edu.byu.cs.vv.Syntax;
 
 public class Pair<A, B> {
     private A first;

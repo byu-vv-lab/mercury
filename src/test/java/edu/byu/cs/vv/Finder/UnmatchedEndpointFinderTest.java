@@ -1,8 +1,8 @@
-package Finder;
+package edu.byu.cs.vv.Finder;
 
-import Finder.UnmatchedEndpoint.UmEPFinder;
-import Syntax.Program;
-import Parser.ProgramParser;
+import edu.byu.cs.vv.Finder.UnmatchedEndpoint.UmEPFinder;
+import edu.byu.cs.vv.Parser.ProgramParser;
+import edu.byu.cs.vv.Syntax.Program;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -10,7 +10,7 @@ import java.net.URL;
 
 import static org.junit.Assert.*;
 
-@Category(Categories.Finder.class)
+@Category(edu.byu.cs.vv.Categories.Finder.class)
 public class UnmatchedEndpointFinderTest {
 
     @Test

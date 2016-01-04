@@ -1,4 +1,4 @@
-package Categories;
+package edu.byu.cs.vv.Categories;
 
 public interface Finder {
 }

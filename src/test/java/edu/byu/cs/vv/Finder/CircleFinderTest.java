@@ -1,4 +1,4 @@
-package Finder;
+package edu.byu.cs.vv.Finder;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

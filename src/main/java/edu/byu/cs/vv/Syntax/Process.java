@@ -1,8 +1,8 @@
-package Syntax;
+package edu.byu.cs.vv.Syntax;
 
-import Syntax.Operations.Operation;
-import Syntax.Operations.Receive;
-import Syntax.Operations.Send;
+import edu.byu.cs.vv.Syntax.Operations.Operation;
+import edu.byu.cs.vv.Syntax.Operations.Receive;
+import edu.byu.cs.vv.Syntax.Operations.Send;
 
 import java.util.*;
 

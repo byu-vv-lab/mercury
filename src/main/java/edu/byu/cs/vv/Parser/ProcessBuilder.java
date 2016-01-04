@@ -1,4 +1,4 @@
-package Parser;
+package edu.byu.cs.vv.Parser;
 
 import Syntax.Operations.Operation;
 import Syntax.Process;

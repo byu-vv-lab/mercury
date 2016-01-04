@@ -1,4 +1,4 @@
-package Finder.CircleFinder;
+package edu.byu.cs.vv.Finder.CircleFinder;
 
 import Syntax.Operations.Operation;
 import Syntax.Operations.Receive;

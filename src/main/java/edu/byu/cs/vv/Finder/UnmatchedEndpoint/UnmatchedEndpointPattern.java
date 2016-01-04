@@ -1,4 +1,4 @@
-package Finder.UnmatchedEndpoint;
+package edu.byu.cs.vv.Finder.UnmatchedEndpoint;
 
 import Finder.AbstractPattern;
 import Syntax.Operations.Operation;

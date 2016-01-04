@@ -1,4 +1,4 @@
-package Syntax.Operations;
+package edu.byu.cs.vv.Syntax.Operations;
 
 public class Send extends Operation {
 
