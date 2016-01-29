@@ -18,7 +18,7 @@ import static edu.udel.cis.vsl.civl.config.IF.CIVLConstants.seedO;
 public class Runner {
 
     public static void main(String[] args) throws Exception {
-        String[] opts = {"run", "src/resources/examples/mpi/diffusion1d.c"};
+        String[] opts = {"run", "-inputnx=4", "src/resources/examples/mpi/diffusion1d.c"};
 
         Model model;
         TracePlayer player;
