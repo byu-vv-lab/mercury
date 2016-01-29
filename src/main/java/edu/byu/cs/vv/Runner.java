@@ -18,7 +18,7 @@ import static edu.udel.cis.vsl.civl.config.IF.CIVLConstants.seedO;
 public class Runner {
 
     public static void main(String[] args) throws Exception {
-        String[] opts = {"run", "-seed=14539", "src/resources/examples/mpi/diffusion1d.c"};
+        String[] opts = {"run", "src/resources/examples/mpi/diffusion1d.c"};
 
         Model model;
         TracePlayer player;
@@ -31,7 +31,7 @@ public class Runner {
 
             GMCConfiguration gmcConfig = commandLine.gmcConfig();
             GMCSection gmcSection = gmcConfig.getAnonymousSection();
-//            gmcSection.setScalarValue(seedO, "1453915418880");
+            gmcSection.setScalarValue(seedO, "1454104962833");
 
             FrontEnd frontEnd = new FrontEnd();
             TransformerFactory transformerFactory =
