@@ -24,20 +24,8 @@
         </repository>
     </repositories>
 
-    <!--<modules>-->
-        <!--<module>modules/sarl</module>-->
-        <!--<module>modules/gmc</module>-->
-        <!--<module>modules/abc</module>-->
-        <!--<module>modules/civl</module>-->
-    <!--</modules>-->
 
     <dependencies>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr-complete</artifactId>
-            <version>${antlr3.version}</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
@@ -54,12 +42,6 @@
             <groupId>com.microsoft</groupId>
             <artifactId>z3</artifactId>
             <version>4.3.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>edu.udel.cis.vsl</groupId>
-            <artifactId>civl</artifactId>
-            <version>0.1.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
