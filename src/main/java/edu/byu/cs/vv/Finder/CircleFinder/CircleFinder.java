@@ -1,7 +1,7 @@
 package edu.byu.cs.vv.Finder.CircleFinder;
 
 import edu.byu.cs.vv.Finder.AbstractFinder;
-import edu.byu.cs.vv.Finder.AbstractMatchGenerator;
+import edu.byu.cs.vv.MatchGeneration.MatchGenerator;
 import edu.byu.cs.vv.Finder.AbstractPattern;
 import edu.byu.cs.vv.Finder.ProgramStepper;
 import edu.byu.cs.vv.Syntax.Operations.Operation;
@@ -20,7 +20,7 @@ public class CircleFinder extends AbstractFinder {
 
     @Override
     public boolean verify() {
-        AbstractMatchGenerator matches = new CircleMatchGenerator(program);
+        MatchGenerator matches = new MatchGenerator(program);
         Digraph graph = new Digraph(program, matches.getMatchTable());
         Johnson tc = new Johnson(graph);
 

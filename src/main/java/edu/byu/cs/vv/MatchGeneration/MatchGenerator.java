@@ -1,4 +1,4 @@
-package edu.byu.cs.vv.Finder;
+package edu.byu.cs.vv.MatchGeneration;
 
 import edu.byu.cs.vv.Syntax.Match;
 import edu.byu.cs.vv.Syntax.Operations.Receive;
@@ -8,13 +8,13 @@ import edu.byu.cs.vv.Syntax.Process;
 
 import java.util.*;
 
-public abstract class AbstractMatchGenerator {
+public class MatchGenerator implements MatchPairGenerator {
 
     protected final Program program;
     private Map<Receive, List<Send>> matchTable = new HashMap<>();
     private Map<Send, List<Receive>> patternMatch = new HashMap<>();
 
-    protected AbstractMatchGenerator(Program program) {
+    public MatchGenerator(Program program) {
         this.program = program;
         generateTables();
     }
@@ -23,7 +23,10 @@ public abstract class AbstractMatchGenerator {
      * TODO: Specify Ors/Ands for matches
      * @return
      */
-    public abstract Collection<Collection<Match>> generateMatches();
+    public Collection<Collection<Match>> generateMatches() {
+        generateTables();
+        return null;
+    }
 
     public Map<Receive, List<Send>> getMatchTable() { return Collections.unmodifiableMap(matchTable); }
 

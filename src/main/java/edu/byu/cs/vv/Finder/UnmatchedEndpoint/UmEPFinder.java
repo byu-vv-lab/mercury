@@ -4,6 +4,7 @@ import edu.byu.cs.vv.Finder.AbstractEncoder;
 import edu.byu.cs.vv.Finder.AbstractFinder;
 import edu.byu.cs.vv.Finder.AbstractPattern;
 import edu.byu.cs.vv.Finder.ProgramStepper;
+import edu.byu.cs.vv.MatchGeneration.MatchGenerator;
 import edu.byu.cs.vv.Syntax.Operations.Barrier;
 import edu.byu.cs.vv.Syntax.Operations.Operation;
 import edu.byu.cs.vv.Syntax.Operations.Receive;
@@ -16,11 +17,12 @@ import java.util.*;
 
 public class UmEPFinder extends AbstractFinder {
 
-    private UmEPMatchGenerator matchGenerator;
+    // TODO: Should be a MatchPairGenerator interface, not MatchGenerator
+    private MatchGenerator matchGenerator;
 
     public UmEPFinder(Program program) {
         super(program);
-        matchGenerator = new UmEPMatchGenerator(program);
+        matchGenerator = new MatchGenerator(program);
     }
 
     @Override
