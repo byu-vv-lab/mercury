@@ -2,7 +2,7 @@ package edu.byu.cs.vv.Finder;
 
 import edu.byu.cs.vv.Syntax.Match;
 import edu.byu.cs.vv.Syntax.Operations.*;
-import edu.byu.cs.vv.Util.Pair;
+import edu.byu.cs.vv.Syntax.Pair;
 import edu.byu.cs.vv.Syntax.Schedule;
 import com.microsoft.z3.*;
 

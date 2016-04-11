@@ -4,7 +4,7 @@ import edu.byu.cs.vv.Finder.AbstractEncoder;
 import edu.byu.cs.vv.Finder.ProgramStepper;
 import edu.byu.cs.vv.Syntax.Match;
 import edu.byu.cs.vv.Syntax.Operations.*;
-import edu.byu.cs.vv.Util.Pair;
+import edu.byu.cs.vv.Syntax.Pair;
 import edu.byu.cs.vv.Syntax.Process;
 import edu.byu.cs.vv.Syntax.Schedule;
 import com.microsoft.z3.*;
