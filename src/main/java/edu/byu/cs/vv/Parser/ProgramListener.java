@@ -10,7 +10,8 @@ import java.lang.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProgramListener extends JTAParserBaseListener {
+public class ProgramListener extends edu.byu.cs.vv.Parser.MercuryParserBaseListener {
+
     @Override
     public void visitErrorNode(ErrorNode node) {
         System.out.println("Error in syntax: " + node.toString());
@@ -27,13 +28,13 @@ public class ProgramListener extends JTAParserBaseListener {
     }
 
     @Override
-    public void enterProgram(JTAParser.ProgramContext ctx) {
+    public void enterProgram(edu.byu.cs.vv.Parser.MercuryParser.ProgramContext ctx) {
         programBuilder = new ProgramBuilder();
         super.enterProgram(ctx);
     }
 
     @Override
-    public void enterThread(JTAParser.ThreadContext ctx) {
+    public void enterThread(edu.byu.cs.vv.Parser.MercuryParser.ThreadContext ctx) {
         processBuilder = new ProcessBuilder();
         processBuilder.setRank(programBuilder.size());
         sends = new HashMap<>();
@@ -42,21 +43,21 @@ public class ProgramListener extends JTAParserBaseListener {
     }
 
     @Override
-    public void enterThreadHeader(JTAParser.ThreadHeaderContext ctx) {
+    public void enterThreadHeader(edu.byu.cs.vv.Parser.MercuryParser.ThreadHeaderContext ctx) {
         processBuilder.setName(ctx.children.get(1).getText());
         super.enterThreadHeader(ctx);
     }
 
     @Override
-    public void exitThread(JTAParser.ThreadContext ctx) {
+    public void exitThread(edu.byu.cs.vv.Parser.MercuryParser.ThreadContext ctx) {
         programBuilder.addProcess(processBuilder.finish());
         super.exitThread(ctx);
     }
 
-    // NOTE: This ignores the destination specified in the dsl for the receive, and assumes that the receive
-    //       endpoint is the thread it is declared within.
+    // TODO: Nearest enclosing wait is ignored
+    // TODO: Blocking receive is ignored
     @Override
-    public void enterReceive(JTAParser.ReceiveContext ctx) {
+    public void enterReceive(edu.byu.cs.vv.Parser.MercuryParser.ReceiveContext ctx) {
         int source = Integer.parseInt(ctx.children.get(1).getText());
         Operation op = new Receive(
                 processBuilder.rank() + "_" + processBuilder.size(),   // Name
@@ -64,7 +65,6 @@ public class ProgramListener extends JTAParserBaseListener {
                 recv_rank,                                            // Operation Rank
                 source,                                               // Source
                 processBuilder.rank(),                                // Destination
-                null,                                                 // Matching Send
                 null,                                                 // Nearest wait
                 true,                                                 // Blocking?
                 (source == -1));                                      // Wildcard?
@@ -73,8 +73,10 @@ public class ProgramListener extends JTAParserBaseListener {
         super.enterReceive(ctx);
     }
 
+    // TODO: Nearest enclosing wait is ignored
+    // TODO: Blocking send is ignored
     @Override
-    public void enterSend(JTAParser.SendContext ctx) {
+    public void enterSend(edu.byu.cs.vv.Parser.MercuryParser.SendContext ctx) {
         int rank, destination = Integer.parseInt(ctx.children.get(1).getText());
         if (sends.containsKey(destination)) {
             rank = sends.get(destination);
@@ -87,12 +89,11 @@ public class ProgramListener extends JTAParserBaseListener {
                 rank,                                                 // Operation rank
                 processBuilder.rank(),                                // Source
                 destination,                                          // Destination
-                null,                                                 // Matching receive
-                Integer.parseInt(ctx.children.get(2).getText()),      // Value
                 true,                                                 // Blocking?
                 null);                                                // Nearest wait
         processBuilder.addOperation(op);
         sends.put(destination, rank + 1);
         super.enterSend(ctx);
     }
+
 }

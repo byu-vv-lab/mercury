@@ -4,17 +4,13 @@ public class Send extends Operation {
 
     public final int src;
     public final int dest;
-    public final Receive match;
-    public final int value;// should be bitset
     public final Wait NearestWait;
 
-    public Send(String name, int process_rank, int rank, int src, int dest, Receive match, int value,
+    public Send(String name, int process_rank, int order, int src, int dest,
                 boolean isBlock, Wait nw) {
-        super(name, rank, isBlock, process_rank);
+        super(name, order, isBlock, process_rank);
         this.src = src;
         this.dest = dest;
-        this.match = match;
-        this.value = value;
         this.NearestWait = nw;
     }
 
@@ -23,8 +19,7 @@ public class Send extends Operation {
         return "Send: {" +
                 "src=" + src +
                 ", dest=" + dest +
-                ", value=" + value +
-                ", rank=" + rank +
+                ", rank=" + order +
                 ", isBlock=" + isBlock +
                 '}';
     }
@@ -38,8 +33,7 @@ public class Send extends Operation {
 
         if (src != send.src) return false;
         if (dest != send.dest) return false;
-        if (value != send.value) return false;
-        if (rank != send.rank) return false;
+        if (order != send.order) return false;
         return isBlock == send.isBlock;
     }
 
@@ -47,8 +41,7 @@ public class Send extends Operation {
     public int hashCode() {
         int result = src;
         result = 31 * result + dest;
-        result = 31 * result + value;
-        result = 31 * result + rank;
+        result = 31 * result + order;
         result = 31 * result + (isBlock ? 1 : 0);
         return result;
     }

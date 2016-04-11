@@ -4,13 +4,9 @@ public class Wait extends Operation {
 
     public final boolean forR;
 
-    public Wait(String name, int rank, boolean forR) {
-        super(name, rank, false, 0);
+    public Wait(String name, int order, boolean forR) {
+        super(name, order, false, 0);
         this.forR = forR;
-    }
-
-    public boolean forR() {
-        return forR;
     }
 
 }

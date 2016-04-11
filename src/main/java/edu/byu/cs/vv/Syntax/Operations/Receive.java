@@ -1,24 +1,18 @@
 package edu.byu.cs.vv.Syntax.Operations;
 
-import java.util.BitSet;
-
 public class Receive extends Operation {
 
     public final int src;
     public final int dest;
-    public final Send match;
-    public final BitSet var;
     public final boolean isWildcard;
     public final Wait NearestWait;
 
-    public Receive(String name, int process_rank, int rank, int src, int dest,
-                   Send match, Wait nw, boolean isBlock, boolean isWildcard) {
-        super(name, rank, isBlock, process_rank);
+    public Receive(String name, int process_rank, int order, int src, int dest,
+                   Wait nw, boolean isBlock, boolean isWildcard) {
+        super(name, order, isBlock, process_rank);
         this.src = src;
         this.isWildcard = isWildcard;
         this.dest = dest;
-        this.match = match;
-        this.var = new BitSet();
         this.NearestWait = nw;
     }
 
@@ -27,7 +21,7 @@ public class Receive extends Operation {
         return "Recv: {" +
                 "src=" + src +
                 ", dest=" + dest +
-                ", rank=" + rank +
+                ", rank=" + order +
                 ", isBlock=" + isBlock +
                 ", isWildcard=" + isWildcard +
                 '}';
@@ -42,7 +36,7 @@ public class Receive extends Operation {
 
         if (src != recv.src) return false;
         if (dest != recv.dest) return false;
-        if (rank != recv.rank) return false;
+        if (order != recv.order) return false;
         return isBlock == recv.isBlock;
     }
 
@@ -50,7 +44,7 @@ public class Receive extends Operation {
     public int hashCode() {
         int result = src;
         result = 31 * result + dest;
-        result = 31 * result + rank;
+        result = 31 * result + order;
         result = 31 * result + (isBlock ? 1 : 0);
         return result;
     }
