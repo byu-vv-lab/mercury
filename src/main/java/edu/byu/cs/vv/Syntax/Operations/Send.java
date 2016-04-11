@@ -5,7 +5,7 @@ public class Send extends Operation {
     public final int src;
     public final int dest;
     public final Receive match;
-    public final int value;// should be bitset
+    public final int value;
     public final Wait NearestWait;
 
     public Send(String name, int process_rank, int rank, int src, int dest, Receive match, int value,
