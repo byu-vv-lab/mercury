@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProgramListener extends edu.byu.cs.vv.Parser.MercuryParserBaseListener {
+
     @Override
     public void visitErrorNode(ErrorNode node) {
         System.out.println("Error in syntax: " + node.toString());
@@ -53,8 +54,8 @@ public class ProgramListener extends edu.byu.cs.vv.Parser.MercuryParserBaseListe
         super.exitThread(ctx);
     }
 
-    // NOTE: This ignores the destination specified in the dsl for the receive, and assumes that the receive
-    //       endpoint is the thread it is declared within.
+    // TODO: Nearest enclosing wait is ignored
+    // TODO: Blocking receive is ignored
     @Override
     public void enterReceive(edu.byu.cs.vv.Parser.MercuryParser.ReceiveContext ctx) {
         int source = Integer.parseInt(ctx.children.get(1).getText());
@@ -64,7 +65,6 @@ public class ProgramListener extends edu.byu.cs.vv.Parser.MercuryParserBaseListe
                 recv_rank,                                            // Operation Rank
                 source,                                               // Source
                 processBuilder.rank(),                                // Destination
-                null,                                                 // Matching Send
                 null,                                                 // Nearest wait
                 true,                                                 // Blocking?
                 (source == -1));                                      // Wildcard?
@@ -73,6 +73,8 @@ public class ProgramListener extends edu.byu.cs.vv.Parser.MercuryParserBaseListe
         super.enterReceive(ctx);
     }
 
+    // TODO: Nearest enclosing wait is ignored
+    // TODO: Blocking send is ignored
     @Override
     public void enterSend(edu.byu.cs.vv.Parser.MercuryParser.SendContext ctx) {
         int rank, destination = Integer.parseInt(ctx.children.get(1).getText());
@@ -87,12 +89,11 @@ public class ProgramListener extends edu.byu.cs.vv.Parser.MercuryParserBaseListe
                 rank,                                                 // Operation rank
                 processBuilder.rank(),                                // Source
                 destination,                                          // Destination
-                null,                                                 // Matching receive
-                Integer.parseInt(ctx.children.get(2).getText()),      // Value
                 true,                                                 // Blocking?
                 null);                                                // Nearest wait
         processBuilder.addOperation(op);
         sends.put(destination, rank + 1);
         super.enterSend(ctx);
     }
+
 }
