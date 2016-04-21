@@ -1,4 +1,4 @@
-lexer grammar JTALexer;
+lexer grammar CTPLexer;
 
 Comment    : '//' .*? LineBreak+ -> channel(HIDDEN);
 IF         : ('IF' | 'If' | 'if');

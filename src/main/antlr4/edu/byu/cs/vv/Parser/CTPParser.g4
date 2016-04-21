@@ -1,7 +1,7 @@
-parser grammar JTAParser;
+parser grammar CTPParser;
 
 options {
-tokenVocab=JTALexer;
+tokenVocab=CTPLexer;
 }
 
 program      : thread+ EOF;

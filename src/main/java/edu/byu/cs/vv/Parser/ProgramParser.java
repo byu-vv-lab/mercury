@@ -13,8 +13,8 @@ public class ProgramParser {
 
     public static Program loadProgramFromFile(URL filename) throws IOException {
         ANTLRInputStream stream = new ANTLRInputStream(filename.openStream());
-        JTALexer lexer = new JTALexer(stream);
-        JTAParser parser = new JTAParser(new CommonTokenStream(lexer));
+        edu.byu.cs.vv.Parser.CTPLexer lexer = new edu.byu.cs.vv.Parser.CTPLexer(stream);
+        edu.byu.cs.vv.Parser.CTPParser parser = new edu.byu.cs.vv.Parser.CTPParser(new CommonTokenStream(lexer));
         ParserRuleContext tree = parser.program();
 
         ParseTreeWalker walker = new ParseTreeWalker();

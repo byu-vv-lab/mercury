@@ -15,11 +15,11 @@ public class ProgramParserTest {
 
     @Test
     public void trivialPrograms () throws IOException {
-        URL test1 = ProgramParserTest.class.getResource("test1.jta");
+        URL test1 = ProgramParserTest.class.getResource("test1.ctp");
         Program p = ProgramParser.loadProgramFromFile(test1);
         assertEquals(TestProgramFactory.test1(), p);
 
-        URL test2 = ProgramParserTest.class.getResource("test2.jta");
+        URL test2 = ProgramParserTest.class.getResource("test2.ctp");
         p = ProgramParser.loadProgramFromFile(test2);
         assertEquals(TestProgramFactory.test2(), p);
     }

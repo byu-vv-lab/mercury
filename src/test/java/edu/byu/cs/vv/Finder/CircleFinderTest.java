@@ -9,7 +9,7 @@ import java.net.URL;
 public class CircleFinderTest {
     @Test
     public void test1 () throws Exception {
-        URL test = UnmatchedEndpointFinderTest.class.getResource("cf1.jta");
+        URL test = UnmatchedEndpointFinderTest.class.getResource("cf1.ctp");
 //        Program p = Parser.loadProgramFromFile(test);
 
 //        Circle_Finder finder = new Circle_Finder(p);
@@ -19,7 +19,7 @@ public class CircleFinderTest {
 
     @Test
     public void test2 () throws Exception {
-        URL test = UnmatchedEndpointFinderTest.class.getResource("cf2.jta");
+        URL test = UnmatchedEndpointFinderTest.class.getResource("cf2.ctp");
 //        Program p = Parser.loadProgramFromFile(test);
 
 //        Circle_Finder finder = new Circle_Finder(p);
@@ -29,7 +29,7 @@ public class CircleFinderTest {
 
     @Test
     public void test3 () throws Exception {
-        URL test = UnmatchedEndpointFinderTest.class.getResource("cf3.jta");
+        URL test = UnmatchedEndpointFinderTest.class.getResource("cf3.ctp");
 //        Program p = Parser.loadProgramFromFile(test);
 //
 //        Circle_Finder finder = new Circle_Finder(p);

@@ -10,7 +10,7 @@ import java.lang.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProgramListener extends JTAParserBaseListener {
+public class ProgramListener extends edu.byu.cs.vv.Parser.CTPParserBaseListener {
     @Override
     public void visitErrorNode(ErrorNode node) {
         System.out.println("Error in syntax: " + node.toString());
@@ -27,13 +27,13 @@ public class ProgramListener extends JTAParserBaseListener {
     }
 
     @Override
-    public void enterProgram(JTAParser.ProgramContext ctx) {
+    public void enterProgram(edu.byu.cs.vv.Parser.CTPParser.ProgramContext ctx) {
         programBuilder = new ProgramBuilder();
         super.enterProgram(ctx);
     }
 
     @Override
-    public void enterThread(JTAParser.ThreadContext ctx) {
+    public void enterThread(edu.byu.cs.vv.Parser.CTPParser.ThreadContext ctx) {
         processBuilder = new ProcessBuilder();
         processBuilder.setRank(programBuilder.size());
         sends = new HashMap<>();
@@ -42,13 +42,13 @@ public class ProgramListener extends JTAParserBaseListener {
     }
 
     @Override
-    public void enterThreadHeader(JTAParser.ThreadHeaderContext ctx) {
+    public void enterThreadHeader(edu.byu.cs.vv.Parser.CTPParser.ThreadHeaderContext ctx) {
         processBuilder.setName(ctx.children.get(1).getText());
         super.enterThreadHeader(ctx);
     }
 
     @Override
-    public void exitThread(JTAParser.ThreadContext ctx) {
+    public void exitThread(edu.byu.cs.vv.Parser.CTPParser.ThreadContext ctx) {
         programBuilder.addProcess(processBuilder.finish());
         super.exitThread(ctx);
     }
@@ -56,7 +56,7 @@ public class ProgramListener extends JTAParserBaseListener {
     // NOTE: This ignores the destination specified in the dsl for the receive, and assumes that the receive
     //       endpoint is the thread it is declared within.
     @Override
-    public void enterReceive(JTAParser.ReceiveContext ctx) {
+    public void enterReceive(edu.byu.cs.vv.Parser.CTPParser.ReceiveContext ctx) {
         int source = Integer.parseInt(ctx.children.get(1).getText());
         Operation op = new Receive(
                 processBuilder.rank() + "_" + processBuilder.size(),   // Name
@@ -74,7 +74,7 @@ public class ProgramListener extends JTAParserBaseListener {
     }
 
     @Override
-    public void enterSend(JTAParser.SendContext ctx) {
+    public void enterSend(edu.byu.cs.vv.Parser.CTPParser.SendContext ctx) {
         int rank, destination = Integer.parseInt(ctx.children.get(1).getText());
         if (sends.containsKey(destination)) {
             rank = sends.get(destination);
