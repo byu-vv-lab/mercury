@@ -15,7 +15,7 @@ public class UnmatchedEndpointFinderTest {
 
     @Test
     public void test1 () throws Exception {
-        URL test = UnmatchedEndpointFinderTest.class.getResource("umep1.jta");
+        URL test = UnmatchedEndpointFinderTest.class.getResource("umep1.ctp");
         Program p = ProgramParser.loadProgramFromFile(test);
 
         AbstractFinder finder = new UmEPFinder(p);
@@ -25,7 +25,7 @@ public class UnmatchedEndpointFinderTest {
 
     @Test
     public void test2 () throws Exception {
-        URL test = UnmatchedEndpointFinderTest.class.getResource("umep2.jta");
+        URL test = UnmatchedEndpointFinderTest.class.getResource("umep2.ctp");
         Program p = ProgramParser.loadProgramFromFile(test);
 
         AbstractFinder finder = new UmEPFinder(p);
@@ -35,7 +35,7 @@ public class UnmatchedEndpointFinderTest {
 
     @Test
     public void test3 () throws Exception {
-        URL test = UnmatchedEndpointFinderTest.class.getResource("umep3.jta");
+        URL test = UnmatchedEndpointFinderTest.class.getResource("umep3.ctp");
         Program p = ProgramParser.loadProgramFromFile(test);
 
         AbstractFinder finder = new UmEPFinder(p);

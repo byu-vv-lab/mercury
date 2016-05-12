@@ -10,8 +10,7 @@ import java.lang.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProgramListener extends edu.byu.cs.vv.Parser.MercuryParserBaseListener {
-
+public class ProgramListener extends edu.byu.cs.vv.Parser.CTPParserBaseListener {
     @Override
     public void visitErrorNode(ErrorNode node) {
         System.out.println("Error in syntax: " + node.toString());
@@ -28,13 +27,13 @@ public class ProgramListener extends edu.byu.cs.vv.Parser.MercuryParserBaseListe
     }
 
     @Override
-    public void enterProgram(edu.byu.cs.vv.Parser.MercuryParser.ProgramContext ctx) {
+    public void enterProgram(edu.byu.cs.vv.Parser.CTPParser.ProgramContext ctx) {
         programBuilder = new ProgramBuilder();
         super.enterProgram(ctx);
     }
 
     @Override
-    public void enterThread(edu.byu.cs.vv.Parser.MercuryParser.ThreadContext ctx) {
+    public void enterThread(edu.byu.cs.vv.Parser.CTPParser.ThreadContext ctx) {
         processBuilder = new ProcessBuilder();
         processBuilder.setRank(programBuilder.size());
         sends = new HashMap<>();
@@ -43,13 +42,13 @@ public class ProgramListener extends edu.byu.cs.vv.Parser.MercuryParserBaseListe
     }
 
     @Override
-    public void enterThreadHeader(edu.byu.cs.vv.Parser.MercuryParser.ThreadHeaderContext ctx) {
+    public void enterThreadHeader(edu.byu.cs.vv.Parser.CTPParser.ThreadHeaderContext ctx) {
         processBuilder.setName(ctx.children.get(1).getText());
         super.enterThreadHeader(ctx);
     }
 
     @Override
-    public void exitThread(edu.byu.cs.vv.Parser.MercuryParser.ThreadContext ctx) {
+    public void exitThread(edu.byu.cs.vv.Parser.CTPParser.ThreadContext ctx) {
         programBuilder.addProcess(processBuilder.finish());
         super.exitThread(ctx);
     }
@@ -57,7 +56,7 @@ public class ProgramListener extends edu.byu.cs.vv.Parser.MercuryParserBaseListe
     // TODO: Nearest enclosing wait is ignored
     // TODO: Blocking receive is ignored
     @Override
-    public void enterReceive(edu.byu.cs.vv.Parser.MercuryParser.ReceiveContext ctx) {
+    public void enterReceive(edu.byu.cs.vv.Parser.CTPParser.ReceiveContext ctx) {
         int source = Integer.parseInt(ctx.children.get(1).getText());
         Operation op = new Receive(
                 processBuilder.rank() + "_" + processBuilder.size(),   // Name
@@ -76,7 +75,7 @@ public class ProgramListener extends edu.byu.cs.vv.Parser.MercuryParserBaseListe
     // TODO: Nearest enclosing wait is ignored
     // TODO: Blocking send is ignored
     @Override
-    public void enterSend(edu.byu.cs.vv.Parser.MercuryParser.SendContext ctx) {
+    public void enterSend(edu.byu.cs.vv.Parser.CTPParser.SendContext ctx) {
         int rank, destination = Integer.parseInt(ctx.children.get(1).getText());
         if (sends.containsKey(destination)) {
             rank = sends.get(destination);
