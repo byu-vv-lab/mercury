@@ -44,7 +44,13 @@
             <version>4.3.0</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>19.0</version>
+        </dependency>
     </dependencies>
+
 
     <build>
         <defaultGoal>site</defaultGoal>
@@ -67,8 +73,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
@@ -79,7 +85,7 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <argLine>-Djava.library.path=${project.libsdir}</argLine>
-                    <excludedGroups>edu.byu.cs.vv.Categories.Benchmark</excludedGroups>
+                    <excludedGroups>edu.byu.cs.vv.categories.Benchmark</excludedGroups>
                 </configuration>
             </plugin>
         </plugins>

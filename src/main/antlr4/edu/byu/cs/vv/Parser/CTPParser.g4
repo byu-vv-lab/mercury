@@ -4,25 +4,21 @@ options {
 tokenVocab=CTPLexer;
 }
 
-program      : thread+ EOF;
+program      : OpenBlock (OpenBlock thread CloseBlock)+ CloseBlock EOF;
 
-thread       : threadHeader
-               (operation)*;
+thread       : Thread (operation)*;
 
-branch       : IF OpenBlock Identifier Comparator Number CloseBlock
-               OpenBlock (operation)* CloseBlock
-               OpenBlock (operation)* CloseBlock;
+operation    : OpenBlock (send | isend | receive | ireceive | block | barrier) CloseBlock;
 
-threadHeader : Thread Identifier;
+send         : Send Communicator Process Tag;
 
-operation    : (mutate | read | receive | send | block);
+isend        : ISend Communicator Process Tag;
 
-mutate       : Mutate Identifier;
+receive      : Recv Communicator Process Tag;
 
-read         : Read Identifier;
+ireceive     : IRecv Communicator Process Tag;
 
-receive      : Recv Identifier Identifier;
+barrier      : Barrier Communicator;
 
-send         : Send Identifier Identifier;
-
+// TODO: What should we pass to block?
 block        : Wait Identifier;
