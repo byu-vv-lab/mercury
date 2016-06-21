@@ -21,4 +21,4 @@ ireceive     : IRecv Communicator Process Tag;
 barrier      : Barrier Communicator;
 
 // TODO: What should we pass to block?
-block        : Wait Identifier;
+block        : Block Identifier;

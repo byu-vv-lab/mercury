@@ -6,7 +6,7 @@ Send         : ('Send' | 'send');
 ISend        : ('ISend' | 'isend');
 Recv         : ('Recv' | 'recv');
 IRecv        : ('IRecv' | 'irecv');
-Wait         : ('Wait' | 'wait');
+Block        : ('Wait' | 'wait');
 Barrier      : ('Barrier' | 'barrier');
 Communicator : WholeNumber;
 Process      : WholeNumber;

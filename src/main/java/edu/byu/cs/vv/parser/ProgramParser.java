@@ -1,5 +1,7 @@
 package edu.byu.cs.vv.parser;
 
+import edu.byu.cs.vv.Parser.CTPLexer;
+import edu.byu.cs.vv.Parser.CTPParser;
 import edu.byu.cs.vv.ast.Program;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -13,8 +15,8 @@ public class ProgramParser {
 
     public static Program loadProgramFromFile(URL filename) throws IOException {
         ANTLRInputStream stream = new ANTLRInputStream(filename.openStream());
-        edu.byu.cs.vv.parser.CTPLexer lexer = new edu.byu.cs.vv.parser.CTPLexer(stream);
-        edu.byu.cs.vv.parser.CTPParser parser = new edu.byu.cs.vv.parser.CTPParser(new CommonTokenStream(lexer));
+        CTPLexer lexer = new CTPLexer(stream);
+        CTPParser parser = new CTPParser(new CommonTokenStream(lexer));
         ParserRuleContext tree = parser.program();
 
         ParseTreeWalker walker = new ParseTreeWalker();

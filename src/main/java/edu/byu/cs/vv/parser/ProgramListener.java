@@ -1,5 +1,7 @@
 package edu.byu.cs.vv.parser;
 
+import edu.byu.cs.vv.Parser.CTPParser;
+import edu.byu.cs.vv.Parser.CTPParserBaseListener;
 import edu.byu.cs.vv.ast.operations.Barrier;
 import edu.byu.cs.vv.ast.operations.Operation;
 import edu.byu.cs.vv.ast.operations.Receive;
@@ -52,26 +54,31 @@ class ProgramListener extends CTPParserBaseListener {
 
     @Override
     public void enterSend(CTPParser.SendContext ctx) {
-        int communicator = Integer.parseInt(ctx.children.get(1).getText());
-        int destination = Integer.parseInt(ctx.children.get(2).getText());
-        int tag = Integer.parseInt(ctx.children.get(3).getText());
+        int communicator = Integer.parseInt(ctx.Communicator().getText());
+        int destination = Integer.parseInt(ctx.Process().getText());
+        int tag = Integer.parseInt(ctx.Tag().getText());
         int rank = sends.getOrDefault(destination, 0);
-        buildSend(communicator, destination, tag, rank, true);
+        Operation op = new Send(
+                  processBuilder.rank() + "_" + processBuilder.size()  // Name
+                , communicator                                         // Communicator
+                , processBuilder.rank()                                // Process Rank
+                , rank                                                 // Operation rank
+                , processBuilder.rank()                                // Source
+                , destination                                          // Destination
+                , tag                                                  // Tag
+                , null                                                 // Nearest wait
+                , true);                                               // Blocking?
+        processBuilder.addOperation(op);
+        sends.put(destination, rank + 1);
         super.enterSend(ctx);
     }
 
     @Override
     public void enterIsend(CTPParser.IsendContext ctx) {
-        int communicator = Integer.parseInt(ctx.children.get(1).getText());
-        int destination = Integer.parseInt(ctx.children.get(2).getText());
-        int tag = Integer.parseInt(ctx.children.get(3).getText());
+        int communicator = Integer.parseInt(ctx.Communicator().getText());
+        int destination = Integer.parseInt(ctx.Process().getText());
+        int tag = Integer.parseInt(ctx.Tag().getText());
         int rank = sends.getOrDefault(destination, 0);
-        buildSend(communicator, destination, tag, rank, false);
-        super.enterIsend(ctx);
-    }
-
-    // TODO: Nearest enclosing wait is ignored
-    private void buildSend(int communicator, int destination, int tag, int rank, boolean blocks) {
         Operation op = new Send(
                   processBuilder.rank() + "_" + processBuilder.size()  // Name
                 , communicator                                         // Communicator
@@ -84,28 +91,15 @@ class ProgramListener extends CTPParserBaseListener {
                 , false);                                              // Blocking?
         processBuilder.addOperation(op);
         sends.put(destination, rank + 1);
-    }
-
-    @Override
-    public void enterReceive(CTPParser.ReceiveContext ctx) {
-        int communicator = Integer.parseInt(ctx.children.get(1).getText());
-        int source = Integer.parseInt(ctx.children.get(2).getText());
-        int tag = Integer.parseInt(ctx.children.get(3).getText());
-        buildRecv(communicator, source, tag, true);
-        super.enterReceive(ctx);
-    }
-
-    @Override
-    public void enterIreceive(CTPParser.IreceiveContext ctx) {
-        int communicator = Integer.parseInt(ctx.children.get(1).getText());
-        int source = Integer.parseInt(ctx.children.get(2).getText());
-        int tag = Integer.parseInt(ctx.children.get(3).getText());
-        buildRecv(communicator, source, tag, false);
-        super.enterIreceive(ctx);
+        super.enterIsend(ctx);
     }
 
     // TODO: Nearest enclosing wait is ignored
-    private void buildRecv(int communicator, int source, int tag, boolean blocks) {
+    @Override
+    public void enterReceive(CTPParser.ReceiveContext ctx) {
+        int communicator = Integer.parseInt(ctx.Communicator().getText());
+        int source = Integer.parseInt(ctx.Process().getText());
+        int tag = Integer.parseInt(ctx.Tag().getText());
         Operation op = new Receive(
                   processBuilder.rank() + "_" + processBuilder.size()  // Name
                 , communicator                                         // Communicator
@@ -115,15 +109,35 @@ class ProgramListener extends CTPParserBaseListener {
                 , processBuilder.rank()                                // Destination
                 , tag                                                  // Tag
                 , null                                                 // Nearest wait
-                , blocks                                               // Blocking?
-                , (source == -1));                                     // Wildcard?
+                , true);                                               // Blocking?
         processBuilder.addOperation(op);
         recv_rank++;
+        super.enterReceive(ctx);
+    }
+
+    @Override
+    public void enterIreceive(CTPParser.IreceiveContext ctx) {
+        int communicator = Integer.parseInt(ctx.Communicator().getText());
+        int source = Integer.parseInt(ctx.Process().getText());
+        int tag = Integer.parseInt(ctx.Tag().getText());
+        Operation op = new Receive(
+                  processBuilder.rank() + "_" + processBuilder.size()  // Name
+                , communicator                                         // Communicator
+                , processBuilder.rank()                                // Process Rank
+                , recv_rank                                            // Operation Rank
+                , source                                               // Source
+                , processBuilder.rank()                                // Destination
+                , tag                                                  // Tag
+                , null                                                 // Nearest wait
+                , false);                                              // Blocking?
+        processBuilder.addOperation(op);
+        recv_rank++;
+        super.enterIreceive(ctx);
     }
 
     @Override
     public void enterBarrier(CTPParser.BarrierContext ctx) {
-        int communicator = Integer.parseInt(ctx.children.get(1).getText());
+        int communicator = Integer.parseInt(ctx.Communicator().getText());
         Operation op = new Barrier(
                 processBuilder.rank() + "_" + processBuilder.size()  // Name
                 , communicator                                         // Communicator
@@ -134,7 +148,7 @@ class ProgramListener extends CTPParserBaseListener {
 
     // TODO:
     @Override
-    public void enterBlock(CTPParser.BlockContext ctx) {
+    public void enterBlock(CTPParser.BlockContext ctx){
         super.enterBlock(ctx);
     }
 
