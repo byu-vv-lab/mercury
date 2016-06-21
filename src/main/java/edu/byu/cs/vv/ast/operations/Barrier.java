@@ -6,4 +6,8 @@ public class Barrier extends Operation {
         super(name, communicator, 0, order, true);
     }
 
+    @Override
+    public String toSexp() {
+        return "(Barrier " + communicator + ")";
+    }
 }

@@ -9,10 +9,12 @@ public class Program implements Iterable<Process> {
 
     public final String name;
     public final List<Process> processes;
+    public final int numberTags;
 
-    public Program(String name, List<Process> procs) {
+    public Program(String name, List<Process> procs, int numberTags) {
         this.name = name;
         this.processes = ImmutableList.copyOf(procs);
+        this.numberTags = numberTags;
     }
 
     public int size() {
@@ -53,5 +55,15 @@ public class Program implements Iterable<Process> {
                 "name='" + name + '\'' +
                 ", processes=" + processes +
                 '}';
+    }
+
+    public String toSexp() {
+        StringBuilder builder = new StringBuilder();
+        builder.append('(');
+        for (Process process : this) {
+            builder.append(process.toSexp());
+        }
+        builder.append(')');
+        return builder.toString();
     }
 }

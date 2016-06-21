@@ -8,15 +8,16 @@ import edu.byu.cs.vv.ast.operations.Send;
 import java.util.*;
 
 public class Process implements Iterable<Operation> {
+
     public final int rank;
     public final List<Operation> operations;
-    public final List<Receive> rlist;
-    public final Multimap<Integer, Send> smap;
+    private List<Receive> rlist;
+    private List<Send> slist;
+    private Multimap<Integer, Send> smap;
 
     public Process(int rank, List<Operation> operations) {
         this.rank = rank;
         this.operations = ImmutableList.copyOf(operations);
-        this.rlist = getReceiveList();
         this.smap = getSendMap();
     }
 
@@ -24,25 +25,47 @@ public class Process implements Iterable<Operation> {
         return operations.get(rank);
     }
 
-    private List<Receive> getReceiveList() {
+    public List<Receive> getReceiveList() {
+        if (this.rlist == null) {
+            setOpLists();
+        }
+        return this.rlist;
+    }
+
+    public List<Send> getSendList() {
+        if (this.slist == null) {
+            setOpLists();
+        }
+        return this.slist;
+    }
+
+    private void setOpLists() {
+        ImmutableList.Builder<Send> slist = ImmutableList.builder();
         ImmutableList.Builder<Receive> rlist = ImmutableList.builder();
         for (Operation op : this) {
-            if (op instanceof Receive) {
+            if (op instanceof Send) {
+                slist.add((Send) op);
+            } else if (op instanceof Receive) {
                 rlist.add((Receive) op);
             }
         }
-        return rlist.build();
+        this.slist = slist.build();
+        this.rlist = rlist.build();
     }
 
-    private Multimap<Integer, Send> getSendMap() {
-        ImmutableMultimap.Builder<Integer, Send> map = ImmutableListMultimap.builder();
-        for (Operation op : this) {
-            if (op instanceof Send) {
-                Send send = (Send) op;
-                map.put(send.dest, send);
-            }
+    public Multimap<Integer, Send> getSendMap() {
+        if (this.smap ==  null) {
+            buildSendMap();
         }
-        return map.build();
+        return this.smap;
+    }
+
+    private void buildSendMap() {
+        ImmutableMultimap.Builder<Integer, Send> map = ImmutableListMultimap.builder();
+        for (Send send : this.getSendList()) {
+            map.put(send.dest, send);
+        }
+        this.smap = map.build();
     }
 
     @Override
@@ -51,7 +74,7 @@ public class Process implements Iterable<Operation> {
     }
 
     public boolean hasDeterminsticRecv() {
-        for (Receive op : rlist) {
+        for (Receive op : getReceiveList()) {
             if (op.src != -1) {
                 return true;
             }
@@ -87,5 +110,15 @@ public class Process implements Iterable<Operation> {
 
     public int size() {
         return operations.size();
+    }
+
+    public String toSexp() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("(Thread ");
+        for (Operation op : this) {
+            builder.append(op.toSexp());
+        }
+        builder.append(')');
+        return builder.toString();
     }
 }

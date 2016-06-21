@@ -10,9 +10,10 @@ class ProgramBuilder {
 
     private String name = "";
     private List<Process> procs = new ArrayList<>();
+    private int tags = 0;
 
     public Program finish() {
-        return new Program(name, procs);
+        return new Program(name, procs, tags);
     }
 
     public void setName(String name) {
@@ -25,5 +26,10 @@ class ProgramBuilder {
 
     public int size() {
         return procs.size();
+    }
+
+    public int setNumberTags(int tag) {
+        tags = Math.max(tags, tag);
+        return tags;
     }
 }

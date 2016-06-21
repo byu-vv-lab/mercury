@@ -48,4 +48,8 @@ public class Send extends Operation {
         return result;
     }
 
+    @Override
+    public String toSexp() {
+        return "(Send " + communicator + " " + dest + " " + tag + ")";
+    }
 }

@@ -5,16 +5,14 @@ public class Receive extends Operation {
     public final int src;
     public final int dest;
     public final int tag;
-    public final boolean isWildcard;
     public final Wait NearestWait;
 
     public Receive(String name, int communicator, int process_rank, int order, int src, int dest,
-                   int tag, Wait nw, boolean isBlock, boolean isWildcard) {
+                   int tag, Wait nw, boolean isBlock) {
         super(name, communicator, process_rank, order, isBlock);
         this.src = src;
         this.dest = dest;
         this.tag = tag;
-        this.isWildcard = isWildcard;
         this.NearestWait = nw;
     }
 
@@ -25,7 +23,6 @@ public class Receive extends Operation {
                 ", dest=" + dest +
                 ", rank=" + order +
                 ", isBlock=" + isBlock +
-                ", isWildcard=" + isWildcard +
                 '}';
     }
 
@@ -51,4 +48,16 @@ public class Receive extends Operation {
         return result;
     }
 
+    @Override
+    public String toSexp() {
+        return "(Receive " + communicator + " " + src + " " + tag + ")";
+    }
+
+    public boolean isSourceWildcard() {
+        return this.src == -1;
+    }
+
+    public boolean isTagWildcard() {
+        return this.tag == -1;
+    }
 }

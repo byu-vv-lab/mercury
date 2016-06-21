@@ -36,4 +36,6 @@ public abstract class Operation implements Comparable<Operation>, Encodeable {
     public void encode(SMTContext ctx){
         throw new RuntimeException("Not implemented");
     }
+
+    public abstract String toSexp();
 }

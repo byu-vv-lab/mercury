@@ -9,4 +9,8 @@ public class Wait extends Operation {
         this.forR = forR;
     }
 
+    @Override
+    public String toSexp() {
+        return "(Wait " + communicator + ")";
+    }
 }
