@@ -100,7 +100,7 @@ public class Johnson {
                         continue;
                     }
                     //only keep the receive with lower rank
-                    if (pattern.get(r.dest).rank > r.rank) {
+                    if (pattern.get(r.dest).order > r.order) {
                         pattern.put(r.dest, r);
                     }
                 }

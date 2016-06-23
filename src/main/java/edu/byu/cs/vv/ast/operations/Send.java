@@ -5,7 +5,8 @@ public class Send extends Operation {
     public final int src;
     public final int dest;
     public final int tag;
-    public final Wait NearestWait;
+    public final int value = 0;
+    public final Wait nearestWait;
 
     public Send(String name, int communicator, int process_rank, int order, int src, int dest,
                 int tag, Wait nw, boolean isBlock) {
@@ -13,7 +14,7 @@ public class Send extends Operation {
         this.src = src;
         this.dest = dest;
         this.tag = tag;
-        this.NearestWait = nw;
+        this.nearestWait = nw;
     }
 
     @Override
@@ -51,5 +52,10 @@ public class Send extends Operation {
     @Override
     public String toSexp() {
         return "(Send " + communicator + " " + dest + " " + tag + ")";
+    }
+
+    @Override
+    public Operation setOrder(int time) {
+        return new Send(name, communicator, process_rank, time, src, dest, tag, nearestWait, isBlock);
     }
 }

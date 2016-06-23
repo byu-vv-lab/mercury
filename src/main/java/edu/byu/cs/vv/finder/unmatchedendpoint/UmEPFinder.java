@@ -1,6 +1,6 @@
 package edu.byu.cs.vv.finder.unmatchedendpoint;
 
-import edu.byu.cs.vv.finder.AbstractEncoder;
+import edu.byu.cs.vv.encoding.AbstractEncoder;
 import edu.byu.cs.vv.finder.AbstractFinder;
 import edu.byu.cs.vv.finder.AbstractPattern;
 import edu.byu.cs.vv.finder.ProgramStepper;
@@ -222,8 +222,8 @@ public class UmEPFinder extends AbstractFinder {
     private static Set<UnmatchedEndpointPattern> generatePatterns(Process proc) {
         Set<UnmatchedEndpointPattern> set = new HashSet<>();
         boolean hasPred = false;
-        for (Receive recv : proc.rlist) {
-            if (recv.isWildcard) {
+        for (Receive recv : proc.getReceiveList()) {
+            if (recv.isSourceWildcard()) {
                 hasPred = true;
             } else if (hasPred) {
                 set.add(new UnmatchedEndpointPattern(recv, proc));

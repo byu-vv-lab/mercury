@@ -10,4 +10,9 @@ public class Barrier extends Operation {
     public String toSexp() {
         return "(Barrier " + communicator + ")";
     }
+
+    @Override
+    public Operation setOrder(int time) {
+        return new Barrier(name, communicator, time);
+    }
 }

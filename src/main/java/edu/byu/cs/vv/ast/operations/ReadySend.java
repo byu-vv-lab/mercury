@@ -13,6 +13,11 @@ public class ReadySend extends Send {
         return "(RSend " + communicator + " " + dest + " " + tag + ")";
     }
 
+    @Override
+    public Operation setOrder(int time) {
+        return new ReadySend(name, communicator, process_rank, time, src, dest, tag, nearestWait, isBlock);
+    }
+
     // TODO: custom encoding
     @Override
     public void encode(SMTContext ctx) {

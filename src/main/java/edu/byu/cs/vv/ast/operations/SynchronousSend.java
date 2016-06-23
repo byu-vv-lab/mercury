@@ -13,6 +13,11 @@ public class SynchronousSend extends Send {
         return "(SSend " + communicator + " " + dest + " " + tag + ")";
     }
 
+    @Override
+    public Operation setOrder(int time) {
+        return new SynchronousSend(name, communicator, process_rank, time, src, dest, tag, nearestWait, isBlock);
+    }
+
     // TODO: custom encoding
     @Override
     public void encode(SMTContext ctx) {

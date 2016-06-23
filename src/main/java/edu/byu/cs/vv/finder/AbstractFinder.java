@@ -84,9 +84,9 @@ public abstract class AbstractFinder {
                     if (recv.isBlock) {
                         int src = recv.src;
                         int dest = recv.dest;
-                        lastrInShape[dest] = recv.rank;
+                        lastrInShape[dest] = recv.order;
                         if (!recvNums.containsKey(dest)) {
-                            recvNums.put(dest, new HashMap<Integer, Integer>());
+                            recvNums.put(dest, new HashMap<>());
                         }
                         if (!recvNums.get(dest).containsKey(src)) {
                             recvNums.get(dest).put(src, 0);
@@ -102,10 +102,10 @@ public abstract class AbstractFinder {
                         Send send = (Send) op;
                         int src = send.src;
                         int dest = send.dest;
-                        lastsInShape[dest][src] = send.rank;
+                        lastsInShape[dest][src] = send.order;
 
                         if (!sendNums.containsKey(dest)) {
-                            sendNums.put(dest, new HashMap<Integer, Integer>());
+                            sendNums.put(dest, new HashMap<>());
                         }
                         if (!sendNums.get(dest).containsKey(src)) {
                             sendNums.get(dest).put(src, 0);
@@ -121,11 +121,11 @@ public abstract class AbstractFinder {
                         Receive receive = (Receive) op;
                         int src = receive.src;
                         int dest = receive.dest;
-                        lastrInShape[dest] = receive.rank;
+                        lastrInShape[dest] = receive.order;
 
                         if (receive.isBlock) {
                             if (!recvNums.containsKey(dest)) {
-                                recvNums.put(dest, new HashMap<Integer, Integer>());
+                                recvNums.put(dest, new HashMap<>());
                             }
                             if (!recvNums.get(dest).containsKey(src)) {
                                 recvNums.get(dest).put(src, 0);
@@ -137,9 +137,9 @@ public abstract class AbstractFinder {
                                 break;
                             }
                         } else {
-                            Wait nw = receive.NearestWait;
+                            Wait nw = receive.nearestWait;
                             if (!witnessedRecv.containsKey(nw)) {
-                                witnessedRecv.put(nw, new ArrayList<Receive>());
+                                witnessedRecv.put(nw, new ArrayList<>());
                             }
                             witnessedRecv.get(nw).add(receive);
                         }
@@ -158,7 +158,7 @@ public abstract class AbstractFinder {
                                     int dest = recv.dest;
 
                                     if (!recvNums.containsKey(dest)) {
-                                        recvNums.put(dest, new HashMap<Integer, Integer>());
+                                        recvNums.put(dest, new HashMap<>());
                                     }
                                     if (!recvNums.get(dest).containsKey(src)) {
                                         recvNums.get(dest).put(src, 0);

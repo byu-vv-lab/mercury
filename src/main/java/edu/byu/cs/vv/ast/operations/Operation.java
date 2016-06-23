@@ -38,4 +38,6 @@ public abstract class Operation implements Comparable<Operation>, Encodeable {
     }
 
     public abstract String toSexp();
+
+    public abstract Operation setOrder(int time);
 }

@@ -1,4 +1,4 @@
-package edu.byu.cs.vv.finder;
+package edu.byu.cs.vv.encoding;
 
 import edu.byu.cs.vv.ast.operations.Receive;
 import com.microsoft.z3.*;

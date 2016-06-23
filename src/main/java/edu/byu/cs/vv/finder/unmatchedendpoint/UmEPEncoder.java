@@ -1,6 +1,6 @@
 package edu.byu.cs.vv.finder.unmatchedendpoint;
 
-import edu.byu.cs.vv.finder.AbstractEncoder;
+import edu.byu.cs.vv.encoding.AbstractEncoder;
 import edu.byu.cs.vv.finder.ProgramStepper;
 import edu.byu.cs.vv.ast.Match;
 import edu.byu.cs.vv.ast.operations.*;
@@ -54,8 +54,7 @@ public class UmEPEncoder extends AbstractEncoder {
             for (Operation key : operation_expr_map.keySet()) {
                 Expr cont = model.ConstInterp(operation_expr_map.get(key).getSecond());
                 int time = Integer.parseInt(cont.toString());
-                key.order = time;
-                schedule.add(key);
+                schedule.add(key.setOrder(time));
             }
         } catch (Z3Exception e) {
             e.printStackTrace();
@@ -103,7 +102,7 @@ public class UmEPEncoder extends AbstractEncoder {
         //TODO: add nw when the receive is non-blocking
         IntExpr nw = null;
         if (!op.isBlock) {
-            Wait wait = op.NearestWait;
+            Wait wait = op.nearestWait;
             //add nearest inclosing wait for recv
             if (!operation_expr_map.containsKey(wait)) {
                 //TODO:generate the time for wait?
@@ -184,11 +183,11 @@ public class UmEPEncoder extends AbstractEncoder {
     protected Collection<Collection<Match>> filterMatches() {
         Collection<Collection<Match>> results = new HashSet<>();
         for (Receive receive : match_table.keySet()) {
-            if (receive.rank > lastrInShape[receive.dest])
+            if (receive.order > lastrInShape[receive.dest])
                 continue;
             Collection<Match> inner = new HashSet<>();
             for (Send send : match_table.get(receive)) {
-                if (send.rank > lastsInShape[send.dest][send.src])
+                if (send.order > lastsInShape[send.dest][send.src])
                     continue;
                 inner.add(new Match(send, receive));
             }
@@ -200,11 +199,11 @@ public class UmEPEncoder extends AbstractEncoder {
         }
         for (Send send : pattern_match.keySet()) {
             if (send.dest != pattern.process.rank || send.src != pattern.deterministic.src
-                    || send.rank > lastsInShape[send.dest][send.src])
+                    || send.order > lastsInShape[send.dest][send.src])
                 continue;
             Collection<Match> inner = new HashSet<>();
             for (Receive receive : pattern_match.get(send)) {
-                if (receive.rank > lastrInShape[receive.dest])
+                if (receive.order > lastrInShape[receive.dest])
                     continue;
                 inner.add(new Match(send, receive));
             }

@@ -13,4 +13,9 @@ public class Wait extends Operation {
     public String toSexp() {
         return "(Wait " + communicator + ")";
     }
+
+    @Override
+    public Operation setOrder(int time) {
+        return new Wait(name, communicator, time, forR);
+    }
 }

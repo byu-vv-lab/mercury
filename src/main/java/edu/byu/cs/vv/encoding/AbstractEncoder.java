@@ -1,7 +1,8 @@
-package edu.byu.cs.vv.finder;
+package edu.byu.cs.vv.encoding;
 
 import edu.byu.cs.vv.ast.Match;
 import edu.byu.cs.vv.ast.operations.*;
+import edu.byu.cs.vv.finder.ProgramStepper;
 import edu.byu.cs.vv.util.Pair;
 import edu.byu.cs.vv.ast.Schedule;
 import com.microsoft.z3.*;
