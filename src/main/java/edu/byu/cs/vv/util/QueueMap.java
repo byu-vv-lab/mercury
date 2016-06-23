@@ -1,14 +1,12 @@
 package edu.byu.cs.vv.util;
 
-import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.Queue;
 
-public class QueueMap<K, V> extends HashMap<K, Queue<V>> {
+public class QueueMap<K, V> extends HashMap<K, TakeableQueue<V>> {
 
-    public Queue<V> add(K key, V value) {
+    public TakeableQueue<V> add(K key, V value) {
         if (!this.containsKey(key)) {
-            this.put(key, new ArrayDeque<>());
+            this.put(key, new TakeableQueue<>());
         }
         this.get(key).add(value);
         return this.get(key);

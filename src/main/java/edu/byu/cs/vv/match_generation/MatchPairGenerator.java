@@ -27,37 +27,55 @@ public class MatchPairGenerator implements IMatchPairGenerator {
                 }
                 sendMap.put(sendProcess.rank, tagMap);
             }
-            matches.addAll(getMatches(recvProcess, sendMap));
+            matches.addAll(getMatchesForProcess(recvProcess, sendMap));
         }
         return matches;
     }
 
-    private Set<Match> getMatches(Process receiver, Map<Integer, QueueMap<Integer, Send>> sendMap) {
+    private Set<Match> getMatchesForProcess(Process receiver, Map<Integer, QueueMap<Integer, Send>> sendMap) {
         Set<Match> matches = new HashSet<>();
         int[][] counters = new int[program.size()][program.numberTags];
         for(Receive recv : receiver.getReceiveList()) {
             if (recv.isSourceWildcard() && recv.isTagWildcard()) {
-                for (int[] arr : counters) {
-                    for (int val : arr) {
-                        val++;
-                        // TODO: Add matches
+                for (Integer sender : sendMap.keySet()) {
+                    for (Integer tag : sendMap.get(sender).keySet()) {
+                        int send_count = ++counters[sender][tag];
+                        List<Send> sends = sendMap.get(sender).get(tag).take(send_count);
+                        for (Send match : sends) {
+                            matches.add(new Match(match, recv));
+                        }
                     }
                 }
             } else if (recv.isSourceWildcard()) {
-                for (int[] arr : counters) {
-                    arr[recv.tag]++;
-                    // TODO: Add matches
+                for (Integer sender : sendMap.keySet()) {
+                    int tag = recv.tag;
+                    int send_count = ++counters[sender][tag];
+                    List<Send> sends = sendMap.get(sender).get(tag).take(send_count);
+                    for (Send match : sends) {
+                        matches.add(new Match(match, recv));
+                    }
                 }
             } else if (recv.isTagWildcard()) {
-                for(int arr : counters[recv.src]) {
-                    arr++;
-                    // TODO: Add matches
+                int sender = recv.src;
+                for(Integer tag : sendMap.get(sender).keySet()) {
+                    int send_count = ++counters[sender][tag];
+                    List<Send> sends = sendMap.get(sender).get(tag).take(send_count);
+                    for (Send match : sends) {
+                        matches.add(new Match(match, recv));
+                    }
                 }
             } else {
-                Send match = sendMap.get(recv.src).get(recv.tag).remove();
-                matches.add(new Match(match, recv));
+                Send consumed = sendMap.get(recv.src).get(recv.tag).remove();
+                matches.add(new Match(consumed, recv));
+
+                int sender = recv.src;
+                int tag = recv.tag;
+                int send_count = counters[sender][tag];
+                List<Send> sends = sendMap.get(sender).get(tag).take(send_count);
+                for (Send match : sends) {
+                    matches.add(new Match(match, recv));
+                }
             }
-            // TODO: Add matches
         }
         return matches;
     }
