@@ -65,4 +65,16 @@ public class Receive extends Operation {
     public boolean isTagWildcard() {
         return this.tag == -1;
     }
+
+    public boolean doesMatch (Send send) {
+        if (send.communicator != this.communicator) {
+            return false;
+        } else if (!isSourceWildcard() && (send.src != this.src)) {
+            return false;
+        } else if (!isTagWildcard() && (send.tag != this.tag)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
