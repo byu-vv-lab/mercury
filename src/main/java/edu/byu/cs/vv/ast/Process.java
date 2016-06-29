@@ -75,7 +75,16 @@ public class Process implements Iterable<Operation> {
 
     public boolean hasDeterminsticRecv() {
         for (Receive op : getReceiveList()) {
-            if (op.src != -1) {
+            if (!op.isSourceWildcard()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean hasTagDeterminsticRecv(){
+        for (Receive op : getReceiveList()) {
+            if (!op.isTagWildcard()) {
                 return true;
             }
         }

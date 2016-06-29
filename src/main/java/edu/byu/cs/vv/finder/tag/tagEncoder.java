@@ -1,4 +1,4 @@
-package edu.byu.cs.vv.Finder.UnmatchedEndpoint;
+package edu.byu.cs.vv.Finder.Unmatchedtag;
 
 import edu.byu.cs.vv.Finder.AbstractEncoder;
 import edu.byu.cs.vv.Finder.ProgramStepper;
@@ -11,7 +11,7 @@ import com.microsoft.z3.*;
 
 import java.util.*;
 
-public class UmEPEncoder extends AbstractEncoder {
+public class tagEncoder extends AbstractEncoder {
     
     UnmatchedEndpointPattern pattern;
     int[] lastrInShape;
@@ -20,7 +20,7 @@ public class UmEPEncoder extends AbstractEncoder {
     //for unmatched endpoint, make sure all sends in source endpoint should be matched
     Map<Send, List<Receive>> pattern_match;
     Map<Receive, List<Send>> match_table;
-    Operation lastr = null;
+    Map<Integer,Map<Integer,Operation>> lastr = null;
     Operation lastsz = null;
     Map<Integer, Operation> lasts = new HashMap<>();
     
@@ -39,7 +39,7 @@ public class UmEPEncoder extends AbstractEncoder {
     
     public boolean zeroSemantics = false;
     
-    public UmEPEncoder(ProgramStepper program,
+    public tagEncoder(ProgramStepper program,
                        UnmatchedEndpointPattern pattern,
                        int[] lastrInShape,
                        int[][] lastsInShape,
@@ -91,7 +91,7 @@ public class UmEPEncoder extends AbstractEncoder {
         try {
             solver.setup();
             for (Process process : program) {
-                lastr = null;
+                lastr.clear();
                 lasts.clear();
                 for (int i = 0; i < program.blockPoint(process); i++) {
                     Encoding(process.getOp(i));
@@ -123,6 +123,9 @@ public class UmEPEncoder extends AbstractEncoder {
         operation_expr_map.put(op, recvinfo);
         //add var to var table if it is not in the table
         String newName = "var" + op.event;
+        
+        Receive receive = (Receive)op;
+        
         IntExpr var;
         if(var_table.containsKey(newName))
             var = var_table.get(newName);
@@ -165,14 +168,139 @@ public class UmEPEncoder extends AbstractEncoder {
         }
         solver.addFormula(solver.initRecv(recv, ((Recv)op).src, ((Recv)op).dest, time, var, nw));
         
+        //TODO: will need more data structures to store multiple last receives for tags and endpoints
         
-        if(lastr != null)
+        if(receive.isSourceWildcard() && receive.isTagWildcard())
         {
-            BoolExpr newexpr =solver.HB((IntExpr)operation_expr_map.get(lastr).getSecond(),
-                                        time);
-            solver.addFormula(newexpr);
-            //System.out.println(newexpr);
+            if(lastr != null)
+            {
+                for(Integer dest : lastr.keySet())
+                {
+                    for(Integer tag: lastr.get(dest).keySet())
+                    {
+                        solver.addFormula(solver.HB((IntExpr)operation_expr_map.get(lastr.get(dest).get(tag)).getSecond(),
+                                                    time));
+                    }
+                }
+            }
+            else
+            {
+                lastr = new HashMap<Integer,Map<Integer,Operation>>();
+                lastr.put(-1,new HashMap<Integer,Operation>());
+                lastr.get(-1).put(-1,receive);
+            }
         }
+        else if (receive.isSourceWildcard() && !receive.isTagWildcard())
+        {
+            if(lastr!=null)
+            {
+                for(Integer dest : lastr.keySet())
+                {
+                    if(lastr.get(dest).containsKey(receive.tag))
+                    {
+                        solver.addFormula(solver.HB((IntExpr)operation_expr_map.get(lastr.get(dest).get(receive.tag)).getSecond(),
+                                                    time));
+                    }
+                    else if(lastr.get(dest).containsKey(-1))
+                    {
+                        solver.addFormula(solver.HB((IntExpr)operation_expr_map.get(lastr.get(dest).get(-1)).getSecond(),
+                                                    time));
+                    }
+                    lastr.get(dest).put(receive.tag,receive);
+                    //TODO: remove the duplicated HB relations caused by source wildcard and tag wildcard
+                }
+                
+                if(!lastr.containsKey(-1))
+                {
+                    lastr.put(-1,new HashMap<Integer,Operation>());
+                }
+            }
+            else
+            {
+                lastr = new HashMap<Integer,Map<Integer,Operation>>();
+                lastr.put(-1,new HashMap<Integer,Operation>());
+            }
+            lastr.get(-1).put(receive.tag,receive);
+        }
+        else if(!receive.isSourceWildcard() && !receive.isTagWildcard())
+        {
+            if(lastr != null)
+            {
+                if(lastr.containsKey(op.dest))
+                {
+                    if(lastr.get(op.dest).containsKey(receive.tag))
+                    {
+                        solver.addFormula(solver.HB((IntExpr)operation_expr_map.get(lastr.get(op.dest).get(receive.tag)).getSecond(),
+                                                    time));
+                    }
+                    else if(lastr.get(op.dest).containsKey(-1))
+                    {
+                        solver.addFormula(solver.HB((IntExpr)operation_expr_map.get(lastr.get(op.dest).get(-1)).getSecond(),
+                                  time));
+                    }
+                }
+                else
+                {
+                    if(lastr.containsKey(-1))
+                    {
+                        if(lastr.get(-1).containsKey(receive.tag))
+                        {
+                            solver.addFormula(solver.HB((IntExpr)operation_expr_map.get(lastr.get(-1).get(receive.tag)).getSecond(),
+                                                        time));
+                        }
+                        else if(lastr.get(-1).containsKey(-1))
+                        {
+                            solver.addFormula(solver.HB((IntExpr)operation_expr_map.get(lastr.get(-1).get(-1)).getSecond(),
+                                                        time));
+                        }
+                    }
+                    lastr.put(op.dest,new HashMap<Integer,Operation>());
+                }
+            }
+            else
+            {
+                lastr = new HashMap<Integer,Map<Integer,Operation>>();
+                lastr.put(op.dest,new HashMap<Integer,Operation>());
+            }
+            lastr.get(op.dest).put(receive.tag,receive);
+        }
+        else
+        {
+            if(lastr!=null)
+            {
+                if(lastr.containsKey(dest))
+                {
+                    for(Integer tag: lastr.get(dest).keySet())
+                    {
+                        solver.addFormula(solver.HB((IntExpr)operation_expr_map.get(lastr.get(dest).get(tag)).getSecond(),
+                                                    time));
+                        lastr.get(dest).put(tag,receive);
+                    }
+                    
+                    if(!lastr.get(dest).containsKey(-1))
+                    {
+                        lastr.get(dest).put(-1,receive);
+                    }
+                }
+                else if(lastr.containsKey(-1))
+                {
+                    for(Integer tag: lastr.get(-1).keySet())
+                    {
+                        solver.addFormula(solver.HB((IntExpr)operation_expr_map.get(lastr.get(-1).get(tag)).getSecond(),
+                                                    time));
+                        lastr.get(-1).put(tag,receive);
+                    }
+                }
+            }
+            else
+            {
+                lastr = new HashMap<Integer,Map<Integer,Operation>>();
+                lastr.put(dest,new HashMap<Integer,Operation>());
+                lastr.get(dest).put(-1,receive);
+            }
+        }
+        
+        
         
         if(lastwait_s[op.process.getRank()] != null && !hb_ws_r[op.process.getRank()])
         {
