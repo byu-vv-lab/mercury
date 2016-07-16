@@ -2,10 +2,7 @@ package edu.byu.cs.vv.parser;
 
 import edu.byu.cs.vv.Parser.CTPParser;
 import edu.byu.cs.vv.Parser.CTPParserBaseListener;
-import edu.byu.cs.vv.ast.operations.Barrier;
-import edu.byu.cs.vv.ast.operations.Operation;
-import edu.byu.cs.vv.ast.operations.Receive;
-import edu.byu.cs.vv.ast.operations.Send;
+import edu.byu.cs.vv.ast.operations.*;
 import edu.byu.cs.vv.ast.Program;
 import org.antlr.v4.runtime.tree.ErrorNode;
 
@@ -15,11 +12,9 @@ import java.util.Map;
 
 class ProgramListener extends CTPParserBaseListener {
 
-
     private ProgramBuilder programBuilder;
     private ProcessBuilder processBuilder;
     private Map<Integer, Integer> sends;
-    private int recv_rank;
 
     public Program getProgram() {
         return programBuilder.finish();
@@ -42,7 +37,6 @@ class ProgramListener extends CTPParserBaseListener {
         processBuilder = new ProcessBuilder();
         processBuilder.setRank(programBuilder.size());
         sends = new HashMap<>();
-        recv_rank = 0;
         super.enterThread(ctx);
     }
 
@@ -58,18 +52,27 @@ class ProgramListener extends CTPParserBaseListener {
         int destination = Integer.parseInt(ctx.Process().getText());
         int tag = Integer.parseInt(ctx.Tag().getText());
         int rank = sends.getOrDefault(destination, 0);
+        String name = processBuilder.rank() + "_" + processBuilder.sends();
+        String waitName = processBuilder.rank() + "_" + processBuilder.waits();
+
         Operation op = new Send(
-                  processBuilder.rank() + "_" + processBuilder.size()  // Name
-                , communicator                                         // Communicator
-                , processBuilder.rank()                                // Process Rank
-                , rank                                                 // Operation rank
-                , processBuilder.rank()                                // Source
-                , destination                                          // Destination
-                , tag                                                  // Tag
-                , null                                                 // Nearest wait
-                , true);                                               // Blocking?
+                  name                           // Name
+                , communicator                   // Communicator
+                , processBuilder.rank()          // Process Rank
+                , rank                           // Operation rank
+                , processBuilder.rank()          // Source
+                , destination                    // Destination
+                , tag);                          // Tag
         processBuilder.addOperation(op);
         sends.put(destination, rank + 1);
+
+        Operation wait = new Wait(
+                  waitName                       // Name
+                , name                           // Witnessed operation
+                , processBuilder.rank()          // Process rank
+                , processBuilder.waits()         // Rank
+        );
+        processBuilder.addOperation(wait);
         super.enterSend(ctx);
     }
 
@@ -79,16 +82,16 @@ class ProgramListener extends CTPParserBaseListener {
         int destination = Integer.parseInt(ctx.Process().getText());
         int tag = Integer.parseInt(ctx.Tag().getText());
         int rank = sends.getOrDefault(destination, 0);
+        String name = processBuilder.rank() + "_" + processBuilder.sends();
+
         Operation op = new Send(
-                  processBuilder.rank() + "_" + processBuilder.size()  // Name
-                , communicator                                         // Communicator
-                , processBuilder.rank()                                // Process Rank
-                , rank                                                 // Operation rank
-                , processBuilder.rank()                                // Source
-                , destination                                          // Destination
-                , tag                                                  // Tag
-                , null                                                 // Nearest wait
-                , false);                                              // Blocking?
+                  name                           // Name
+                , communicator                   // Communicator
+                , processBuilder.rank()          // Process Rank
+                , rank                           // Operation rank
+                , processBuilder.rank()          // Source
+                , destination                    // Destination
+                , tag);                          // Tag
         processBuilder.addOperation(op);
         sends.put(destination, rank + 1);
         super.enterIsend(ctx);
@@ -100,18 +103,27 @@ class ProgramListener extends CTPParserBaseListener {
         int communicator = Integer.parseInt(ctx.Communicator().getText());
         int source = Integer.parseInt(ctx.Process().getText());
         int tag = Integer.parseInt(ctx.Tag().getText());
+        String name = processBuilder.rank() + "_" + processBuilder.recvs();
+        String waitName = processBuilder.rank() + "_" + processBuilder.waits();
+
         Operation op = new Receive(
-                  processBuilder.rank() + "_" + processBuilder.size()  // Name
-                , communicator                                         // Communicator
-                , processBuilder.rank()                                // Process Rank
-                , recv_rank                                            // Operation Rank
-                , source                                               // Source
-                , processBuilder.rank()                                // Destination
-                , tag                                                  // Tag
-                , null                                                 // Nearest wait
-                , true);                                               // Blocking?
+                  name                           // Name
+                , communicator                   // Communicator
+                , processBuilder.rank()          // Process Rank
+                , processBuilder.recvs()         // Operation Rank
+                , source                         // Source
+                , processBuilder.rank()          // Destination
+                , tag);                          // Tag
         processBuilder.addOperation(op);
-        recv_rank++;
+
+        Operation wait = new Wait(
+                  waitName                       // Name
+                , name                           // Witnessed operation
+                , processBuilder.rank()          // Process rank
+                , processBuilder.waits()         // Rank
+        );
+        processBuilder.addOperation(wait);
+
         super.enterReceive(ctx);
     }
 
@@ -120,35 +132,45 @@ class ProgramListener extends CTPParserBaseListener {
         int communicator = Integer.parseInt(ctx.Communicator().getText());
         int source = Integer.parseInt(ctx.Process().getText());
         int tag = Integer.parseInt(ctx.Tag().getText());
+        String name = processBuilder.rank() + "_" + processBuilder.recvs();
+
         Operation op = new Receive(
-                  processBuilder.rank() + "_" + processBuilder.size()  // Name
-                , communicator                                         // Communicator
-                , processBuilder.rank()                                // Process Rank
-                , recv_rank                                            // Operation Rank
-                , source                                               // Source
-                , processBuilder.rank()                                // Destination
-                , tag                                                  // Tag
-                , null                                                 // Nearest wait
-                , false);                                              // Blocking?
+                  name                           // Name
+                , communicator                   // Communicator
+                , processBuilder.rank()          // Process Rank
+                , processBuilder.recvs()         // Operation Rank
+                , source                         // Source
+                , processBuilder.rank()          // Destination
+                , tag);                          // Tag
         processBuilder.addOperation(op);
-        recv_rank++;
         super.enterIreceive(ctx);
     }
 
     @Override
     public void enterBarrier(CTPParser.BarrierContext ctx) {
         int communicator = Integer.parseInt(ctx.Communicator().getText());
+        String name = processBuilder.rank() + "_" + processBuilder.recvs();
+
         Operation op = new Barrier(
-                processBuilder.rank() + "_" + processBuilder.size()  // Name
-                , communicator                                         // Communicator
-                , processBuilder.size());                              // Operation rank
+                  name                           // Name
+                , communicator                   // Communicator
+                , processBuilder.size());        // Operation rank
         processBuilder.addOperation(op);
         super.enterBarrier(ctx);
     }
 
-    // TODO:
     @Override
     public void enterBlock(CTPParser.BlockContext ctx){
+        String name = processBuilder.rank() + "_" + processBuilder.waits();
+        String witnessed = ctx.Identifier().getText();
+
+        Operation wait = new Wait(
+                  name                           // Name
+                , witnessed                      // Witnessed operation
+                , processBuilder.rank()          // Process rank
+                , processBuilder.waits()         // Rank
+        );
+        processBuilder.addOperation(wait);
         super.enterBlock(ctx);
     }
 

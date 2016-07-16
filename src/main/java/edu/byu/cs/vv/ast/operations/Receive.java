@@ -5,15 +5,12 @@ public class Receive extends Operation {
     public final int src;
     public final int dest;
     public final int tag;
-    public final Wait nearestWait;
 
-    public Receive(String name, int communicator, int process_rank, int order, int src, int dest,
-                   int tag, Wait nw, boolean isBlock) {
-        super(name, communicator, process_rank, order, isBlock);
+    public Receive(String name, int communicator, int process_rank, int order, int src, int dest, int tag) {
+        super(name, communicator, process_rank, order);
         this.src = src;
         this.dest = dest;
         this.tag = tag;
-        this.nearestWait = nw;
     }
 
     @Override
@@ -22,7 +19,6 @@ public class Receive extends Operation {
                 "src=" + src +
                 ", dest=" + dest +
                 ", rank=" + order +
-                ", isBlock=" + isBlock +
                 '}';
     }
 
@@ -35,8 +31,7 @@ public class Receive extends Operation {
 
         if (src != recv.src) return false;
         if (dest != recv.dest) return false;
-        if (order != recv.order) return false;
-        return isBlock == recv.isBlock;
+        return order == recv.order;
     }
 
     @Override
@@ -44,18 +39,21 @@ public class Receive extends Operation {
         int result = src;
         result = 31 * result + dest;
         result = 31 * result + order;
-        result = 31 * result + (isBlock ? 1 : 0);
         return result;
     }
 
     @Override
     public String toSexp() {
-        return "(Receive " + communicator + " " + src + " " + tag + ")";
+        return "(Receive " + name + " " + communicator + " " + src + " " + tag + ")";
     }
 
     @Override
     public Operation setOrder(int time) {
-        return new Receive(name, communicator, process_rank, time, src, dest, tag, nearestWait, isBlock);
+        return new Receive(name, communicator, process_rank, time, src, dest, tag);
+    }
+
+    public boolean isDeterministic() {
+        return !(isSourceWildcard() || isTagWildcard());
     }
 
     public boolean isSourceWildcard() {

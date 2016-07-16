@@ -6,15 +6,12 @@ public class Send extends Operation {
     public final int dest;
     public final int tag;
     public final int value = 0;
-    public final Wait nearestWait;
 
-    public Send(String name, int communicator, int process_rank, int order, int src, int dest,
-                int tag, Wait nw, boolean isBlock) {
-        super(name, communicator, process_rank, order, isBlock);
+    public Send(String name, int communicator, int process_rank, int order, int src, int dest, int tag) {
+        super(name, communicator, process_rank, order);
         this.src = src;
         this.dest = dest;
         this.tag = tag;
-        this.nearestWait = nw;
     }
 
     @Override
@@ -23,7 +20,6 @@ public class Send extends Operation {
                 "src=" + src +
                 ", dest=" + dest +
                 ", rank=" + order +
-                ", isBlock=" + isBlock +
                 '}';
     }
 
@@ -36,8 +32,7 @@ public class Send extends Operation {
 
         if (src != send.src) return false;
         if (dest != send.dest) return false;
-        if (order != send.order) return false;
-        return isBlock == send.isBlock;
+        return order == send.order;
     }
 
     @Override
@@ -45,17 +40,16 @@ public class Send extends Operation {
         int result = src;
         result = 31 * result + dest;
         result = 31 * result + order;
-        result = 31 * result + (isBlock ? 1 : 0);
         return result;
     }
 
     @Override
     public String toSexp() {
-        return "(Send " + communicator + " " + dest + " " + tag + ")";
+        return "(Send " + name + " " + communicator + " " + dest + " " + tag + ")";
     }
 
     @Override
     public Operation setOrder(int time) {
-        return new Send(name, communicator, process_rank, time, src, dest, tag, nearestWait, isBlock);
+        return new Send(name, communicator, process_rank, time, src, dest, tag);
     }
 }

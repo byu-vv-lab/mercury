@@ -9,7 +9,6 @@ public abstract class Operation implements Comparable<Operation>, Encodeable {
     public final int process_rank;
     public final int order;
     public final int communicator;
-    public final boolean isBlock;
 
     /**
      * Constructor
@@ -17,13 +16,11 @@ public abstract class Operation implements Comparable<Operation>, Encodeable {
      * @param communicator
      * @param process_rank The index of this process in the program
      * @param order The index of this operation in its process
-     * @param isBlock Is the operation blocking?
      */
-    public Operation(String name, int communicator, int process_rank, int order, boolean isBlock) {
+    public Operation(String name, int communicator, int process_rank, int order) {
         this.name = name;
         this.communicator = communicator;
         this.order = order;
-        this.isBlock = isBlock;
         this.process_rank = process_rank;
     }
 

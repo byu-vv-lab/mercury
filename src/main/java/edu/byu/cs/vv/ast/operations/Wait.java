@@ -2,20 +2,20 @@ package edu.byu.cs.vv.ast.operations;
 
 public class Wait extends Operation {
 
-    public final boolean forR;
+    public final String opWitnessed;
 
-    public Wait(String name, int communicator, int order, boolean forR) {
-        super(name, communicator, 0, order, false);
-        this.forR = forR;
+    public Wait(String name, String opWitnessed, int process_rank, int order) {
+        super(name, -1, process_rank, order);
+        this.opWitnessed = opWitnessed;
     }
 
     @Override
     public String toSexp() {
-        return "(Wait " + communicator + ")";
+        return "(Wait " + opWitnessed + ")";
     }
 
     @Override
     public Operation setOrder(int time) {
-        return new Wait(name, communicator, time, forR);
+        return new Wait(name, opWitnessed, process_rank, time);
     }
 }
